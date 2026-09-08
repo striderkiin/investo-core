@@ -5,6 +5,7 @@ import type { ProfileRow } from '../supabase/mappers';
 import type { AccountStatus, Profile, Transaction } from '../../types/database';
 import { mapTransactionRow } from '../supabase/mappers';
 import type { TransactionRow } from '../supabase/mappers';
+import type { RoleName } from '../../types/roles';
 
 export type BalanceField = 'total_balance' | 'available_balance' | 'bonus_balance' | 'invested_balance';
 export type AdjustmentType = 'credit' | 'debit';
@@ -68,6 +69,18 @@ export function createUserService(client: SupabaseClient = getSupabaseClient()) 
       });
       if (error) throw error;
       return mapTransactionRow(data as TransactionRow);
+    },
+
+    async listAdmins(): Promise<Profile[]> {
+      const { data, error } = await client.from('profiles').select('*').neq('role', 'client').order('created_at', { ascending: false });
+      if (error) throw error;
+      return (data as ProfileRow[]).map(mapProfileRow);
+    },
+
+    async setRole(userId: string, role: RoleName): Promise<Profile> {
+      const { data, error } = await client.rpc('admin_set_user_role', { p_user_id: userId, p_role: role });
+      if (error) throw error;
+      return mapProfileRow(data as ProfileRow);
     },
   };
 }

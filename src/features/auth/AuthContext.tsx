@@ -3,6 +3,8 @@ import type { ReactNode } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import { createAuthService } from '../../services/auth/authService';
 import { isSupabaseConfigured } from '../../services/supabase/client';
+import { createSecurityService } from '../../services/api/securityService';
+import { isAdminRole } from '../../types/roles';
 import type { Profile } from '../../types/database';
 import type { LoginInput, RegisterInput } from '../../services/auth/authService';
 
@@ -15,12 +17,13 @@ export interface AuthContextValue {
   login: (input: LoginInput) => Promise<void>;
   register: (input: RegisterInput) => Promise<void>;
   logout: () => Promise<void>;
-  refreshProfile: () => Promise<void>;
+  refreshProfile: () => Promise<Profile | null>;
 }
 
 export const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 const authService = isSupabaseConfigured() ? createAuthService() : null;
+const securityService = isSupabaseConfigured() ? createSecurityService() : null;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
@@ -29,13 +32,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const isConfigured = isSupabaseConfigured();
 
-  const refreshProfile = useCallback(async () => {
-    if (!authService) return;
+  const refreshProfile = useCallback(async (): Promise<Profile | null> => {
+    if (!authService) return null;
     try {
       const currentProfile = await authService.getCurrentProfile();
       setProfile(currentProfile);
+      return currentProfile;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load profile');
+      return null;
     }
   }, []);
 
@@ -76,7 +81,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setError(null);
     const result = await authService.login(input);
     setSession(result.session);
-    await refreshProfile();
+    const loadedProfile = await refreshProfile();
+    if (result.user && securityService) {
+      void securityService.recordSession(result.user.id, loadedProfile ? isAdminRole(loadedProfile.role) : false).catch(() => undefined);
+    }
   }, [refreshProfile]);
 
   const register = useCallback(async (input: RegisterInput) => {

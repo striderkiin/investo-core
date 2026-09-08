@@ -4,6 +4,7 @@ import { useAuth } from '../../../hooks/useAuth';
 import { useToast } from '../../../hooks/useToast';
 import { createUserService } from '../../../services/api/userService';
 import { createAuthService } from '../../../services/auth/authService';
+import { SecuritySettingsSection } from '../components/SecuritySettingsSection';
 
 const userService = createUserService();
 const authService = createAuthService();
@@ -121,6 +122,8 @@ export function ClientSettingsPage() {
           </form>
         </div>
       </div>
+
+      <SecuritySettingsSection />
     </div>
   );
 }
