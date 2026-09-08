@@ -178,8 +178,8 @@ needs to change when they land.
   ```bash
   createdb investo_test
   psql -d investo_test -f supabase/testing/auth_stub.sql
+  psql -d investo_test -f supabase/testing/grants.sql               # BEFORE migrations — see file header
   for f in supabase/migrations/*.sql; do psql -d investo_test -f "$f"; done
-  psql -d investo_test -f supabase/testing/grants.sql
   psql -d investo_test -f supabase/testing/integration_test.sql   # exercises RLS + every RPC
   psql -d investo_test -f supabase/seed.sql                        # seed data end-to-end
   ```

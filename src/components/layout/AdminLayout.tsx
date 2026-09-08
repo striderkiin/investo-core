@@ -4,6 +4,9 @@ import { Sidebar } from './Sidebar';
 import type { SidebarNavItem } from './Sidebar';
 import { Topbar } from './Topbar';
 import { usePermission } from '../../hooks/usePermission';
+import { useBranding } from '../../hooks/useBranding';
+import { MaintenanceBanner } from '../notifications/MaintenanceBanner';
+import { AnnouncementBanner } from '../notifications/AnnouncementBanner';
 import type { Permission } from '../../types/roles';
 
 const ALL_NAV_ITEMS: (SidebarNavItem & { permission?: Permission })[] = [
@@ -17,8 +20,18 @@ const ALL_NAV_ITEMS: (SidebarNavItem & { permission?: Permission })[] = [
   { to: '/admin/transactions', label: 'Transactions', icon: 'bi-receipt', permission: 'transactions.read' },
   { to: '/admin/treasury', label: 'Treasury', icon: 'bi-safe', permission: 'treasury.read' },
   { to: '/admin/referrals', label: 'Referrals', icon: 'bi-diagram-3', permission: 'referrals.read' },
+  { to: '/admin/announcements', label: 'Announcements', icon: 'bi-megaphone', permission: 'announcements.manage' },
+  { to: '/admin/maintenance', label: 'Maintenance', icon: 'bi-cone-striped', permission: 'settings.manage' },
+  { to: '/admin/activity', label: 'Activity', icon: 'bi-activity', permission: 'settings.manage' },
   { to: '/admin/support', label: 'Support', icon: 'bi-life-preserver', permission: 'support.read' },
+  { to: '/admin/white-label', label: 'White Label', icon: 'bi-tags', permission: 'white_label.manage' },
+  { to: '/admin/branding', label: 'Branding', icon: 'bi-palette', permission: 'branding.manage' },
+  { to: '/admin/integrations', label: 'Integrations', icon: 'bi-plug', permission: 'integrations.manage' },
+  { to: '/admin/sandbox-testing', label: 'Sandbox Testing', icon: 'bi-hdd-network', permission: 'integrations.manage' },
+  { to: '/admin/security', label: 'Security', icon: 'bi-shield-lock', permission: 'security.manage' },
+  { to: '/admin/admins', label: 'Admins & Roles', icon: 'bi-person-badge', permission: 'admins.manage' },
   { to: '/admin/audit-logs', label: 'Audit Logs', icon: 'bi-journal-text', permission: 'audit.read' },
+  { to: '/admin/settings', label: 'System Settings', icon: 'bi-gear', permission: 'settings.manage' },
 ];
 
 const TITLES: Record<string, string> = {
@@ -32,26 +45,47 @@ const TITLES: Record<string, string> = {
   '/admin/transactions': 'Transactions',
   '/admin/treasury': 'Treasury',
   '/admin/referrals': 'Referrals',
+  '/admin/announcements': 'Announcements',
+  '/admin/maintenance': 'Maintenance',
+  '/admin/activity': 'Activity & Simulation',
   '/admin/support': 'Support',
+  '/admin/white-label': 'White Label',
+  '/admin/branding': 'Branding',
+  '/admin/integrations': 'Integrations',
+  '/admin/sandbox-testing': 'Sandbox Testing',
+  '/admin/security': 'Security',
+  '/admin/admins': 'Admins & Roles',
   '/admin/audit-logs': 'Audit Logs',
+  '/admin/settings': 'System Settings',
 };
 
 export function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const { can } = usePermission();
+  const { branding } = useBranding();
   const title = TITLES[location.pathname] ?? 'Admin';
 
   const items = ALL_NAV_ITEMS.filter((item) => !item.permission || can(item.permission));
 
   return (
-    <div className="d-flex">
-      <Sidebar brand="Investo Admin" items={items} show={sidebarOpen} onNavigate={() => setSidebarOpen(false)} />
-      <div className="flex-grow-1 min-vh-100 d-flex flex-column">
-        <Topbar title={title} onToggleSidebar={() => setSidebarOpen((open) => !open)} />
-        <main className="p-3 p-lg-4 flex-grow-1">
-          <Outlet />
-        </main>
+    <div className="d-flex flex-column min-vh-100">
+      <MaintenanceBanner />
+      <AnnouncementBanner />
+      <div className="d-flex flex-grow-1">
+        <Sidebar
+          brand={`${branding.siteName} Admin`}
+          logoUrl={branding.logoUrl}
+          items={items}
+          show={sidebarOpen}
+          onNavigate={() => setSidebarOpen(false)}
+        />
+        <div className="flex-grow-1 d-flex flex-column">
+          <Topbar title={title} onToggleSidebar={() => setSidebarOpen((open) => !open)} />
+          <main className="p-3 p-lg-4 flex-grow-1">
+            <Outlet />
+          </main>
+        </div>
       </div>
     </div>
   );

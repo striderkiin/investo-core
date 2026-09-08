@@ -62,3 +62,27 @@ $$;
 grant usage on schema public to authenticated, anon;
 grant usage on schema auth to authenticated, anon;
 
+-- Minimal stand-in for Supabase Storage's schema (real one has more columns/
+-- triggers; this only needs what our RLS policies and bucket seed touch).
+create schema if not exists storage;
+
+create table storage.buckets (
+  id text primary key,
+  name text not null,
+  public boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table storage.objects (
+  id uuid primary key default gen_random_uuid(),
+  bucket_id text references storage.buckets(id),
+  name text,
+  owner uuid,
+  metadata jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+grant usage on schema storage to authenticated, anon;
+

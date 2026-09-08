@@ -37,6 +37,16 @@ import { TreasuryPage } from '../features/admin/pages/TreasuryPage';
 import { AdminReferralsPage } from '../features/admin/pages/AdminReferralsPage';
 import { AdminSupportPage } from '../features/admin/pages/AdminSupportPage';
 import { AuditLogsPage } from '../features/admin/pages/AuditLogsPage';
+import { AnnouncementsPage } from '../features/admin/pages/AnnouncementsPage';
+import { MaintenanceModePage } from '../features/admin/pages/MaintenanceModePage';
+import { ActivitySimulationPage } from '../features/admin/pages/ActivitySimulationPage';
+import { WhiteLabelPage } from '../features/admin/pages/WhiteLabelPage';
+import { BrandingPage } from '../features/admin/pages/BrandingPage';
+import { IntegrationsPage } from '../features/admin/pages/IntegrationsPage';
+import { SandboxTestingPage } from '../features/admin/pages/SandboxTestingPage';
+import { SecurityCenterPage } from '../features/admin/pages/SecurityCenterPage';
+import { AdminsPage } from '../features/admin/pages/AdminsPage';
+import { SystemSettingsPage } from '../features/admin/pages/SystemSettingsPage';
 
 import { NotFoundPage } from '../features/public/pages/NotFoundPage';
 
@@ -154,6 +164,30 @@ export function AppRoutes() {
           }
         />
         <Route
+          path="/admin/announcements"
+          element={
+            <ProtectedRoute requireAdmin requirePermission="announcements.manage">
+              <AnnouncementsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/maintenance"
+          element={
+            <ProtectedRoute requireAdmin requirePermission="settings.manage">
+              <MaintenanceModePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/activity"
+          element={
+            <ProtectedRoute requireAdmin requirePermission="settings.manage">
+              <ActivitySimulationPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/admin/support"
           element={
             <ProtectedRoute requireAdmin requirePermission="support.read">
@@ -162,10 +196,66 @@ export function AppRoutes() {
           }
         />
         <Route
+          path="/admin/white-label"
+          element={
+            <ProtectedRoute requireAdmin requirePermission="white_label.manage">
+              <WhiteLabelPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/branding"
+          element={
+            <ProtectedRoute requireAdmin requirePermission="branding.manage">
+              <BrandingPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/integrations"
+          element={
+            <ProtectedRoute requireAdmin requirePermission="integrations.manage">
+              <IntegrationsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/sandbox-testing"
+          element={
+            <ProtectedRoute requireAdmin requirePermission="integrations.manage">
+              <SandboxTestingPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/security"
+          element={
+            <ProtectedRoute requireAdmin requirePermission="security.manage">
+              <SecurityCenterPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/admins"
+          element={
+            <ProtectedRoute requireAdmin requirePermission="admins.manage">
+              <AdminsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/admin/audit-logs"
           element={
             <ProtectedRoute requireAdmin requirePermission="audit.read">
               <AuditLogsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/settings"
+          element={
+            <ProtectedRoute requireAdmin requirePermission="settings.manage">
+              <SystemSettingsPage />
             </ProtectedRoute>
           }
         />

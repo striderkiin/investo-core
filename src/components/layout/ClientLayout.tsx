@@ -3,6 +3,11 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import type { SidebarNavItem } from './Sidebar';
 import { Topbar } from './Topbar';
+import { useBranding } from '../../hooks/useBranding';
+import { useMaintenanceStatus } from '../../features/operations/useMaintenanceStatus';
+import { MaintenanceBanner } from '../notifications/MaintenanceBanner';
+import { MaintenanceScreen } from '../../features/operations/MaintenanceScreen';
+import { AnnouncementBanner } from '../notifications/AnnouncementBanner';
 
 const NAV_ITEMS: SidebarNavItem[] = [
   { to: '/dashboard', label: 'Dashboard', icon: 'bi-speedometer2', end: true },
@@ -32,15 +37,31 @@ export function ClientLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const title = TITLES[location.pathname] ?? 'Dashboard';
+  const { branding } = useBranding();
+  const { settings: maintenance } = useMaintenanceStatus();
+
+  if (maintenance?.enabled && maintenance.restrictClientAccess) {
+    return <MaintenanceScreen settings={maintenance} />;
+  }
 
   return (
-    <div className="d-flex">
-      <Sidebar brand="Investo" items={NAV_ITEMS} show={sidebarOpen} onNavigate={() => setSidebarOpen(false)} />
-      <div className="flex-grow-1 min-vh-100 d-flex flex-column">
-        <Topbar title={title} onToggleSidebar={() => setSidebarOpen((open) => !open)} />
-        <main className="p-3 p-lg-4 flex-grow-1">
-          <Outlet />
-        </main>
+    <div className="d-flex flex-column min-vh-100">
+      <MaintenanceBanner />
+      <AnnouncementBanner />
+      <div className="d-flex flex-grow-1">
+        <Sidebar
+          brand={branding.siteName}
+          logoUrl={branding.logoUrl}
+          items={NAV_ITEMS}
+          show={sidebarOpen}
+          onNavigate={() => setSidebarOpen(false)}
+        />
+        <div className="flex-grow-1 d-flex flex-column">
+          <Topbar title={title} onToggleSidebar={() => setSidebarOpen((open) => !open)} />
+          <main className="p-3 p-lg-4 flex-grow-1">
+            <Outlet />
+          </main>
+        </div>
       </div>
     </div>
   );
