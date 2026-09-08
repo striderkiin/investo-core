@@ -25,20 +25,16 @@ export function createDemoPaymentProvider(client: SupabaseClient = getSupabaseCl
   return {
     name: 'demo',
 
-    async createDeposit({ userId, amount, currency, network }: CreateDepositInput): Promise<DepositSession> {
-      const { data, error } = await client
-        .from('deposits')
-        .insert({
-          user_id: userId,
-          amount,
-          currency,
-          network,
-          provider: 'demo',
-          provider_reference: `DEMO-${crypto.randomUUID()}`,
-          status: 'pending',
-        })
-        .select('*')
-        .single();
+    async createDeposit({ amount, currency, network }: CreateDepositInput): Promise<DepositSession> {
+      // Routed through create_demo_deposit() so deposit min/max, the deposit-enabled
+      // flag, and maintenance mode are enforced server-side — the same validation
+      // request_withdrawal() already gets — instead of trusting the client to only
+      // ever insert a reasonable row.
+      const { data, error } = await client.rpc('create_demo_deposit', {
+        p_amount: amount,
+        p_currency: currency,
+        p_network: network,
+      });
       if (error) throw error;
 
       const deposit = mapDepositRow(data as DepositRow);
