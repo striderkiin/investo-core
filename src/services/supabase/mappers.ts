@@ -10,9 +10,15 @@ import type {
   InvestmentPlanRateType,
   InvestmentPlanStatus,
   InvestmentStatus,
+  MarketAdjustmentDirection,
+  MarketAdjustmentType,
+  MarketAsset,
   MarketControlPreset,
   MarketDataPoint,
   MarketMode,
+  MarketOverrideHistoryEntry,
+  MarketProviderHistoryPoint,
+  MarketProviderState,
   MarketSettings,
   MarketTrend,
   MarketVolatility,
@@ -418,6 +424,110 @@ export function mapMarketControlPresetRow(row: MarketControlPresetRow): MarketCo
     name: row.name,
     settings: row.settings,
     createdBy: row.created_by,
+    createdAt: row.created_at,
+  };
+}
+
+export interface MarketAssetRow {
+  id: string;
+  symbol: string;
+  display_name: string;
+  enabled: boolean;
+  sort_order: number;
+  created_at: string;
+}
+
+export function mapMarketAssetRow(row: MarketAssetRow): MarketAsset {
+  return {
+    id: row.id,
+    symbol: row.symbol,
+    displayName: row.display_name,
+    enabled: row.enabled,
+    sortOrder: row.sort_order,
+    createdAt: row.created_at,
+  };
+}
+
+export interface MarketProviderStateRow {
+  id: string;
+  asset_id: string;
+  provider_price: number;
+  manual_offset: number;
+  effective_price: number;
+  manual_increase_enabled: boolean;
+  manual_decrease_enabled: boolean;
+  direct_value_entry_enabled: boolean;
+  percentage_adjustment_enabled: boolean;
+  automatic_behavior: AutomaticMarketBehavior;
+  min_movement: number;
+  max_movement: number;
+  updated_at: string;
+}
+
+export function mapMarketProviderStateRow(row: MarketProviderStateRow): MarketProviderState {
+  return {
+    id: row.id,
+    assetId: row.asset_id,
+    providerPrice: Number(row.provider_price),
+    manualOffset: Number(row.manual_offset),
+    effectivePrice: Number(row.effective_price),
+    manualIncreaseEnabled: row.manual_increase_enabled,
+    manualDecreaseEnabled: row.manual_decrease_enabled,
+    directValueEntryEnabled: row.direct_value_entry_enabled,
+    percentageAdjustmentEnabled: row.percentage_adjustment_enabled,
+    automaticBehavior: row.automatic_behavior,
+    minMovement: Number(row.min_movement),
+    maxMovement: Number(row.max_movement),
+    updatedAt: row.updated_at,
+  };
+}
+
+export interface MarketProviderHistoryRow {
+  id: string;
+  asset_id: string;
+  value: number;
+  is_manual: boolean;
+  recorded_at: string;
+}
+
+export function mapMarketProviderHistoryRow(row: MarketProviderHistoryRow): MarketProviderHistoryPoint {
+  return {
+    id: row.id,
+    assetId: row.asset_id,
+    value: Number(row.value),
+    isManual: row.is_manual,
+    recordedAt: row.recorded_at,
+  };
+}
+
+export interface MarketOverrideHistoryRow {
+  id: string;
+  asset_id: string;
+  admin_id: string | null;
+  adjustment_type: MarketAdjustmentType;
+  direction: MarketAdjustmentDirection;
+  input_value: number | null;
+  previous_offset: number;
+  new_offset: number;
+  previous_effective_price: number;
+  new_effective_price: number;
+  undone: boolean;
+  created_at: string;
+}
+
+export function mapMarketOverrideHistoryRow(row: MarketOverrideHistoryRow): MarketOverrideHistoryEntry {
+  return {
+    id: row.id,
+    assetId: row.asset_id,
+    adminId: row.admin_id,
+    adjustmentType: row.adjustment_type,
+    direction: row.direction,
+    inputValue: row.input_value === null ? null : Number(row.input_value),
+    previousOffset: Number(row.previous_offset),
+    newOffset: Number(row.new_offset),
+    previousEffectivePrice: Number(row.previous_effective_price),
+    newEffectivePrice: Number(row.new_effective_price),
+    undone: row.undone,
     createdAt: row.created_at,
   };
 }

@@ -222,6 +222,69 @@ export interface MarketControlPreset {
   createdAt: string;
 }
 
+// --- Live Provider + Manual Override architecture (post-build correction) ---
+// Additive to MarketSettings/MarketDataPoint above, which remain the
+// "automatic vs. manual chart simulation" system exactly as originally
+// built. This is a separate, per-asset layer: effectivePrice = providerPrice
+// + manualOffset, where providerPrice keeps advancing on its own regardless
+// of any active override.
+
+export interface MarketAsset {
+  id: string;
+  symbol: string;
+  displayName: string;
+  enabled: boolean;
+  sortOrder: number;
+  createdAt: string;
+}
+
+export type MarketAdjustmentDirection = 'increase' | 'decrease' | 'set';
+export type MarketAdjustmentType = 'fixed' | 'percentage' | 'direct' | 'undo' | 'reset' | 'reset_all';
+export type MarketCapabilityKey =
+  | 'manualIncreaseEnabled'
+  | 'manualDecreaseEnabled'
+  | 'directValueEntryEnabled'
+  | 'percentageAdjustmentEnabled';
+
+export interface MarketProviderState {
+  id: string;
+  assetId: string;
+  providerPrice: number;
+  manualOffset: number;
+  effectivePrice: number;
+  manualIncreaseEnabled: boolean;
+  manualDecreaseEnabled: boolean;
+  directValueEntryEnabled: boolean;
+  percentageAdjustmentEnabled: boolean;
+  automaticBehavior: AutomaticMarketBehavior;
+  minMovement: number;
+  maxMovement: number;
+  updatedAt: string;
+}
+
+export interface MarketProviderHistoryPoint {
+  id: string;
+  assetId: string;
+  value: number;
+  isManual: boolean;
+  recordedAt: string;
+}
+
+export interface MarketOverrideHistoryEntry {
+  id: string;
+  assetId: string;
+  adminId: string | null;
+  adjustmentType: MarketAdjustmentType;
+  direction: MarketAdjustmentDirection;
+  inputValue: number | null;
+  previousOffset: number;
+  newOffset: number;
+  previousEffectivePrice: number;
+  newEffectivePrice: number;
+  undone: boolean;
+  createdAt: string;
+}
+
 export interface AdminAuditLog {
   id: string;
   adminId: string;

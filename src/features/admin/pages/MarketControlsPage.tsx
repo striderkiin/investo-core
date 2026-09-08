@@ -4,6 +4,7 @@ import { useAuth } from '../../../hooks/useAuth';
 import { useToast } from '../../../hooks/useToast';
 import { usePermission } from '../../../hooks/usePermission';
 import { useMarketData } from '../../../features/market/useMarketData';
+import { MarketOverridePanel } from '../components/MarketOverridePanel';
 import { MarketChart } from '../../../components/charts/MarketChart';
 import { MarketArrowControl } from '../../../components/controls/MarketArrowControl';
 import { LoadingScreen } from '../../../components/common/LoadingScreen';
@@ -79,8 +80,12 @@ export function MarketControlsPage() {
 
   return (
     <div className="d-flex flex-column gap-4">
+      <MarketOverridePanel />
+
+      <hr />
+
       <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <h2 className="h4 mb-0">Live Market Control Panel</h2>
+        <h2 className="h4 mb-0">Chart Simulation Mode (Automatic / Manual)</h2>
         <span className={`badge text-bg-${settings.mode === 'manual' ? 'warning' : 'success'} text-capitalize`}>
           {settings.mode === 'manual' ? 'Manual Control Active' : 'Automatic'}
         </span>
