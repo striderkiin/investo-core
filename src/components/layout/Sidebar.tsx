@@ -9,17 +9,22 @@ export interface SidebarNavItem {
 
 interface SidebarProps {
   brand: string;
+  logoUrl?: string | null;
   items: SidebarNavItem[];
   show: boolean;
   onNavigate: () => void;
 }
 
-export function Sidebar({ brand, items, show, onNavigate }: SidebarProps) {
+export function Sidebar({ brand, logoUrl, items, show, onNavigate }: SidebarProps) {
   return (
     <>
       <aside className={`ic-sidebar d-flex flex-column p-3 ${show ? 'show' : ''}`} aria-label="Primary navigation">
         <div className="d-flex align-items-center mb-4 px-1">
-          <i className="bi bi-graph-up-arrow text-primary fs-4 me-2" aria-hidden="true" />
+          {logoUrl ? (
+            <img src={logoUrl} alt="" className="me-2" style={{ height: 28, width: 'auto' }} />
+          ) : (
+            <i className="bi bi-graph-up-arrow text-primary fs-4 me-2" aria-hidden="true" />
+          )}
           <span className="fw-bold fs-5">{brand}</span>
         </div>
         <nav className="ic-sidebar-nav d-flex flex-column gap-1 overflow-auto flex-grow-1">
