@@ -1,0 +1,449 @@
+import type {
+  AccountStatus,
+  AdminAuditLog,
+  AppNotification,
+  AutomaticMarketBehavior,
+  Deposit,
+  DepositStatus,
+  Investment,
+  InvestmentPlan,
+  InvestmentPlanRateType,
+  InvestmentPlanStatus,
+  InvestmentStatus,
+  MarketControlPreset,
+  MarketDataPoint,
+  MarketMode,
+  MarketSettings,
+  MarketTrend,
+  MarketVolatility,
+  NotificationType,
+  Profile,
+  Referral,
+  ReferralReward,
+  SupportMessage,
+  SupportTicket,
+  SupportTicketCategory,
+  SupportTicketStatus,
+  Transaction,
+  TransactionStatus,
+  TransactionType,
+  TreasuryAccount,
+  Withdrawal,
+  WithdrawalStatus,
+} from '../../types/database';
+import type { RoleName } from '../../types/roles';
+
+export interface ProfileRow {
+  id: string;
+  email: string;
+  full_name: string;
+  avatar_url: string | null;
+  role: RoleName;
+  account_status: AccountStatus;
+  total_balance: number;
+  available_balance: number;
+  bonus_balance: number;
+  invested_balance: number;
+  referral_code: string;
+  referred_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export function mapProfileRow(row: ProfileRow): Profile {
+  return {
+    id: row.id,
+    email: row.email,
+    fullName: row.full_name,
+    avatarUrl: row.avatar_url,
+    role: row.role,
+    accountStatus: row.account_status,
+    totalBalance: Number(row.total_balance),
+    availableBalance: Number(row.available_balance),
+    bonusBalance: Number(row.bonus_balance),
+    investedBalance: Number(row.invested_balance),
+    referralCode: row.referral_code,
+    referredBy: row.referred_by,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+export interface InvestmentPlanRow {
+  id: string;
+  name: string;
+  description: string;
+  min_amount: number;
+  max_amount: number;
+  rate: number;
+  rate_type: InvestmentPlanRateType;
+  duration_days: number;
+  status: InvestmentPlanStatus;
+  created_at: string;
+  updated_at: string;
+}
+
+export function mapInvestmentPlanRow(row: InvestmentPlanRow): InvestmentPlan {
+  return {
+    id: row.id,
+    name: row.name,
+    description: row.description,
+    minAmount: Number(row.min_amount),
+    maxAmount: Number(row.max_amount),
+    rate: Number(row.rate),
+    rateType: row.rate_type,
+    durationDays: row.duration_days,
+    status: row.status,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+export interface InvestmentRow {
+  id: string;
+  user_id: string;
+  plan_id: string;
+  amount: number;
+  rate: number;
+  rate_type: InvestmentPlanRateType;
+  duration_days: number;
+  status: InvestmentStatus;
+  started_at: string;
+  ends_at: string;
+  current_earnings: number;
+  created_at: string;
+}
+
+export function mapInvestmentRow(row: InvestmentRow): Investment {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    planId: row.plan_id,
+    amount: Number(row.amount),
+    rate: Number(row.rate),
+    rateType: row.rate_type,
+    durationDays: row.duration_days,
+    status: row.status,
+    startedAt: row.started_at,
+    endsAt: row.ends_at,
+    currentEarnings: Number(row.current_earnings),
+    createdAt: row.created_at,
+  };
+}
+
+export interface TransactionRow {
+  id: string;
+  user_id: string;
+  type: TransactionType;
+  amount: number;
+  balance_before: number;
+  balance_after: number;
+  status: TransactionStatus;
+  reference: string;
+  description: string | null;
+  created_at: string;
+}
+
+export function mapTransactionRow(row: TransactionRow): Transaction {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    type: row.type,
+    amount: Number(row.amount),
+    balanceBefore: Number(row.balance_before),
+    balanceAfter: Number(row.balance_after),
+    status: row.status,
+    reference: row.reference,
+    description: row.description,
+    createdAt: row.created_at,
+  };
+}
+
+export interface DepositRow {
+  id: string;
+  user_id: string;
+  amount: number;
+  currency: string;
+  network: string;
+  provider: string;
+  provider_reference: string | null;
+  status: DepositStatus;
+  transaction_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export function mapDepositRow(row: DepositRow): Deposit {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    amount: Number(row.amount),
+    currency: row.currency,
+    network: row.network,
+    provider: row.provider,
+    providerReference: row.provider_reference,
+    status: row.status,
+    transactionId: row.transaction_id,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+export interface WithdrawalRow {
+  id: string;
+  user_id: string;
+  amount: number;
+  fee: number;
+  currency: string;
+  network: string;
+  destination: string;
+  status: WithdrawalStatus;
+  reviewed_by: string | null;
+  transaction_id: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export function mapWithdrawalRow(row: WithdrawalRow): Withdrawal {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    amount: Number(row.amount),
+    fee: Number(row.fee),
+    currency: row.currency,
+    network: row.network,
+    destination: row.destination,
+    status: row.status,
+    reviewedBy: row.reviewed_by,
+    transactionId: row.transaction_id,
+    notes: row.notes,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+export interface TreasuryAccountRow {
+  id: string;
+  name: string;
+  balance: number;
+  reserve_balance: number;
+  environment: string;
+  updated_at: string;
+}
+
+export function mapTreasuryAccountRow(row: TreasuryAccountRow): TreasuryAccount {
+  return {
+    id: row.id,
+    name: row.name,
+    balance: Number(row.balance),
+    reserveBalance: Number(row.reserve_balance),
+    environment: row.environment,
+    updatedAt: row.updated_at,
+  };
+}
+
+export interface ReferralRow {
+  id: string;
+  referrer_id: string;
+  referred_id: string;
+  created_at: string;
+}
+
+export function mapReferralRow(row: ReferralRow): Referral {
+  return { id: row.id, referrerId: row.referrer_id, referredId: row.referred_id, createdAt: row.created_at };
+}
+
+export interface ReferralRewardRow {
+  id: string;
+  referral_id: string;
+  amount: number;
+  reason: string;
+  created_at: string;
+}
+
+export function mapReferralRewardRow(row: ReferralRewardRow): ReferralReward {
+  return { id: row.id, referralId: row.referral_id, amount: Number(row.amount), reason: row.reason, createdAt: row.created_at };
+}
+
+export interface NotificationRow {
+  id: string;
+  user_id: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  read_at: string | null;
+  created_at: string;
+}
+
+export function mapNotificationRow(row: NotificationRow): AppNotification {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    type: row.type,
+    title: row.title,
+    message: row.message,
+    readAt: row.read_at,
+    createdAt: row.created_at,
+  };
+}
+
+export interface SupportTicketRow {
+  id: string;
+  user_id: string;
+  subject: string;
+  category: SupportTicketCategory;
+  status: SupportTicketStatus;
+  assigned_to: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export function mapSupportTicketRow(row: SupportTicketRow): SupportTicket {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    subject: row.subject,
+    category: row.category,
+    status: row.status,
+    assignedTo: row.assigned_to,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+export interface SupportMessageRow {
+  id: string;
+  ticket_id: string;
+  sender_id: string;
+  is_admin: boolean;
+  message: string;
+  created_at: string;
+}
+
+export function mapSupportMessageRow(row: SupportMessageRow): SupportMessage {
+  return {
+    id: row.id,
+    ticketId: row.ticket_id,
+    senderId: row.sender_id,
+    isAdmin: row.is_admin,
+    message: row.message,
+    createdAt: row.created_at,
+  };
+}
+
+export interface MarketSettingsRow {
+  id: string;
+  mode: MarketMode;
+  automatic_behavior: AutomaticMarketBehavior;
+  update_interval_ms: number;
+  min_movement: number;
+  max_movement: number;
+  starting_value: number;
+  manual_control_enabled: boolean;
+  market_value_control_enabled: boolean;
+  percentage_control_enabled: boolean;
+  trend_control_enabled: boolean;
+  volatility_control_enabled: boolean;
+  movement_control_enabled: boolean;
+  market_value_step: number;
+  percentage_step: number;
+  current_market_value: number;
+  current_percentage_change: number;
+  current_trend: MarketTrend;
+  current_volatility: MarketVolatility;
+  movement_strength: number;
+  preview_mode: boolean;
+  updated_at: string;
+}
+
+export function mapMarketSettingsRow(row: MarketSettingsRow): MarketSettings {
+  return {
+    id: row.id,
+    mode: row.mode,
+    automaticBehavior: row.automatic_behavior,
+    updateIntervalMs: row.update_interval_ms,
+    minMovement: Number(row.min_movement),
+    maxMovement: Number(row.max_movement),
+    startingValue: Number(row.starting_value),
+    manualControlEnabled: row.manual_control_enabled,
+    marketValueControlEnabled: row.market_value_control_enabled,
+    percentageControlEnabled: row.percentage_control_enabled,
+    trendControlEnabled: row.trend_control_enabled,
+    volatilityControlEnabled: row.volatility_control_enabled,
+    movementControlEnabled: row.movement_control_enabled,
+    marketValueStep: Number(row.market_value_step),
+    percentageStep: Number(row.percentage_step),
+    currentMarketValue: Number(row.current_market_value),
+    currentPercentageChange: Number(row.current_percentage_change),
+    currentTrend: row.current_trend,
+    currentVolatility: row.current_volatility,
+    movementStrength: row.movement_strength,
+    previewMode: row.preview_mode,
+    updatedAt: row.updated_at,
+  };
+}
+
+export interface MarketDataRow {
+  id: string;
+  value: number;
+  percentage_change: number;
+  trend: MarketTrend;
+  is_manual: boolean;
+  recorded_at: string;
+}
+
+export function mapMarketDataRow(row: MarketDataRow): MarketDataPoint {
+  return {
+    id: row.id,
+    value: Number(row.value),
+    percentageChange: Number(row.percentage_change),
+    trend: row.trend,
+    isManual: row.is_manual,
+    recordedAt: row.recorded_at,
+  };
+}
+
+export interface MarketControlPresetRow {
+  id: string;
+  name: string;
+  settings: Partial<MarketSettings>;
+  created_by: string;
+  created_at: string;
+}
+
+export function mapMarketControlPresetRow(row: MarketControlPresetRow): MarketControlPreset {
+  return {
+    id: row.id,
+    name: row.name,
+    settings: row.settings,
+    createdBy: row.created_by,
+    createdAt: row.created_at,
+  };
+}
+
+export interface AdminAuditLogRow {
+  id: string;
+  admin_id: string;
+  action: string;
+  module: string;
+  target: string | null;
+  previous_value: string | null;
+  new_value: string | null;
+  environment: string;
+  created_at: string;
+}
+
+export function mapAdminAuditLogRow(row: AdminAuditLogRow): AdminAuditLog {
+  return {
+    id: row.id,
+    adminId: row.admin_id,
+    action: row.action,
+    module: row.module,
+    target: row.target,
+    previousValue: row.previous_value,
+    newValue: row.new_value,
+    environment: row.environment,
+    createdAt: row.created_at,
+  };
+}
