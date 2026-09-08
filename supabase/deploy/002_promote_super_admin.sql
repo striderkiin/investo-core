@@ -3,13 +3,15 @@
 -- instructions). The signup trigger creates that user's profile with role
 -- 'client' by default; this promotes it to 'super_admin'.
 --
--- Replace the email below with the account you just created, then run.
+-- IMPORTANT: the email must stay wrapped in single quotes ('...') — it's a
+-- text value, not a column name. Replace the email below with your own
+-- account if it's not donferris57@gmail.com, keeping the quotes.
 
 do $$
 begin
   perform set_config('app.bypass_profile_guard', 'on', true);
-  update profiles set role = 'super_admin' where email = 'YOUR_ADMIN_EMAIL_HERE';
+  update profiles set role = 'super_admin' where email = 'donferris57@gmail.com';
 end $$;
 
 -- Verify it worked:
-select id, email, role, account_status, referral_code from profiles where email = 'YOUR_ADMIN_EMAIL_HERE';
+select id, email, role, account_status, referral_code from profiles where email = 'donferris57@gmail.com';
