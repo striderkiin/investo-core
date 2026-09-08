@@ -285,6 +285,65 @@ export interface MarketOverrideHistoryEntry {
   createdAt: string;
 }
 
+// --- Social Proof & Activity Notification System (post-build correction) ---
+
+export type SocialProofPopupPosition = 'bottom-left' | 'bottom-right';
+export type SocialProofPrivacyMode = 'first_name' | 'first_initial' | 'anonymous';
+export type SocialProofEventSource = 'production' | 'admin_test';
+export type SocialProofBroadcastScope = 'production' | 'client_test';
+
+export interface SocialProofSettings {
+  id: string;
+  enabled: boolean;
+  testModeEnabled: boolean;
+  popupPosition: SocialProofPopupPosition;
+  displayDurationSeconds: number;
+  minDelaySeconds: number;
+  maxDelaySeconds: number;
+  maxQueue: number;
+  maxPerSession: number;
+  maxPerMinute: number;
+  enableSound: boolean;
+  showCloseButton: boolean;
+  privacyMode: SocialProofPrivacyMode;
+  enabledEventTypes: string[];
+  testEventTypes: string[];
+  updatedAt: string;
+}
+
+export interface SocialProofTemplate {
+  id: string;
+  eventType: string;
+  template: string;
+  updatedAt: string;
+}
+
+export interface SocialProofEvent {
+  id: string;
+  eventType: string;
+  source: SocialProofEventSource;
+  displayName: string;
+  message: string;
+  amount: number | null;
+  planName: string | null;
+  referenceTable: string | null;
+  referenceId: string | null;
+  generatedByAdminId: string | null;
+  environment: string;
+  broadcastScope: SocialProofBroadcastScope;
+  createdAt: string;
+  expiresAt: string;
+}
+
+export interface SocialProofMetric {
+  metricDate: string;
+  eventType: string;
+  source: SocialProofEventSource;
+  shownCount: number;
+  clickedCount: number;
+  dismissedCount: number;
+}
+
 export interface AdminAuditLog {
   id: string;
   adminId: string;

@@ -8,6 +8,7 @@ import { useMaintenanceStatus } from '../../features/operations/useMaintenanceSt
 import { MaintenanceBanner } from '../notifications/MaintenanceBanner';
 import { MaintenanceScreen } from '../../features/operations/MaintenanceScreen';
 import { AnnouncementBanner } from '../notifications/AnnouncementBanner';
+import { SocialProofPopup } from '../../features/socialProof/SocialProofPopup';
 
 const NAV_ITEMS: SidebarNavItem[] = [
   { to: '/dashboard', label: 'Dashboard', icon: 'bi-speedometer2', end: true },
@@ -63,6 +64,7 @@ export function ClientLayout() {
           </main>
         </div>
       </div>
+      <SocialProofPopup />
     </div>
   );
 }

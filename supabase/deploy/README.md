@@ -23,6 +23,20 @@ need to apply everything by hand through the Dashboard's SQL Editor instead.
   cleanly on top of a database that already has 001 + 003 applied. See
   `docs/PRODUCTION_READINESS.md` for what this closes and what's still
   deferred to your real project.
+- **005_schema_bootstrap_market_override.sql** — migration 0017 (the Live
+  Provider + Manual Override market architecture: multi-asset provider
+  price that keeps ticking on its own while an admin's manual offset sits
+  on top of it, independently, per asset). Additive to the original
+  automatic/manual chart system — run AFTER 001, 003, and 004. Verified
+  locally that it applies cleanly on top of a database that already has
+  those three applied.
+- **006_schema_bootstrap_social_proof.sql** — migration 0018 (the Social
+  Proof & Activity Notification System: production event triggers on
+  confirmed deposits/withdrawals/investments/referrals/signups, privacy
+  filtering, an admin-controlled live-looking test-broadcast mode, and
+  analytics). Run AFTER 001, 003, 004, and 005. Verified locally that it
+  applies cleanly on top of a database that already has those four
+  applied.
 
 Once 003 is applied, two things still need manual setup for Phase 6/7/10 to
 be fully live (not required for Phases 1-5 to keep working):

@@ -29,6 +29,33 @@ what still requires action on your real Supabase project (backups,
 environment separation, Auth Hooks, a real payment/KYC/email provider —
 none of that was requested or is buildable from this session).
 
+Two post-build corrections extend this further, additive to everything
+above rather than replacing it:
+
+- **Live Provider + Manual Override market architecture**: a per-asset
+  (BTC/USD, ETH/USD, USDT/USD) provider price that keeps advancing on its
+  own while an admin's manual offset sits on top of it as an independent
+  layer (`effectivePrice = providerPrice + manualOffset`) — fixed/
+  percentage/direct adjustment methods, undo, reset-to-live, reset-all,
+  per-capability toggles, and a dedicated override audit trail. This is
+  separate from (and doesn't touch) the original automatic-vs-manual chart
+  system, which still works exactly as before.
+- **Social Proof & Activity Notification System**: a branded,
+  privacy-filtered activity popup fed by real confirmed events (new
+  signups, confirmed deposits, completed withdrawals, plan activations,
+  referrals), plus an admin-controlled "live-looking test notifications"
+  mode for demos/video capture that broadcasts presentation-only events —
+  visually identical to production ones — to connected client dashboards
+  without ever touching a financial record. Off by default; the admin
+  panel warns before you turn it on and audits every enable/disable and
+  test broadcast.
+
+Note: connecting a client's investment *value* to live market movement
+would require a real per-asset holdings/units model this platform doesn't
+have today (investment plans are principal + yield, not priced crypto
+holdings) — building that honestly was judged out of scope for this pass
+rather than half-implemented; flag it if you want it as a follow-up.
+
 Two pieces need manual setup once you have real network access to Supabase
 — see `supabase/deploy/README.md`: deploying the two Edge Functions
 (`payment-webhook`, `simulate-sandbox-webhook` — written but never

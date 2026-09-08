@@ -38,6 +38,7 @@ import { AdminReferralsPage } from '../features/admin/pages/AdminReferralsPage';
 import { AdminSupportPage } from '../features/admin/pages/AdminSupportPage';
 import { AuditLogsPage } from '../features/admin/pages/AuditLogsPage';
 import { AnnouncementsPage } from '../features/admin/pages/AnnouncementsPage';
+import { SocialProofPage } from '../features/admin/pages/SocialProofPage';
 import { MaintenanceModePage } from '../features/admin/pages/MaintenanceModePage';
 import { ActivitySimulationPage } from '../features/admin/pages/ActivitySimulationPage';
 import { WhiteLabelPage } from '../features/admin/pages/WhiteLabelPage';
@@ -168,6 +169,14 @@ export function AppRoutes() {
           element={
             <ProtectedRoute requireAdmin requirePermission="announcements.manage">
               <AnnouncementsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/social-proof"
+          element={
+            <ProtectedRoute requireAdmin requirePermission="social_proof.manage">
+              <SocialProofPage />
             </ProtectedRoute>
           }
         />

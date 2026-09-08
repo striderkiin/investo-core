@@ -26,6 +26,14 @@ import type {
   Profile,
   Referral,
   ReferralReward,
+  SocialProofBroadcastScope,
+  SocialProofEvent,
+  SocialProofEventSource,
+  SocialProofMetric,
+  SocialProofPopupPosition,
+  SocialProofPrivacyMode,
+  SocialProofSettings,
+  SocialProofTemplate,
   SupportMessage,
   SupportTicket,
   SupportTicketCategory,
@@ -529,6 +537,113 @@ export function mapMarketOverrideHistoryRow(row: MarketOverrideHistoryRow): Mark
     newEffectivePrice: Number(row.new_effective_price),
     undone: row.undone,
     createdAt: row.created_at,
+  };
+}
+
+export interface SocialProofSettingsRow {
+  id: string;
+  enabled: boolean;
+  test_mode_enabled: boolean;
+  popup_position: SocialProofPopupPosition;
+  display_duration_seconds: number;
+  min_delay_seconds: number;
+  max_delay_seconds: number;
+  max_queue: number;
+  max_per_session: number;
+  max_per_minute: number;
+  enable_sound: boolean;
+  show_close_button: boolean;
+  privacy_mode: SocialProofPrivacyMode;
+  enabled_event_types: string[];
+  test_event_types: string[];
+  updated_at: string;
+}
+
+export function mapSocialProofSettingsRow(row: SocialProofSettingsRow): SocialProofSettings {
+  return {
+    id: row.id,
+    enabled: row.enabled,
+    testModeEnabled: row.test_mode_enabled,
+    popupPosition: row.popup_position,
+    displayDurationSeconds: row.display_duration_seconds,
+    minDelaySeconds: row.min_delay_seconds,
+    maxDelaySeconds: row.max_delay_seconds,
+    maxQueue: row.max_queue,
+    maxPerSession: row.max_per_session,
+    maxPerMinute: row.max_per_minute,
+    enableSound: row.enable_sound,
+    showCloseButton: row.show_close_button,
+    privacyMode: row.privacy_mode,
+    enabledEventTypes: row.enabled_event_types ?? [],
+    testEventTypes: row.test_event_types ?? [],
+    updatedAt: row.updated_at,
+  };
+}
+
+export interface SocialProofTemplateRow {
+  id: string;
+  event_type: string;
+  template: string;
+  updated_at: string;
+}
+
+export function mapSocialProofTemplateRow(row: SocialProofTemplateRow): SocialProofTemplate {
+  return { id: row.id, eventType: row.event_type, template: row.template, updatedAt: row.updated_at };
+}
+
+export interface SocialProofEventRow {
+  id: string;
+  event_type: string;
+  source: SocialProofEventSource;
+  display_name: string;
+  message: string;
+  amount: number | null;
+  plan_name: string | null;
+  reference_table: string | null;
+  reference_id: string | null;
+  generated_by_admin_id: string | null;
+  environment: string;
+  broadcast_scope: SocialProofBroadcastScope;
+  created_at: string;
+  expires_at: string;
+}
+
+export function mapSocialProofEventRow(row: SocialProofEventRow): SocialProofEvent {
+  return {
+    id: row.id,
+    eventType: row.event_type,
+    source: row.source,
+    displayName: row.display_name,
+    message: row.message,
+    amount: row.amount === null ? null : Number(row.amount),
+    planName: row.plan_name,
+    referenceTable: row.reference_table,
+    referenceId: row.reference_id,
+    generatedByAdminId: row.generated_by_admin_id,
+    environment: row.environment,
+    broadcastScope: row.broadcast_scope,
+    createdAt: row.created_at,
+    expiresAt: row.expires_at,
+  };
+}
+
+export interface SocialProofMetricRow {
+  metric_date: string;
+  event_type: string;
+  source: SocialProofEventSource;
+  shown_count: number;
+  clicked_count: number;
+  dismissed_count: number;
+}
+
+export function mapSocialProofMetricRow(row: SocialProofMetricRow): SocialProofMetric {
+  return {
+    metricDate: row.metric_date,
+    eventType: row.event_type,
+    source: row.source,
+    shownCount: row.shown_count,
+    clickedCount: row.clicked_count,
+    dismissedCount: row.dismissed_count,
   };
 }
 

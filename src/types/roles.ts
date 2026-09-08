@@ -21,6 +21,7 @@ export type Permission =
   | 'support.manage'
   | 'notifications.send'
   | 'announcements.manage'
+  | 'social_proof.manage'
   | 'branding.manage'
   | 'white_label.manage'
   | 'integrations.manage'
@@ -55,6 +56,7 @@ export const ROLE_PERMISSIONS: Record<RoleName, Permission[]> = {
     'support.manage',
     'notifications.send',
     'announcements.manage',
+    'social_proof.manage',
     'branding.manage',
     'white_label.manage',
     'integrations.manage',
@@ -78,7 +80,7 @@ export const ROLE_PERMISSIONS: Record<RoleName, Permission[]> = {
     'investments.read',
   ],
   support_admin: ['users.read', 'transactions.read', 'support.read', 'support.manage', 'notifications.send'],
-  operations_admin: ['announcements.manage', 'investments.read', 'investments.manage', 'branding.manage', 'market.read'],
+  operations_admin: ['announcements.manage', 'investments.read', 'investments.manage', 'branding.manage', 'market.read', 'social_proof.manage'],
   client: [],
 };
 

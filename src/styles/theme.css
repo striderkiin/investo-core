@@ -74,6 +74,64 @@ h1, h2, h3, h4, h5, h6 {
   touch-action: manipulation;
 }
 
+.ic-social-proof-popup {
+  position: fixed;
+  bottom: 1.25rem;
+  z-index: 1050;
+  max-width: 340px;
+  background-color: var(--ic-surface);
+  color: var(--ic-text);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.12);
+  padding: 0.9rem 1rem;
+  font-family: var(--ic-font-primary);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.ic-social-proof-popup.ic-social-proof-left {
+  left: 1.25rem;
+}
+
+.ic-social-proof-popup.ic-social-proof-right {
+  right: 1.25rem;
+}
+
+.ic-social-proof-popup.ic-social-proof-enter {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.ic-social-proof-popup.ic-social-proof-exit {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ic-social-proof-popup {
+    transition: opacity 0.15s linear;
+  }
+  .ic-social-proof-popup.ic-social-proof-exit {
+    transform: none;
+  }
+}
+
+.ic-social-proof-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background-color: var(--ic-success);
+  display: inline-block;
+}
+
+@media (max-width: 575.98px) {
+  .ic-social-proof-popup {
+    left: 0.75rem;
+    right: 0.75rem;
+    max-width: none;
+  }
+}
+
 @media (max-width: 991.98px) {
   .ic-sidebar {
     position: fixed;
