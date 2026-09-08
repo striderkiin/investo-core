@@ -12,17 +12,22 @@ a typed service layer (`src/services`), not in components — see
 
 ## Status
 
-Phases 1-10 of the spec's build plan are implemented: Foundation, Client
+All 11 phases of the spec's build plan are implemented: Foundation, Client
 Core, Admin Core, the Market System (automatic engine + full manual chart
 controls), Financial Flows (deposits via a swappable `PaymentProvider`,
 withdrawals, treasury, ledger, balance adjustments), White Label (dynamic
 branding, business/domain settings), Integrations (credential storage with
 RLS-enforced zero client access), Operations (announcements, maintenance
 mode, activity/online-user simulation), Security (2FA, sessions, admin role
-management), and Sandbox (HMAC-verified webhook-driven deposit
-confirmation). Real third-party providers (a live payment gateway, KYC
-vendor, email/SMS sender), Compliance configuration, and Production
-Hardening (Phase 11) are not built yet.
+management), Sandbox (HMAC-verified webhook-driven deposit confirmation),
+and Production Hardening (idempotent webhook completion, a negative-balance
+guard on manual balance adjustments, automatic audit logging on every
+settings table, a withdrawal double-submit cooldown, and added indexes).
+See [`docs/PRODUCTION_READINESS.md`](docs/PRODUCTION_READINESS.md) for the
+full spec-section-91 checklist mapped honestly against what's done versus
+what still requires action on your real Supabase project (backups,
+environment separation, Auth Hooks, a real payment/KYC/email provider —
+none of that was requested or is buildable from this session).
 
 Two pieces need manual setup once you have real network access to Supabase
 — see `supabase/deploy/README.md`: deploying the two Edge Functions

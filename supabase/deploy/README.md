@@ -16,6 +16,13 @@ need to apply everything by hand through the Dashboard's SQL Editor instead.
   roles). Run this AFTER 001 has already been applied — it's additive, not a
   replacement. Verified locally that it applies cleanly on top of a database
   that already has 001 applied.
+- **004_schema_bootstrap_phase11.sql** — migration 0016 (Phase 11: idempotent
+  webhook completion, negative-balance guard, automatic settings audit
+  logging, withdrawal double-submit cooldown, added indexes). Run this AFTER
+  001 and 003 have already been applied. Verified locally that it applies
+  cleanly on top of a database that already has 001 + 003 applied. See
+  `docs/PRODUCTION_READINESS.md` for what this closes and what's still
+  deferred to your real project.
 
 Once 003 is applied, two things still need manual setup for Phase 6/7/10 to
 be fully live (not required for Phases 1-5 to keep working):
