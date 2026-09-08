@@ -12,12 +12,24 @@ a typed service layer (`src/services`), not in components — see
 
 ## Status
 
-Phases 1-5 of the spec's build plan are implemented: Foundation, Client Core,
-Admin Core, the Market System (automatic engine + full manual chart controls),
-and Financial Flows (deposits via a swappable `PaymentProvider`, withdrawals,
-treasury, ledger, balance adjustments). White-Label, real payment/KYC/email
-provider integrations, Compliance, and Security-center polish are not built
-yet (Phases 6+).
+Phases 1-10 of the spec's build plan are implemented: Foundation, Client
+Core, Admin Core, the Market System (automatic engine + full manual chart
+controls), Financial Flows (deposits via a swappable `PaymentProvider`,
+withdrawals, treasury, ledger, balance adjustments), White Label (dynamic
+branding, business/domain settings), Integrations (credential storage with
+RLS-enforced zero client access), Operations (announcements, maintenance
+mode, activity/online-user simulation), Security (2FA, sessions, admin role
+management), and Sandbox (HMAC-verified webhook-driven deposit
+confirmation). Real third-party providers (a live payment gateway, KYC
+vendor, email/SMS sender), Compliance configuration, and Production
+Hardening (Phase 11) are not built yet.
+
+Two pieces need manual setup once you have real network access to Supabase
+— see `supabase/deploy/README.md`: deploying the two Edge Functions
+(`payment-webhook`, `simulate-sandbox-webhook` — written but never
+runtime-tested, since this repo's development session could not reach
+Supabase's network at all), and confirming the `branding` Storage bucket
+exists.
 
 ## Prerequisites
 
