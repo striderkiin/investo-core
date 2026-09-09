@@ -1,10 +1,15 @@
 # One-time hosted-project bootstrap
 
-These files exist because this development session's network is blocked from
-reaching Supabase directly (org egress policy + this proxy never tunnels raw
-Postgres). `supabase/migrations/` remains the source of truth for the CLI
-workflow (`supabase link` + `supabase db push`) — use these only when you
-need to apply everything by hand through the Dashboard's SQL Editor instead.
+`supabase/migrations/` remains the source of truth (`supabase link` +
+`supabase db push`, or applied directly via the Supabase MCP server once
+connected). These concatenated files exist as a fallback for applying
+everything by hand through the Dashboard's SQL Editor — e.g. from a session
+with no direct network/MCP access to Supabase, or to bootstrap a second
+project (staging/production) that mirrors this one.
+
+As of migration 0019, all of these have already been applied directly to
+the `InvestoDev` project via the Supabase MCP connection. You only need
+these files for a *different* project.
 
 - **001_schema_bootstrap.sql** — migrations 0001-0009 (Phases 1-5), concatenated
   in order and wrapped in one transaction. Paste the whole file into SQL Editor
@@ -37,6 +42,10 @@ need to apply everything by hand through the Dashboard's SQL Editor instead.
   analytics). Run AFTER 001, 003, 004, and 005. Verified locally that it
   applies cleanly on top of a database that already has those four
   applied.
+- **007_schema_bootstrap_search_path_fix.sql** — migration 0019, a small
+  follow-up that sets `search_path` on three Social Proof helper functions
+  (`social_proof_privacy_name` and friends) to close a warning Supabase's
+  own security advisor raised after 006 was applied. Run AFTER 006.
 
 Once 003 is applied, two things still need manual setup for Phase 6/7/10 to
 be fully live (not required for Phases 1-5 to keep working):
