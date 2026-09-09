@@ -3,6 +3,7 @@ import type { FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createAuthService } from '../../../services/auth/authService';
 import { isSupabaseConfigured } from '../../../services/supabase/client';
+import { AuthCard } from '../../../components/public/AuthCard';
 
 export function ResetPasswordPage() {
   const navigate = useNavigate();
@@ -40,12 +41,8 @@ export function ResetPasswordPage() {
   }
 
   return (
-    <div className="container py-5" style={{ maxWidth: 440 }}>
-      <div className="card ic-card p-4">
-        <h1 className="h4 mb-1">Choose a new password</h1>
-        <p className="text-secondary mb-4">Enter a new password for your account.</p>
-
-        {!isConfigured && (
+    <AuthCard title="Choose a new password" subtitle="Enter a new password for your account.">
+      {!isConfigured && (
           <div className="alert alert-warning" role="alert">
             Supabase is not configured yet.
           </div>
@@ -93,7 +90,6 @@ export function ResetPasswordPage() {
             </button>
           </form>
         )}
-      </div>
-    </div>
+    </AuthCard>
   );
 }

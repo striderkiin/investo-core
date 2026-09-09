@@ -5,9 +5,13 @@ import { AdminLayout } from '../components/layout/AdminLayout';
 import { ProtectedRoute } from '../features/auth/ProtectedRoute';
 
 import { LandingPage } from '../features/public/pages/LandingPage';
+import { PricingPage } from '../features/public/pages/PricingPage';
+import { FaqPage } from '../features/public/pages/FaqPage';
+import { MissionVisionPage } from '../features/public/pages/MissionVisionPage';
 import { TermsPage } from '../features/public/pages/TermsPage';
 import { PrivacyPage } from '../features/public/pages/PrivacyPage';
 import { RiskDisclosurePage } from '../features/public/pages/RiskDisclosurePage';
+import { RefundPolicyPage } from '../features/public/pages/RefundPolicyPage';
 import { ContactPage } from '../features/public/pages/ContactPage';
 
 import { LoginPage } from '../features/auth/pages/LoginPage';
@@ -57,9 +61,13 @@ export function AppRoutes() {
     <Routes>
       <Route element={<PublicLayout />}>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/faq" element={<FaqPage />} />
+        <Route path="/mission-vision" element={<MissionVisionPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/risk-disclosure" element={<RiskDisclosurePage />} />
+        <Route path="/refund-policy" element={<RefundPolicyPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

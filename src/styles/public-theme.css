@@ -1,0 +1,257 @@
+/* Dark, futuristic visual language for the public marketing site
+   (landing/pricing/faq/legal/auth pages). Scoped under .ic-public so it
+   never affects the authenticated client/admin dashboards, which keep
+   following the operator's configured white-label theme. The accent glow
+   color is driven by --ic-primary (set by BrandingContext) so an
+   operator's brand color still comes through. */
+
+.ic-public {
+  --pub-bg: #05060b;
+  --pub-bg-elevated: #0a0d18;
+  --pub-surface: rgba(255, 255, 255, 0.035);
+  --pub-border: rgba(255, 255, 255, 0.09);
+  --pub-text: #e8eaf3;
+  --pub-text-muted: #9398ad;
+  --pub-glow: var(--ic-primary, #6366f1);
+  --pub-glow-2: #7c3aed;
+  background: var(--pub-bg);
+  color: var(--pub-text);
+  min-height: 100vh;
+  position: relative;
+  isolation: isolate;
+}
+
+.ic-public a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.ic-public h1,
+.ic-public h2,
+.ic-public h3,
+.ic-public h4,
+.ic-public h5 {
+  color: var(--pub-text);
+}
+
+.ic-public .text-secondary,
+.ic-public p {
+  color: var(--pub-text-muted) !important;
+}
+
+.ic-public-nav {
+  background: rgba(5, 6, 11, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--pub-border);
+}
+
+.ic-public-nav .nav-link {
+  color: var(--pub-text-muted);
+  font-size: 0.9rem;
+}
+
+.ic-public-nav .nav-link:hover,
+.ic-public-nav .nav-link.active {
+  color: var(--pub-text);
+}
+
+.ic-public-footer {
+  background: var(--pub-bg-elevated);
+  border-top: 1px solid var(--pub-border);
+}
+
+.ic-public-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015));
+  border: 1px solid var(--pub-border);
+  border-radius: 1rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.ic-public-card-highlight {
+  border-color: color-mix(in srgb, var(--pub-glow) 55%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--pub-glow) 25%, transparent), 0 20px 60px -20px color-mix(in srgb, var(--pub-glow) 45%, transparent);
+}
+
+.ic-public-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--pub-glow) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pub-glow) 35%, transparent);
+  color: var(--pub-text);
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+}
+
+.ic-public-gradient-text {
+  background: linear-gradient(90deg, #ffffff 10%, var(--pub-glow) 60%, var(--pub-glow-2) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.ic-public-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.ic-public-btn-primary {
+  background: linear-gradient(135deg, var(--pub-glow), var(--pub-glow-2));
+  border: none;
+  color: #fff;
+  box-shadow: 0 8px 30px -10px color-mix(in srgb, var(--pub-glow) 60%, transparent);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ic-public-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 36px -8px color-mix(in srgb, var(--pub-glow) 70%, transparent);
+  color: #fff;
+}
+
+.ic-public-btn-outline {
+  background: transparent;
+  border: 1px solid var(--pub-border);
+  color: var(--pub-text);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.ic-public-btn-outline:hover {
+  border-color: color-mix(in srgb, var(--pub-glow) 55%, transparent);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--pub-text);
+}
+
+.ic-public-grid-lines {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 0%, #000 40%, transparent 100%);
+  mask-image: radial-gradient(ellipse 60% 50% at 50% 0%, #000 40%, transparent 100%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.ic-public-form-control {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--pub-border);
+  color: var(--pub-text);
+}
+
+.ic-public-form-control:focus {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: color-mix(in srgb, var(--pub-glow) 55%, transparent);
+  color: var(--pub-text);
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--pub-glow) 22%, transparent);
+}
+
+.ic-public-form-control::placeholder {
+  color: var(--pub-text-muted);
+}
+
+.ic-public-form-control:disabled {
+  opacity: 0.6;
+}
+
+/* Generic Bootstrap form/button/alert/card elements used inside forms
+   (auth pages, Contact page) automatically pick up the dark theme without
+   needing every className hand-edited. */
+.ic-public .form-control,
+.ic-public .form-select {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--pub-border);
+  color: var(--pub-text);
+}
+
+.ic-public .form-control:focus,
+.ic-public .form-select:focus {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: color-mix(in srgb, var(--pub-glow) 55%, transparent);
+  color: var(--pub-text);
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--pub-glow) 22%, transparent);
+}
+
+.ic-public .form-control::placeholder {
+  color: var(--pub-text-muted);
+}
+
+.ic-public .form-control:disabled {
+  opacity: 0.6;
+}
+
+.ic-public .form-label {
+  color: var(--pub-text);
+}
+
+.ic-public .btn-primary {
+  background: linear-gradient(135deg, var(--pub-glow), var(--pub-glow-2));
+  border: none;
+  box-shadow: 0 8px 30px -10px color-mix(in srgb, var(--pub-glow) 60%, transparent);
+}
+
+.ic-public .btn-primary:hover,
+.ic-public .btn-primary:focus {
+  box-shadow: 0 12px 36px -8px color-mix(in srgb, var(--pub-glow) 70%, transparent);
+}
+
+.ic-public .btn-outline-secondary {
+  border-color: var(--pub-border);
+  color: var(--pub-text);
+}
+
+.ic-public .btn-outline-secondary:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--pub-border);
+  color: var(--pub-text);
+}
+
+.ic-public .card.ic-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015));
+  border: 1px solid var(--pub-border);
+  color: var(--pub-text);
+}
+
+.ic-public .alert-danger {
+  background: rgba(220, 53, 69, 0.12);
+  border-color: rgba(220, 53, 69, 0.35);
+  color: #ff8a93;
+}
+
+.ic-public .alert-warning {
+  background: rgba(255, 193, 7, 0.12);
+  border-color: rgba(255, 193, 7, 0.35);
+  color: #ffd873;
+}
+
+.ic-public .alert-success {
+  background: rgba(25, 135, 84, 0.14);
+  border-color: rgba(25, 135, 84, 0.4);
+  color: #6ee7a8;
+}
+
+.ic-public .btn-close {
+  filter: invert(1) grayscale(1);
+}
+
+.ic-public-notice {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--pub-border);
+  border-radius: 0.75rem;
+  color: var(--pub-text-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ic-public * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

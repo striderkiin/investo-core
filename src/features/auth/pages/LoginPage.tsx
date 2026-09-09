@@ -3,6 +3,7 @@ import type { FormEvent } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth';
 import { isAdminRole } from '../../../types/roles';
+import { AuthCard } from '../../../components/public/AuthCard';
 
 export function LoginPage() {
   const { login, session, profile, isConfigured } = useAuth();
@@ -33,12 +34,8 @@ export function LoginPage() {
   }
 
   return (
-    <div className="container py-5" style={{ maxWidth: 440 }}>
-      <div className="card ic-card p-4">
-        <h1 className="h4 mb-1">Welcome back</h1>
-        <p className="text-secondary mb-4">Log in to your Investo account.</p>
-
-        {!isConfigured && (
+    <AuthCard title="Welcome back" subtitle="Log in to your account.">
+      {!isConfigured && (
           <div className="alert alert-warning" role="alert">
             Supabase is not configured yet. Set <code>VITE_SUPABASE_URL</code> and{' '}
             <code>VITE_SUPABASE_ANON_KEY</code> in your <code>.env</code> file to enable authentication.
@@ -89,10 +86,9 @@ export function LoginPage() {
           </button>
         </form>
 
-        <p className="text-center text-secondary mt-4 mb-0">
-          Don&apos;t have an account? <Link to="/register">Create one</Link>
-        </p>
-      </div>
-    </div>
+      <p className="text-center text-secondary mt-4 mb-0">
+        Don&apos;t have an account? <Link to="/register">Create one</Link>
+      </p>
+    </AuthCard>
   );
 }

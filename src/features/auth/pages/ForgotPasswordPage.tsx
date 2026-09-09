@@ -3,6 +3,7 @@ import type { FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { createAuthService } from '../../../services/auth/authService';
 import { isSupabaseConfigured } from '../../../services/supabase/client';
+import { AuthCard } from '../../../components/public/AuthCard';
 
 export function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -27,12 +28,8 @@ export function ForgotPasswordPage() {
   }
 
   return (
-    <div className="container py-5" style={{ maxWidth: 440 }}>
-      <div className="card ic-card p-4">
-        <h1 className="h4 mb-1">Reset your password</h1>
-        <p className="text-secondary mb-4">We&apos;ll email you a link to reset your password.</p>
-
-        {!isConfigured && (
+    <AuthCard title="Reset your password" subtitle="We'll email you a link to reset your password.">
+      {!isConfigured && (
           <div className="alert alert-warning" role="alert">
             Supabase is not configured yet.
           </div>
@@ -67,10 +64,9 @@ export function ForgotPasswordPage() {
           </form>
         )}
 
-        <p className="text-center text-secondary mt-4 mb-0">
-          <Link to="/login">Back to log in</Link>
-        </p>
-      </div>
-    </div>
+      <p className="text-center text-secondary mt-4 mb-0">
+        <Link to="/login">Back to log in</Link>
+      </p>
+    </AuthCard>
   );
 }

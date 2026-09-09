@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, Navigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth';
+import { AuthCard } from '../../../components/public/AuthCard';
 
 export function RegisterPage() {
   const { register, session, isConfigured } = useAuth();
@@ -21,11 +22,11 @@ export function RegisterPage() {
 
   if (registered) {
     return (
-      <div className="container py-5" style={{ maxWidth: 440 }}>
-        <div className="card ic-card p-4 text-center">
-          <i className="bi bi-envelope-check text-success fs-1 mb-3" aria-hidden="true" />
+      <AuthCard>
+        <div className="text-center">
+          <i className="bi bi-envelope-check fs-1 mb-3" style={{ color: 'var(--pub-glow)' }} aria-hidden="true" />
           <h1 className="h5">Check your email</h1>
-          <p className="text-secondary mb-0">
+          <p className="mb-0">
             We&apos;ve sent a confirmation link to <strong>{email}</strong>. Verify your email to finish setting up
             your account, then log in.
           </p>
@@ -33,7 +34,7 @@ export function RegisterPage() {
             Go to Log In
           </Link>
         </div>
-      </div>
+      </AuthCard>
     );
   }
 
@@ -62,12 +63,8 @@ export function RegisterPage() {
   }
 
   return (
-    <div className="container py-5" style={{ maxWidth: 440 }}>
-      <div className="card ic-card p-4">
-        <h1 className="h4 mb-1">Create your account</h1>
-        <p className="text-secondary mb-4">Start investing with Investo.</p>
-
-        {!isConfigured && (
+    <AuthCard title="Create your account" subtitle="Start investing today.">
+      {!isConfigured && (
           <div className="alert alert-warning" role="alert">
             Supabase is not configured yet. Set <code>VITE_SUPABASE_URL</code> and{' '}
             <code>VITE_SUPABASE_ANON_KEY</code> in your <code>.env</code> file to enable registration.
@@ -154,10 +151,9 @@ export function RegisterPage() {
           </button>
         </form>
 
-        <p className="text-center text-secondary mt-4 mb-0">
-          Already have an account? <Link to="/login">Log in</Link>
-        </p>
-      </div>
-    </div>
+      <p className="text-center text-secondary mt-4 mb-0">
+        Already have an account? <Link to="/login">Log in</Link>
+      </p>
+    </AuthCard>
   );
 }

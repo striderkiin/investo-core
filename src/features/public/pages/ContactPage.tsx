@@ -3,6 +3,8 @@ import type { FormEvent } from 'react';
 import { createContactService } from '../../../services/api/contactService';
 import { useAuth } from '../../../hooks/useAuth';
 import { useBranding } from '../../../hooks/useBranding';
+import { PublicPageHero } from '../../../components/public/PublicPageHero';
+import { PublicSection } from '../../../components/public/PublicSection';
 
 const contactService = createContactService();
 
@@ -34,14 +36,13 @@ export function ContactPage() {
   }
 
   return (
-    <div className="container py-5" style={{ maxWidth: 640 }}>
-      <h1 className="h3 mb-2">Contact Us</h1>
-      <p className="text-secondary mb-4">
-        Have a question about {branding.siteName}, a deposit, or a withdrawal? Send us a message and our team will
-        get back to you. Already have an account? You can also open a ticket from your dashboard&apos;s Support
-        Center for the fastest response.
-      </p>
-
+    <>
+      <PublicPageHero
+        eyebrow="Contact"
+        title="Get in touch"
+        subtitle={`Have a question about ${branding.siteName}, a deposit, or a withdrawal? Send us a message and our team will get back to you. Already have an account? You can also open a ticket from your dashboard's Support Center for the fastest response.`}
+      />
+      <PublicSection className="container py-5" style={{ maxWidth: 640 }}>
       {status === 'sent' ? (
         <div className="alert alert-success d-flex align-items-center gap-2" role="status">
           <i className="bi bi-check-circle-fill" aria-hidden="true" />
@@ -131,6 +132,7 @@ export function ContactPage() {
           support@investo.example
         </li>
       </ul>
-    </div>
+      </PublicSection>
+    </>
   );
 }

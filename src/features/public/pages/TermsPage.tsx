@@ -6,7 +6,7 @@ export function TermsPage() {
 
   return (
     <LegalPage title="Terms of Service">
-      <div className="alert alert-secondary small mb-4">
+      <div className="ic-public-notice small p-3 mb-4">
         <i className="bi bi-info-circle me-1" aria-hidden="true" />
         Starter terms provided as a configurable template. Have these reviewed by qualified legal counsel for your
         jurisdiction before launching to real users.
