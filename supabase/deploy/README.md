@@ -52,6 +52,13 @@ these files for a *different* project.
   (a public Contact form that works for logged-out visitors — deliberately
   separate from `support_tickets`, whose `user_id` is `NOT NULL` by design
   for the in-dashboard Support Center). Run AFTER 007.
+- **009_schema_bootstrap_market_provider_cron.sql** — migration 0021,
+  schedules `market_provider_tick()` via `pg_cron` every minute so the Live
+  Provider price keeps moving even when no browser tab is open (it
+  previously only ticked from a client-side `setInterval`). Run AFTER 008.
+  Requires the `pg_cron` extension to be available on your project — if the
+  `create extension` line fails, enable it first via Dashboard → Database →
+  Extensions → pg_cron.
 
 Once 003 is applied, two things still need manual setup for Phase 6/7/10 to
 be fully live (not required for Phases 1-5 to keep working):

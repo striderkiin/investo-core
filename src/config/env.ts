@@ -27,6 +27,7 @@ export const env = {
   supabaseUrl: import.meta.env.VITE_SUPABASE_URL ?? '',
   supabaseAnonKey: import.meta.env.VITE_SUPABASE_ANON_KEY ?? '',
   serverApiUrl: import.meta.env.SERVER_API_URL ?? '',
+  sentryDsn: import.meta.env.VITE_SENTRY_DSN ?? '',
 };
 
 export function environmentLabel(environment: AppEnvironment): string {
