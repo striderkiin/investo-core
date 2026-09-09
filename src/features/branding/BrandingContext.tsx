@@ -13,17 +13,25 @@ const DEFAULT_BRANDING: Branding = {
   faviconUrl: null,
   logoText: null,
   primaryColor: '#c6a15b',
-  secondaryColor: '#6c757d',
+  secondaryColor: '#a8a6a1',
   successColor: '#198754',
   warningColor: '#ffc107',
   dangerColor: '#dc3545',
-  backgroundColor: '#f5f7fa',
-  surfaceColor: '#ffffff',
-  textColor: '#1c2333',
-  theme: 'light',
+  backgroundColor: '#080808',
+  surfaceColor: '#111111',
+  textColor: '#f5f3ee',
+  theme: 'dark',
   primaryFont: 'Inter',
   headingFont: 'Inter',
 };
+
+/** #rrggbb -> "r, g, b", for Bootstrap CSS vars that need an rgb() triplet (rgba() blends, focus rings). Falls back to a neutral gray on a malformed value rather than breaking every dependent style. */
+function hexToRgbTriplet(hex: string): string {
+  const match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!match) return '108, 117, 125';
+  const [, r, g, b] = match;
+  return `${parseInt(r, 16)}, ${parseInt(g, 16)}, ${parseInt(b, 16)}`;
+}
 
 export interface BrandingContextValue {
   branding: Branding;
@@ -46,6 +54,30 @@ function applyCssVariables(branding: Branding) {
   root.style.setProperty('--ic-text', branding.textColor);
   root.style.setProperty('--ic-font-primary', `'${branding.primaryFont}', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`);
   root.style.setProperty('--ic-font-heading', `'${branding.headingFont}', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`);
+
+  // Alias Bootstrap's own theme variables to the branding values, so every
+  // vanilla .btn-primary/.card/.table/.badge/.alert across the dashboard
+  // (there are dozens, built across 13 phases) picks up an operator's
+  // configured colors automatically — previously these color pickers only
+  // fed the handful of custom .ic-* classes, so most of Bootstrap's own
+  // component chrome silently ignored them.
+  root.style.setProperty('--bs-body-bg', branding.backgroundColor);
+  root.style.setProperty('--bs-body-color', branding.textColor);
+  root.style.setProperty('--bs-emphasis-color', branding.textColor);
+  root.style.setProperty('--bs-tertiary-bg', branding.surfaceColor);
+  root.style.setProperty('--bs-secondary-bg', branding.surfaceColor);
+  root.style.setProperty('--bs-card-bg', branding.surfaceColor);
+  root.style.setProperty('--bs-card-color', branding.textColor);
+  root.style.setProperty('--bs-primary', branding.primaryColor);
+  root.style.setProperty('--bs-primary-rgb', hexToRgbTriplet(branding.primaryColor));
+  root.style.setProperty('--bs-success', branding.successColor);
+  root.style.setProperty('--bs-success-rgb', hexToRgbTriplet(branding.successColor));
+  root.style.setProperty('--bs-warning', branding.warningColor);
+  root.style.setProperty('--bs-warning-rgb', hexToRgbTriplet(branding.warningColor));
+  root.style.setProperty('--bs-danger', branding.dangerColor);
+  root.style.setProperty('--bs-danger-rgb', hexToRgbTriplet(branding.dangerColor));
+  root.style.setProperty('--bs-link-color', branding.primaryColor);
+  root.style.setProperty('--bs-link-hover-color', branding.primaryColor);
 
   if (branding.theme === 'dark') {
     root.setAttribute('data-bs-theme', 'dark');

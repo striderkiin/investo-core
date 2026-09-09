@@ -19,7 +19,7 @@ export function Topbar({ title, onToggleSidebar, extra }: TopbarProps) {
   }
 
   return (
-    <header className="bg-white border-bottom px-3 py-2 d-flex align-items-center justify-content-between sticky-top">
+    <header className="bg-body-tertiary border-bottom px-3 py-2 d-flex align-items-center justify-content-between sticky-top">
       <div className="d-flex align-items-center gap-2">
         <button
           type="button"
@@ -37,7 +37,7 @@ export function Topbar({ title, onToggleSidebar, extra }: TopbarProps) {
         <div className="dropdown">
           <button
             type="button"
-            className="btn btn-light btn-sm d-flex align-items-center gap-2"
+            className="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2"
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >

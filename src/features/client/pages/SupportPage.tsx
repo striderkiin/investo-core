@@ -62,7 +62,7 @@ function TicketThread({ ticket, onClose }: { ticket: SupportTicket; onClose: () 
           {messages.map((message) => (
             <div
               key={message.id}
-              className={`p-2 rounded ${message.isAdmin ? 'bg-light align-self-start' : 'bg-primary-subtle align-self-end'}`}
+              className={`p-2 rounded ${message.isAdmin ? 'bg-body-tertiary align-self-start' : 'bg-primary-subtle align-self-end'}`}
               style={{ maxWidth: '80%' }}
             >
               <p className="mb-1 small text-secondary">{message.isAdmin ? 'Support' : 'You'}</p>

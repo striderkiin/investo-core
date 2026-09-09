@@ -122,7 +122,7 @@ export function DepositPage() {
                   <span className={`badge text-bg-${STATUS_VARIANT[session.deposit.status]} text-capitalize mb-3`}>
                     {session.deposit.status}
                   </span>
-                  <div className="border rounded p-3 mb-3 bg-light">
+                  <div className="border rounded p-3 mb-3 bg-body-tertiary">
                     <i className="bi bi-qr-code" style={{ fontSize: '6rem' }} aria-hidden="true" />
                     <p className="small text-secondary mb-0 text-break">{session.qrCodeData}</p>
                   </div>
@@ -131,7 +131,7 @@ export function DepositPage() {
                     {session.deposit.amount} {session.deposit.currency}
                   </p>
                   <p className="small text-secondary mb-1">to address</p>
-                  <p className="text-break small bg-light p-2 rounded">{session.address}</p>
+                  <p className="text-break small bg-body-tertiary p-2 rounded">{session.address}</p>
                   <p className="small text-secondary mb-0">Network: {session.deposit.network}</p>
                   {session.deposit.status === 'pending' && (
                     <div className="mt-3 d-flex align-items-center justify-content-center gap-2 text-secondary small">

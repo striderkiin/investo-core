@@ -16,6 +16,14 @@ export function MarketChart({ data, height = 320 }: MarketChartProps) {
   const isUp = data.length >= 2 ? data[data.length - 1].value >= data[0].value : true;
   const lineColor = isUp ? '#198754' : '#dc3545';
 
+  // Chart.js doesn't read CSS variables on its own, so pull the current
+  // theme's border/muted-text tokens in directly — keeps the chart in sync
+  // with the dark/light theme without hardcoding a light-mode-only grid
+  // color (the previous rgba(0,0,0,0.05) was invisible on a dark background).
+  const rootStyle = typeof window !== 'undefined' ? getComputedStyle(document.documentElement) : null;
+  const gridColor = rootStyle?.getPropertyValue('--bs-border-color').trim() || 'rgba(0,0,0,0.08)';
+  const tickColor = rootStyle?.getPropertyValue('--bs-secondary-color').trim() || '#6c757d';
+
   return (
     <div style={{ height }}>
       <Line
@@ -47,10 +55,10 @@ export function MarketChart({ data, height = 320 }: MarketChartProps) {
             },
           },
           scales: {
-            x: { grid: { display: false }, ticks: { maxTicksLimit: 6 } },
+            x: { grid: { display: false }, ticks: { maxTicksLimit: 6, color: tickColor } },
             y: {
-              grid: { color: 'rgba(0,0,0,0.05)' },
-              ticks: { callback: (value) => `$${Number(value).toLocaleString()}` },
+              grid: { color: gridColor },
+              ticks: { color: tickColor, callback: (value) => `$${Number(value).toLocaleString()}` },
             },
           },
         }}
