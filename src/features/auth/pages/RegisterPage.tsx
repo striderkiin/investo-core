@@ -24,7 +24,7 @@ export function RegisterPage() {
     return (
       <AuthCard>
         <div className="text-center">
-          <i className="bi bi-envelope-check fs-1 mb-3" style={{ color: 'var(--pub-glow)' }} aria-hidden="true" />
+          <i className="bi bi-envelope-check fs-1 mb-3" style={{ color: 'var(--pub-accent)' }} aria-hidden="true" />
           <h1 className="h5">Check your email</h1>
           <p className="mb-0">
             We&apos;ve sent a confirmation link to <strong>{email}</strong>. Verify your email to finish setting up

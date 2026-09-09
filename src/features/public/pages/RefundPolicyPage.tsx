@@ -6,19 +6,13 @@ export function RefundPolicyPage() {
 
   return (
     <LegalPage title="Refund Policy">
-      <div className="ic-public-notice small p-3 mb-4">
-        <i className="bi bi-info-circle me-1" aria-hidden="true" />
-        Starter refund policy provided as a configurable template. Have these reviewed by qualified legal counsel for
-        your jurisdiction before launching to real users.
-      </div>
-
       <p>This Refund Policy explains how deposits, active investments, and fees are treated on {branding.siteName}.</p>
 
       <h2 className="h5 mt-4 mb-2">1. Deposits</h2>
       <p>
         Deposits are credited to your account only after confirmation by our backend systems. If a deposit was made
         in error or you believe it was processed incorrectly, contact support as soon as possible through your
-        dashboard&apos;s Support Center or our <a href="/contact">Contact page</a> — refund eligibility depends on
+        dashboard&apos;s Support Center or our <a href="/contact">Contact page</a>. Refund eligibility depends on
         whether the funds have already been allocated to an active investment.
       </p>
 
@@ -26,8 +20,8 @@ export function RefundPolicyPage() {
       <p>
         Funds allocated to an active investment plan are subject to that plan&apos;s duration and terms as displayed
         at the time you invested. Early withdrawal from an active plan, where permitted by the platform operator, may
-        be subject to a reduced return or a cancellation fee — this is disclosed on the investment plan details
-        before you confirm.
+        be subject to a reduced return or a cancellation fee, disclosed on the investment plan details before you
+        confirm.
       </p>
 
       <h2 className="h5 mt-4 mb-2">3. Fees</h2>
@@ -39,8 +33,8 @@ export function RefundPolicyPage() {
       <h2 className="h5 mt-4 mb-2">4. Withdrawal Reversals</h2>
       <p>
         A withdrawal that is rejected or cancelled before processing completes is returned to your available
-        balance. Once a withdrawal has completed and funds have left the platform, it cannot be reversed by us —
-        please review the destination details carefully before confirming a withdrawal.
+        balance. Once a withdrawal has completed and funds have left the platform, it cannot be reversed by us.
+        Please review the destination details carefully before confirming a withdrawal.
       </p>
 
       <h2 className="h5 mt-4 mb-2">5. Account Status Restrictions</h2>

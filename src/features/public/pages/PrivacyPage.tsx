@@ -6,12 +6,6 @@ export function PrivacyPage() {
 
   return (
     <LegalPage title="Privacy Policy">
-      <div className="ic-public-notice small p-3 mb-4">
-        <i className="bi bi-info-circle me-1" aria-hidden="true" />
-        Starter privacy policy provided as a configurable template. Have these reviewed by qualified legal counsel
-        for your jurisdiction (e.g. GDPR, CCPA) before launching to real users.
-      </div>
-
       <p>
         This Privacy Policy explains how {branding.siteName} collects, uses, and protects your information when
         you use our platform.
@@ -19,10 +13,10 @@ export function PrivacyPage() {
 
       <h2 className="h5 mt-4 mb-2">1. Information We Collect</h2>
       <p>
-        <strong>Account information</strong> — name, email address, and password (stored securely by our
-        authentication provider, never in plain text). <strong>Financial information</strong> — deposit, investment,
-        withdrawal, and transaction records associated with your account. <strong>Support communications</strong> —
-        messages you send through our Support Center or Contact page. <strong>Security information</strong> — login
+        <strong>Account information:</strong> name, email address, and password (stored securely by our
+        authentication provider, never in plain text). <strong>Financial information:</strong> deposit, investment,
+        withdrawal, and transaction records associated with your account. <strong>Support communications:</strong>
+        messages you send through our Support Center or Contact page. <strong>Security information:</strong> login
         timestamps, active sessions, and security events used to protect your account.
       </p>
 

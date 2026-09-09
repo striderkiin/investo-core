@@ -12,7 +12,7 @@ const DEFAULT_BRANDING: Branding = {
   logoDarkUrl: null,
   faviconUrl: null,
   logoText: null,
-  primaryColor: '#0d6efd',
+  primaryColor: '#c6a15b',
   secondaryColor: '#6c757d',
   successColor: '#198754',
   warningColor: '#ffc107',

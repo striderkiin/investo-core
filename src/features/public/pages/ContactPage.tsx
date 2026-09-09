@@ -46,7 +46,7 @@ export function ContactPage() {
       {status === 'sent' ? (
         <div className="alert alert-success d-flex align-items-center gap-2" role="status">
           <i className="bi bi-check-circle-fill" aria-hidden="true" />
-          <span>Thanks — your message has been sent. We&apos;ll reply to {email} as soon as we can.</span>
+          <span>Thanks, your message has been sent. We&apos;ll reply to {email} as soon as we can.</span>
         </div>
       ) : (
         <form onSubmit={handleSubmit} noValidate>
@@ -125,13 +125,6 @@ export function ContactPage() {
           </button>
         </form>
       )}
-
-      <ul className="list-unstyled mt-5 text-secondary small">
-        <li className="mb-2">
-          <i className="bi bi-envelope me-2" aria-hidden="true" />
-          support@investo.example
-        </li>
-      </ul>
       </PublicSection>
     </>
   );

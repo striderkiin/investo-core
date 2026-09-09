@@ -6,12 +6,6 @@ export function RiskDisclosurePage() {
 
   return (
     <LegalPage title="Risk Disclosure">
-      <div className="ic-public-notice small p-3 mb-4">
-        <i className="bi bi-info-circle me-1" aria-hidden="true" />
-        Starter risk disclosure provided as a configurable template. Have these reviewed by qualified legal counsel
-        for your jurisdiction&apos;s financial regulations before launching to real users.
-      </div>
-
       <p>
         Please read this Risk Disclosure carefully before depositing funds or activating an investment plan on{' '}
         {branding.siteName}.

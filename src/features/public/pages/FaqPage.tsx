@@ -17,7 +17,7 @@ const FAQS = [
   {
     question: 'How long do deposits take to confirm?',
     answer:
-      'Deposits are confirmed automatically once our backend verifies the payment — we never mark a deposit as complete based on the browser alone, so confirmation timing depends on the payment method used.',
+      'Deposits are confirmed automatically once our backend verifies the payment. We never mark a deposit as complete based on the browser alone, so confirmation timing depends on the payment method used.',
   },
   {
     question: 'How do withdrawals work?',
@@ -26,7 +26,7 @@ const FAQS = [
   },
   {
     question: 'Is there a referral program?',
-    answer: 'Yes — every account gets a referral code and link. Track your direct referrals, earnings, and bonuses from your dashboard.',
+    answer: 'Yes, every account gets a referral code and link. Track your direct referrals, earnings, and bonuses from your dashboard.',
   },
   {
     question: 'How is my account secured?',

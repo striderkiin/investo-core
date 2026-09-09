@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 export function PublicPageHero({ eyebrow, title, subtitle, children }: { eyebrow?: string; title: string; subtitle?: string; children?: ReactNode }) {
   return (
     <section className="position-relative overflow-hidden border-bottom" style={{ borderColor: 'var(--pub-border)' }}>
-      <div className="ic-public-glow" style={{ width: 480, height: 480, top: -220, left: '50%', transform: 'translateX(-50%)', background: 'var(--pub-glow)' }} />
+      <div className="ic-public-glow" style={{ width: 480, height: 480, top: -220, left: '50%', transform: 'translateX(-50%)', background: 'var(--pub-accent)' }} />
       <div className="container py-5 text-center position-relative">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           {eyebrow && <span className="ic-public-badge mb-3">{eyebrow}</span>}

@@ -47,14 +47,14 @@ export function PricingPage() {
       <PublicPageHero
         eyebrow="Pricing"
         title="Simple, transparent investment plans"
-        subtitle="Every rate, minimum, and duration below is live from the platform — set and updated by the operator at any time from the admin panel."
+        subtitle="Every rate, minimum, and duration below is live from the platform, set and updated by the operator at any time from the admin panel."
       />
 
       <div className="container py-5">
         {loadError ? (
           <p className="text-center">
             We couldn&apos;t load pricing right now. Please refresh the page, or{' '}
-            <Link to="/contact" style={{ color: 'var(--pub-glow)' }}>
+            <Link to="/contact" style={{ color: 'var(--pub-accent)' }}>
               contact us
             </Link>{' '}
             if this keeps happening.
@@ -72,24 +72,24 @@ export function PricingPage() {
                   <h2 className="h5 mb-1">{plan.name}</h2>
                   <p className="small mb-3">{plan.description}</p>
                   <div className="mb-4">
-                    <span className="display-6 fw-bold ic-public-gradient-text">{plan.rate}%</span>
+                    <span className="display-6 fw-bold ic-public-accent-text">{plan.rate}%</span>
                     <span className="small"> / {RATE_TYPE_LABEL[plan.rateType]}</span>
                   </div>
                   <ul className="list-unstyled small mb-4 flex-grow-1 d-flex flex-column gap-2">
                     <li>
-                      <i className="bi bi-check2-circle me-2" style={{ color: 'var(--pub-glow)' }} aria-hidden="true" />
+                      <i className="bi bi-check2-circle me-2" style={{ color: 'var(--pub-accent)' }} aria-hidden="true" />
                       Minimum {formatCurrency(plan.minAmount)}
                     </li>
                     <li>
-                      <i className="bi bi-check2-circle me-2" style={{ color: 'var(--pub-glow)' }} aria-hidden="true" />
+                      <i className="bi bi-check2-circle me-2" style={{ color: 'var(--pub-accent)' }} aria-hidden="true" />
                       Maximum {formatCurrency(plan.maxAmount)}
                     </li>
                     <li>
-                      <i className="bi bi-check2-circle me-2" style={{ color: 'var(--pub-glow)' }} aria-hidden="true" />
+                      <i className="bi bi-check2-circle me-2" style={{ color: 'var(--pub-accent)' }} aria-hidden="true" />
                       {plan.durationDays}-day duration
                     </li>
                     <li>
-                      <i className="bi bi-check2-circle me-2" style={{ color: 'var(--pub-glow)' }} aria-hidden="true" />
+                      <i className="bi bi-check2-circle me-2" style={{ color: 'var(--pub-accent)' }} aria-hidden="true" />
                       {RATE_TYPE_LABEL[plan.rateType]} returns
                     </li>
                   </ul>

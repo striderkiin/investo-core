@@ -60,6 +60,14 @@ these files for a *different* project.
   `create extension` line fails, enable it first via Dashboard → Database →
   Extensions → pg_cron.
 
+**Legal pages**: Terms, Privacy, Risk Disclosure, and Refund Policy
+(`src/features/public/pages/{Terms,Privacy,RiskDisclosure,RefundPolicy}Page.tsx`)
+ship with realistic starter copy, not real legal advice. Have each one
+reviewed by qualified legal counsel for your jurisdiction before launching
+to real users — this used to be a notice on the pages themselves, but that
+leaked reseller/admin context to end clients on a white-label deployment,
+so it's a reminder here for whoever operates the deployment instead.
+
 Once 003 is applied, two things still need manual setup for Phase 6/7/10 to
 be fully live (not required for Phases 1-5 to keep working):
 - **Edge Functions**: `supabase functions deploy payment-webhook` and

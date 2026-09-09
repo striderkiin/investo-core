@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 export function AuthCard({ title, subtitle, children }: { title?: string; subtitle?: string; children: ReactNode }) {
   return (
     <div className="container py-5 position-relative" style={{ maxWidth: 440 }}>
-      <div className="ic-public-glow" style={{ width: 360, height: 360, top: -40, left: '50%', transform: 'translateX(-50%)', background: 'var(--pub-glow)' }} />
+      <div className="ic-public-glow" style={{ width: 360, height: 360, top: -40, left: '50%', transform: 'translateX(-50%)', background: 'var(--pub-accent)' }} />
       <motion.div
         className="ic-public-card p-4 position-relative"
         initial={{ opacity: 0, y: 16 }}

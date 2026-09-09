@@ -6,12 +6,6 @@ export function TermsPage() {
 
   return (
     <LegalPage title="Terms of Service">
-      <div className="ic-public-notice small p-3 mb-4">
-        <i className="bi bi-info-circle me-1" aria-hidden="true" />
-        Starter terms provided as a configurable template. Have these reviewed by qualified legal counsel for your
-        jurisdiction before launching to real users.
-      </div>
-
       <p>
         These Terms of Service (&quot;Terms&quot;) govern your access to and use of {branding.siteName} (the
         &quot;Platform&quot;), including the client dashboard, investment plans, deposit and withdrawal services,
@@ -38,7 +32,7 @@ export function TermsPage() {
         Investment plans displayed on the Platform (including minimum/maximum amounts, rates, and durations) are
         configured by the platform operator and may change at any time for future investments. Funds allocated to
         an active investment are subject to the terms of that plan as displayed at the time of investment. Deposits
-        are only credited to your account after confirmation by our backend systems — the Platform will never mark
+        are only credited to your account after confirmation by our backend systems. The Platform will never mark
         a deposit as complete based solely on client-side confirmation.
       </p>
 

@@ -21,7 +21,7 @@ export function PublicLayout() {
             {branding.logoUrl ? (
               <img src={branding.logoUrl} alt="" className="me-2" style={{ height: 28, width: 'auto' }} />
             ) : (
-              <i className="bi bi-graph-up-arrow me-2" style={{ color: 'var(--pub-glow)' }} aria-hidden="true" />
+              <i className="bi bi-graph-up-arrow me-2" style={{ color: 'var(--pub-accent)' }} aria-hidden="true" />
             )}
             {branding.logoText ?? branding.siteName}
           </Link>
@@ -69,11 +69,11 @@ export function PublicLayout() {
                 {branding.logoUrl ? (
                   <img src={branding.logoUrl} alt="" className="me-2" style={{ height: 24, width: 'auto' }} />
                 ) : (
-                  <i className="bi bi-graph-up-arrow me-2" style={{ color: 'var(--pub-glow)' }} aria-hidden="true" />
+                  <i className="bi bi-graph-up-arrow me-2" style={{ color: 'var(--pub-accent)' }} aria-hidden="true" />
                 )}
                 {branding.logoText ?? branding.siteName}
               </Link>
-              <p className="small mb-0">A modular, white-label investment platform.</p>
+              <p className="small mb-0">Secure, transparent investment management, all in one place.</p>
             </div>
             <div className="d-flex gap-5 flex-wrap">
               <div>
