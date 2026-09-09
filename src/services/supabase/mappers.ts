@@ -3,6 +3,8 @@ import type {
   AdminAuditLog,
   AppNotification,
   AutomaticMarketBehavior,
+  ContactMessage,
+  ContactMessageStatus,
   Deposit,
   DepositStatus,
   Investment,
@@ -644,6 +646,34 @@ export function mapSocialProofMetricRow(row: SocialProofMetricRow): SocialProofM
     shownCount: row.shown_count,
     clickedCount: row.clicked_count,
     dismissedCount: row.dismissed_count,
+  };
+}
+
+export interface ContactMessageRow {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  status: ContactMessageStatus;
+  submitted_by: string | null;
+  responded_by: string | null;
+  responded_at: string | null;
+  created_at: string;
+}
+
+export function mapContactMessageRow(row: ContactMessageRow): ContactMessage {
+  return {
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    subject: row.subject,
+    message: row.message,
+    status: row.status,
+    submittedBy: row.submitted_by,
+    respondedBy: row.responded_by,
+    respondedAt: row.responded_at,
+    createdAt: row.created_at,
   };
 }
 

@@ -7,7 +7,7 @@ everything by hand through the Dashboard's SQL Editor — e.g. from a session
 with no direct network/MCP access to Supabase, or to bootstrap a second
 project (staging/production) that mirrors this one.
 
-As of migration 0019, all of these have already been applied directly to
+As of migration 0020, all of these have already been applied directly to
 the `InvestoDev` project via the Supabase MCP connection. You only need
 these files for a *different* project.
 
@@ -46,6 +46,12 @@ these files for a *different* project.
   follow-up that sets `search_path` on three Social Proof helper functions
   (`social_proof_privacy_name` and friends) to close a warning Supabase's
   own security advisor raised after 006 was applied. Run AFTER 006.
+- **008_schema_bootstrap_public_pages.sql** — migration 0020, for the
+  front-facing public pages: lets anonymous visitors read active investment
+  plans (the landing page shows real plan data), and adds `contact_messages`
+  (a public Contact form that works for logged-out visitors — deliberately
+  separate from `support_tickets`, whose `user_id` is `NOT NULL` by design
+  for the in-dashboard Support Center). Run AFTER 007.
 
 Once 003 is applied, two things still need manual setup for Phase 6/7/10 to
 be fully live (not required for Phases 1-5 to keep working):

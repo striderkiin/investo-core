@@ -56,6 +56,18 @@ have today (investment plans are principal + yield, not priced crypto
 holdings) — building that honestly was judged out of scope for this pass
 rather than half-implemented; flag it if you want it as a follow-up.
 
+The front-facing public pages (landing, terms, privacy, risk disclosure,
+contact) have also been built out — previously thin placeholders, now real
+content: the landing page pulls live investment plan data, the legal pages
+carry substantive (template) copy, and the Contact page is a working form
+backed by a `contact_messages` table that accepts submissions from visitors
+with no account. See [`docs/GAP_ANALYSIS.md`](docs/GAP_ANALYSIS.md) for a
+full spec-compliance audit — what's genuinely done vs. the handful of real
+gaps still open (a Compliance Center admin UI, client onboarding-status
+tracking, a few User Management actions, MFA recovery codes/device
+management, and others), separate from the deliberately-scoped-out items
+already noted above.
+
 Two pieces need manual setup once you have real network access to Supabase
 — see `supabase/deploy/README.md`: deploying the two Edge Functions
 (`payment-webhook`, `simulate-sandbox-webhook` — written but never

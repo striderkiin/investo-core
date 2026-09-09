@@ -344,6 +344,21 @@ export interface SocialProofMetric {
   dismissedCount: number;
 }
 
+export type ContactMessageStatus = 'new' | 'read' | 'responded' | 'closed';
+
+export interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  status: ContactMessageStatus;
+  submittedBy: string | null;
+  respondedBy: string | null;
+  respondedAt: string | null;
+  createdAt: string;
+}
+
 export interface AdminAuditLog {
   id: string;
   adminId: string;

@@ -37,6 +37,7 @@ import { TreasuryPage } from '../features/admin/pages/TreasuryPage';
 import { AdminReferralsPage } from '../features/admin/pages/AdminReferralsPage';
 import { AdminSupportPage } from '../features/admin/pages/AdminSupportPage';
 import { AuditLogsPage } from '../features/admin/pages/AuditLogsPage';
+import { ContactMessagesPage } from '../features/admin/pages/ContactMessagesPage';
 import { AnnouncementsPage } from '../features/admin/pages/AnnouncementsPage';
 import { SocialProofPage } from '../features/admin/pages/SocialProofPage';
 import { MaintenanceModePage } from '../features/admin/pages/MaintenanceModePage';
@@ -201,6 +202,14 @@ export function AppRoutes() {
           element={
             <ProtectedRoute requireAdmin requirePermission="support.read">
               <AdminSupportPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/contact-messages"
+          element={
+            <ProtectedRoute requireAdmin requirePermission="support.read">
+              <ContactMessagesPage />
             </ProtectedRoute>
           }
         />
