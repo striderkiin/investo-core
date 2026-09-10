@@ -51,14 +51,14 @@
 .ic-client-critso .wg-card .icon {
   margin-bottom: 1rem;
   display: inline-flex;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 3rem;
+  height: 3rem;
   align-items: center;
   justify-content: center;
-  border-radius: 0.75rem;
-  background: color-mix(in srgb, var(--ic-primary) 16%, transparent);
-  color: var(--ic-primary);
-  font-size: 1.1rem;
+  border-radius: 1rem;
+  background: var(--ic-primary);
+  color: #080808;
+  font-size: 1.35rem;
 }
 
 .ic-client-critso .wg-card.style-1 {
@@ -69,7 +69,8 @@
 }
 
 .ic-client-critso .wg-card.style-1 .icon {
-  background: color-mix(in srgb, var(--ic-primary) 24%, transparent);
+  background: var(--White);
+  color: var(--ic-primary);
 }
 
 .ic-client-critso .wg-card .content {
@@ -77,6 +78,13 @@
   align-items: center;
   justify-content: space-between;
   margin-top: 15px;
+  gap: 0.75rem;
+}
+
+.ic-client-critso .wg-card .chart-small {
+  flex-shrink: 0;
+  width: 72px;
+  height: 32px;
 }
 
 .ic-client-critso .wg-card .counter {
