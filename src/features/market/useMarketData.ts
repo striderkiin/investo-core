@@ -57,16 +57,20 @@ export function useMarketData() {
   useEffect(() => {
     if (!isSupabaseConfigured()) return;
     const client = getSupabaseClient();
+    // Unique per hook instance so concurrent mounts (e.g. this hook used from
+    // more than one page/component at once) can never collide on the same
+    // channel name — see useMaintenanceStatus.ts for the bug this avoids.
+    const instanceId = Math.random().toString(36).slice(2);
 
     const settingsChannel = client
-      .channel('market_settings_changes')
+      .channel(`market_settings_changes_${instanceId}`)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'market_settings' }, (payload) => {
         setSettings(mapMarketSettingsRow(payload.new as MarketSettingsRow));
       })
       .subscribe();
 
     const dataChannel = client
-      .channel('market_data_changes')
+      .channel(`market_data_changes_${instanceId}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'market_data' }, (payload) => {
         const point = mapMarketDataRow(payload.new as MarketDataRow);
         setHistory((current) => [...current.slice(-(HISTORY_LIMIT - 1)), point]);

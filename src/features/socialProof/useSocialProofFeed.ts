@@ -137,8 +137,10 @@ export function useSocialProofFeed() {
   useEffect(() => {
     if (!isSupabaseConfigured() || !settings?.enabled) return;
     const client = getSupabaseClient();
+    // Unique per hook instance — see useMaintenanceStatus.ts for the
+    // same-channel-name double-subscribe bug this avoids.
     const channel = client
-      .channel('social_proof_events_feed')
+      .channel(`social_proof_events_feed_${Math.random().toString(36).slice(2)}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'social_proof_events' }, (payload) => {
         enqueue(mapSocialProofEventRow(payload.new as SocialProofEventRow));
       })

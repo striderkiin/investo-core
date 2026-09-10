@@ -24,8 +24,14 @@ export function useMaintenanceStatus() {
   useEffect(() => {
     if (!isSupabaseConfigured()) return;
     const client = getSupabaseClient();
+    // A unique channel name per hook instance — this hook is called from
+    // more than one component in the same tree (ClientLayout calls it
+    // directly AND renders MaintenanceBanner, which calls it again), and a
+    // shared hardcoded name meant two simultaneous .subscribe() calls raced
+    // on the same channel ("cannot add postgres_changes callbacks... after
+    // subscribe()").
     const channel = client
-      .channel('maintenance_settings_changes')
+      .channel(`maintenance_settings_changes_${Math.random().toString(36).slice(2)}`)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'maintenance_settings' }, (payload) => {
         const row = payload.new as Record<string, unknown>;
         setSettings({
