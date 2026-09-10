@@ -1,0 +1,192 @@
+/* Client dashboard component shells ported from the licensed "Critso" crypto
+   dashboard template (reference/legacy-template/), per the client dashboard
+   build brief: keep Critso's actual layout/structure/class conventions for
+   the components below, but replace its own color palette with Investo's
+   established near-black/warm-white/gold system.
+
+   Scope: only the DISTINCTIVE component styles are ported here (stat tiles,
+   panel boxes, counters, legend dots, chart checkboxes) — generic spacing/
+   flex utilities are NOT duplicated from Critso's styles.css, since this
+   app already uses Bootstrap's equivalent utilities (d-flex, gap-*,
+   align-items-center, etc.) everywhere. Critso's own page shell (sidebar,
+   header, main-content wrapper) is intentionally not ported at all — the
+   existing ClientLayout/Topbar/.ic-sidebar already provide that, themed
+   dark in an earlier pass this session.
+
+   Critso's own :root variables (--Primary, --YellowGreen, --Orchid, etc.)
+   are remapped below to this app's existing --ic-* branding tokens rather
+   than given fixed hex values, so an operator's configured colors (accent,
+   success, danger) still flow through here exactly as everywhere else.
+   Critso shipped four different bright accent colors for its four stat-tile
+   icon badges (YellowGreen/Orchid/Khaki/LightSkyBlue) — per the "no rainbow
+   dashboard" direction, all four are mapped to the single gold accent
+   instead of kept as four different hues. */
+
+.ic-client-critso {
+  --White: var(--ic-text);
+  --Black: var(--ic-surface);
+  --Primary: var(--ic-surface);
+  --Gray: var(--ic-secondary);
+  --GrayDark: #66645f;
+  --Gainsboro: var(--ic-surface);
+  --LightGray: var(--bs-border-color, rgba(255, 255, 255, 0.08));
+  --YellowGreen: var(--ic-primary);
+  --Orchid: var(--ic-primary);
+  --Khaki: var(--ic-primary);
+  --LightSkyBlue: var(--ic-primary);
+  --Green: var(--ic-success);
+  --Salmon: var(--ic-danger);
+  --Orange: var(--ic-warning);
+  --LimeGreen: var(--ic-surface);
+}
+
+/* Stat tile ("wg-card") — the small icon + counter + trend cards. */
+.ic-client-critso .wg-card {
+  border-radius: 1rem;
+  padding: 19px 23px;
+  border: 1px solid var(--LightGray);
+  background: transparent;
+}
+
+.ic-client-critso .wg-card .icon {
+  margin-bottom: 1rem;
+  display: inline-flex;
+  width: 2.25rem;
+  height: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--ic-primary) 16%, transparent);
+  color: var(--ic-primary);
+  font-size: 1.1rem;
+}
+
+.ic-client-critso .wg-card.style-1 {
+  padding: 24px 24px 26px;
+  border: 0;
+  background: var(--Primary);
+  color: var(--White);
+}
+
+.ic-client-critso .wg-card.style-1 .icon {
+  background: color-mix(in srgb, var(--ic-primary) 24%, transparent);
+}
+
+.ic-client-critso .wg-card .content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.ic-client-critso .wg-card .counter {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 1.15rem;
+  margin-bottom: 2px;
+  color: inherit;
+}
+
+/* Panel box ("wg-box") — the larger Market Overview / Crypto Statistics panels. */
+.ic-client-critso .wg-box {
+  border-radius: 1rem;
+  padding: 23px;
+  border: 1px solid var(--LightGray);
+  background: transparent;
+}
+
+.ic-client-critso .wg-box.style-1 {
+  padding: 24px;
+  border: 0;
+  background: var(--Gainsboro);
+}
+
+.ic-client-critso .wg-box .title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ic-client-critso .label-01 {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.ic-client-critso .widget-menu-tab {
+  display: flex;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 2px;
+  background: var(--Gainsboro);
+  border-radius: 0.5rem;
+}
+
+.ic-client-critso .widget-menu-tab .item-title {
+  padding: 0.3rem 0.75rem;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  color: var(--Gray);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.ic-client-critso .widget-menu-tab .item-title.active {
+  background: var(--ic-primary);
+  color: #080808;
+}
+
+.ic-client-critso .block-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ic-client-critso .block-legend .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ic-primary);
+  flex-shrink: 0;
+}
+
+/* Chart-series toggle checkbox ("tf-cart-checkbox"). */
+.ic-client-critso .tf-cart-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ic-client-critso .tf-cart-checkbox .tf-checkbox-wrapp {
+  position: relative;
+  width: 1rem;
+  height: 1rem;
+}
+
+.ic-client-critso .tf-cart-checkbox .tf-checkbox-wrapp input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.ic-client-critso .tf-cart-checkbox .tf-checkbox-wrapp div {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--LightGray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  color: transparent;
+}
+
+.ic-client-critso .tf-cart-checkbox .tf-checkbox-wrapp input:checked + div {
+  background: var(--ic-primary);
+  border-color: var(--ic-primary);
+  color: #080808;
+}

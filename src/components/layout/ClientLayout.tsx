@@ -46,7 +46,7 @@ export function ClientLayout() {
   }
 
   return (
-    <div className="d-flex flex-column min-vh-100">
+    <div className="d-flex flex-column min-vh-100 ic-client-critso">
       <MaintenanceBanner />
       <AnnouncementBanner />
       <div className="d-flex flex-grow-1">

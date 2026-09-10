@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth';
 import { createFinancialService } from '../../../services/api/financialService';
 import type { PortfolioSummary } from '../../../services/api/financialService';
-import { MetricCard } from '../../../components/common/MetricCard';
+import { CritsoStatTile } from '../../../components/common/CritsoStatTile';
 import { LoadingScreen } from '../../../components/common/LoadingScreen';
 import { ErrorState } from '../../../components/common/ErrorState';
 import { MarketChart } from '../../../components/charts/MarketChart';
@@ -40,7 +40,7 @@ export function DashboardHomePage() {
   if (error || !summary) return <ErrorState message={error ?? 'Unable to load portfolio'} onRetry={load} />;
 
   const percentageChange = settings?.currentPercentageChange ?? 0;
-  const trendVariant = percentageChange >= 0 ? 'success' : 'danger';
+  const isUp = percentageChange >= 0;
 
   return (
     <div className="d-flex flex-column gap-4">
@@ -51,89 +51,96 @@ export function DashboardHomePage() {
 
       <div className="row g-3">
         <div className="col-6 col-lg-4 col-xl-2">
-          <MetricCard label="Total Balance" value={summary.totalBalance} icon="bi-wallet2" variant="primary" />
+          <CritsoStatTile label="Total Balance" value={summary.totalBalance} icon="bi-wallet2" highlight />
         </div>
         <div className="col-6 col-lg-4 col-xl-2">
-          <MetricCard label="Available Balance" value={summary.availableBalance} icon="bi-cash-coin" variant="success" />
+          <CritsoStatTile label="Available Balance" value={summary.availableBalance} icon="bi-cash-coin" />
         </div>
         <div className="col-6 col-lg-4 col-xl-2">
-          <MetricCard label="Total Invested" value={summary.totalInvested} icon="bi-graph-up" variant="primary" />
+          <CritsoStatTile label="Total Invested" value={summary.totalInvested} icon="bi-graph-up" />
         </div>
         <div className="col-6 col-lg-4 col-xl-2">
-          <MetricCard
+          <CritsoStatTile
             label="Today's Change"
             value={percentageChange}
-            icon={percentageChange >= 0 ? 'bi-arrow-up-right' : 'bi-arrow-down-right'}
+            icon={isUp ? 'bi-arrow-up-right' : 'bi-arrow-down-right'}
             prefix=""
             suffix="%"
-            variant={trendVariant}
+            decimals={2}
           />
         </div>
         <div className="col-6 col-lg-4 col-xl-2">
-          <MetricCard label="Total Earnings" value={summary.totalEarnings} icon="bi-trophy" variant="success" />
+          <CritsoStatTile label="Total Earnings" value={summary.totalEarnings} icon="bi-trophy" />
         </div>
         <div className="col-6 col-lg-4 col-xl-2">
-          <MetricCard label="Pending Withdrawals" value={summary.pendingWithdrawals} icon="bi-hourglass-split" variant="warning" />
+          <CritsoStatTile label="Pending Withdrawals" value={summary.pendingWithdrawals} icon="bi-hourglass-split" />
         </div>
       </div>
 
-      <div className="card ic-card">
-        <div className="card-body">
-          <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-            <div>
-              <h3 className="h6 mb-1">Live Market</h3>
-              {settings && (
-                <div className="d-flex align-items-center gap-3 flex-wrap">
-                  <span className="fs-4 fw-bold">
-                    ${settings.currentMarketValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                  </span>
-                  <span className={`badge text-bg-${trendVariant}`}>
-                    {percentageChange >= 0 ? '+' : ''}
-                    {percentageChange.toFixed(2)}% (24h)
-                  </span>
-                  <span className="text-secondary small text-capitalize">
-                    <i className="bi bi-signpost-2 me-1" aria-hidden="true" />
-                    Trend: {settings.currentTrend}
-                  </span>
-                  <span className="text-secondary small">
-                    <i className="bi bi-broadcast me-1" aria-hidden="true" />
-                    Market Status: {settings.mode === 'manual' ? 'Manually Controlled' : 'Live'}
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-          {marketLoading ? (
-            <LoadingScreen label="Loading market data..." />
-          ) : history.length === 0 ? (
-            <p className="text-secondary mb-0">No market history yet.</p>
-          ) : (
-            <MarketChart data={history} />
+      <div className="wg-box style-1">
+        <div className="title mb-3">
+          <div className="label-01">Live Market</div>
+          {settings && (
+            <ul className="widget-menu-tab mb-0">
+              <li className="item-title">
+                <span className="inner">
+                  <i className="bi bi-broadcast me-1" aria-hidden="true" />
+                  {settings.mode === 'manual' ? 'Manual' : 'Live'}
+                </span>
+              </li>
+              <li className="item-title active">
+                <span className="inner text-capitalize">{settings.currentTrend}</span>
+              </li>
+            </ul>
           )}
         </div>
+        {settings && (
+          <div className="d-flex align-items-center flex-wrap mb-3" style={{ gap: '1.5rem' }}>
+            <div>
+              <span className="fs-4 fw-bold">${settings.currentMarketValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+            </div>
+            <div className="block-legend">
+              <div className="dot" style={{ background: isUp ? 'var(--ic-success)' : 'var(--ic-danger)' }} />
+              <div className="f12-medium">
+                <span className="text-secondary">24h change</span>{' '}
+                <span className="f12-bold">
+                  {isUp ? '+' : ''}
+                  {percentageChange.toFixed(2)}%
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+        {marketLoading ? (
+          <LoadingScreen label="Loading market data..." />
+        ) : history.length === 0 ? (
+          <p className="text-secondary mb-0">No market history yet.</p>
+        ) : (
+          <MarketChart data={history} />
+        )}
       </div>
 
       <div className="row g-3">
         <div className="col-12 col-md-6">
-          <div className="card ic-card h-100">
-            <div className="card-body">
-              <h3 className="h6">Investments</h3>
-              <p className="text-secondary small">Review your active, completed, and paused investments.</p>
-              <Link to="/dashboard/investments" className="btn btn-sm btn-primary">
-                View Investments
-              </Link>
+          <div className="wg-box h-100">
+            <div className="title mb-2">
+              <div className="label-01">Investments</div>
             </div>
+            <p className="text-secondary small">Review your active, completed, and paused investments.</p>
+            <Link to="/dashboard/investments" className="btn btn-sm btn-primary">
+              View Investments
+            </Link>
           </div>
         </div>
         <div className="col-12 col-md-6">
-          <div className="card ic-card h-100">
-            <div className="card-body">
-              <h3 className="h6">Referral Program</h3>
-              <p className="text-secondary small">Share your referral link and earn rewards.</p>
-              <Link to="/dashboard/referral" className="btn btn-sm btn-outline-primary">
-                View Referral
-              </Link>
+          <div className="wg-box h-100">
+            <div className="title mb-2">
+              <div className="label-01">Referral Program</div>
             </div>
+            <p className="text-secondary small">Share your referral link and earn rewards.</p>
+            <Link to="/dashboard/referral" className="btn btn-sm btn-outline-primary">
+              View Referral
+            </Link>
           </div>
         </div>
       </div>
