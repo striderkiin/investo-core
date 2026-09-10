@@ -4,10 +4,10 @@ import { useBranding } from '../../hooks/useBranding';
 
 const NAV_LINKS = [
   { to: '/', label: 'Home', end: true },
-  { to: '/pricing', label: 'Pricing' },
-  { to: '/mission-vision', label: 'About' },
-  { to: '/faq', label: 'FAQ' },
-  { to: '/contact', label: 'Contact' },
+  { to: '/#pricing', label: 'Pricing' },
+  { to: '/#about', label: 'About' },
+  { to: '/#faq', label: 'FAQ' },
+  { to: '/#contact', label: 'Contact' },
 ];
 
 export function PublicLayout() {
@@ -38,13 +38,21 @@ export function PublicLayout() {
           </button>
           <div className="collapse navbar-collapse" id="publicNav">
             <ul className="navbar-nav mx-auto my-3 my-lg-0 gap-lg-2">
-              {NAV_LINKS.map((link) => (
-                <li className="nav-item" key={link.to}>
-                  <NavLink to={link.to} end={link.end} className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-                    {link.label}
-                  </NavLink>
-                </li>
-              ))}
+              {NAV_LINKS.map((link) =>
+                link.end ? (
+                  <li className="nav-item" key={link.to}>
+                    <NavLink to={link.to} end className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+                      {link.label}
+                    </NavLink>
+                  </li>
+                ) : (
+                  <li className="nav-item" key={link.to}>
+                    <Link to={link.to} className="nav-link">
+                      {link.label}
+                    </Link>
+                  </li>
+                )
+              )}
             </ul>
             <div className="d-flex align-items-center gap-2">
               <EnvironmentBadge />
@@ -80,16 +88,16 @@ export function PublicLayout() {
                 <p className="small fw-semibold text-white mb-2">Platform</p>
                 <ul className="list-unstyled small d-flex flex-column gap-2">
                   <li>
-                    <Link to="/pricing">Pricing</Link>
+                    <Link to="/#pricing">Pricing</Link>
                   </li>
                   <li>
-                    <Link to="/mission-vision">About</Link>
+                    <Link to="/#about">About</Link>
                   </li>
                   <li>
-                    <Link to="/faq">FAQ</Link>
+                    <Link to="/#faq">FAQ</Link>
                   </li>
                   <li>
-                    <Link to="/contact">Contact</Link>
+                    <Link to="/#contact">Contact</Link>
                   </li>
                 </ul>
               </div>

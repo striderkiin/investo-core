@@ -8,16 +8,19 @@ export function PublicSection({
   style,
   delay = 0,
   as = 'section',
+  id,
 }: {
   children: ReactNode;
   className?: string;
   style?: CSSProperties;
   delay?: number;
   as?: 'section' | 'div';
+  id?: string;
 }) {
   const Component = motion[as];
   return (
     <Component
+      id={id}
       className={className}
       style={style}
       initial={{ opacity: 0, y: 24 }}

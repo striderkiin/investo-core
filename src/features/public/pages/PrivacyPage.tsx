@@ -52,7 +52,7 @@ export function PrivacyPage() {
       <p>
         Depending on your jurisdiction, you may have the right to access, correct, or request deletion of your
         personal information, or to object to certain processing. Contact us through our{' '}
-        <a href="/contact">Contact page</a> to make a request.
+        <a href="/#contact">Contact page</a> to make a request.
       </p>
 
       <h2 className="h5 mt-4 mb-2">7. Cookies</h2>
@@ -69,7 +69,7 @@ export function PrivacyPage() {
 
       <h2 className="h5 mt-4 mb-2">10. Contact</h2>
       <p>
-        Questions about this Privacy Policy can be sent through our <a href="/contact">Contact page</a>.
+        Questions about this Privacy Policy can be sent through our <a href="/#contact">Contact page</a>.
       </p>
     </LegalPage>
   );

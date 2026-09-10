@@ -94,7 +94,7 @@ export function TermsPage() {
 
       <h2 className="h5 mt-4 mb-2">12. Contact</h2>
       <p>
-        Questions about these Terms can be sent through our <a href="/contact">Contact page</a>.
+        Questions about these Terms can be sent through our <a href="/#contact">Contact page</a>.
       </p>
     </LegalPage>
   );

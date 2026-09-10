@@ -12,7 +12,7 @@ export function RefundPolicyPage() {
       <p>
         Deposits are credited to your account only after confirmation by our backend systems. If a deposit was made
         in error or you believe it was processed incorrectly, contact support as soon as possible through your
-        dashboard&apos;s Support Center or our <a href="/contact">Contact page</a>. Refund eligibility depends on
+        dashboard&apos;s Support Center or our <a href="/#contact">Contact page</a>. Refund eligibility depends on
         whether the funds have already been allocated to an active investment.
       </p>
 
@@ -45,7 +45,7 @@ export function RefundPolicyPage() {
 
       <h2 className="h5 mt-4 mb-2">6. How to Request a Refund</h2>
       <p>
-        Contact us through our <a href="/contact">Contact page</a>, or open a ticket from your dashboard&apos;s
+        Contact us through our <a href="/#contact">Contact page</a>, or open a ticket from your dashboard&apos;s
         Support Center if you already have an account, with your transaction reference and a description of the
         issue.
       </p>
