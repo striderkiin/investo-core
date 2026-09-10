@@ -1,8 +1,15 @@
 import { createAuthService } from '../../src/services/auth/authService';
 import { isSupabaseConfigured } from '../../src/services/supabase/client';
-import type { Profile } from '../../src/types/database';
+import { createNotificationService } from '../../src/services/api/notificationService';
+import { createSupportService } from '../../src/services/api/supportService';
+import type { Profile, SupportTicketStatus } from '../../src/types/database';
+import { formatRelativeTime } from './format';
 
 const authService = createAuthService();
+const notificationService = createNotificationService();
+const supportService = createSupportService();
+
+const OPEN_TICKET_STATUSES: SupportTicketStatus[] = ['open', 'in_progress', 'waiting'];
 
 /**
  * Runs on every client-app page before anything else: confirms there's a
@@ -41,6 +48,7 @@ export async function requireClientSession(): Promise<Profile> {
 
   populateHeader(profile);
   wireLogout();
+  void populateHeaderWidgets(profile);
   return profile;
 }
 
@@ -53,6 +61,67 @@ function populateHeader(profile: Profile): void {
 
   const avatarEl = document.getElementById('userAvatar') as HTMLImageElement | null;
   if (avatarEl && profile.avatarUrl) avatarEl.src = profile.avatarUrl;
+}
+
+/**
+ * Fills the header's Notifications and Support Tickets dropdown previews
+ * with real data. Both dropdowns are identical markup on every page here
+ * (4 fixed slots + an empty state + a "View All" link), so this is the one
+ * place that needs to know about them.
+ */
+async function populateHeaderWidgets(profile: Profile): Promise<void> {
+  const [notifications, tickets] = await Promise.all([
+    notificationService.list(profile.id).catch(() => []),
+    supportService.listMyTickets(profile.id).catch(() => []),
+  ]);
+
+  fillSlots(
+    'headerNotification',
+    notifications.slice(0, 4),
+    (n) => n.title,
+    (n) => n.message,
+    (n) => formatRelativeTime(n.createdAt)
+  );
+
+  fillSlots(
+    'headerMessage',
+    tickets.slice(0, 4),
+    (t) => t.subject,
+    (t) => t.status.replace('_', ' '),
+    (t) => formatRelativeTime(t.updatedAt)
+  );
+
+  const openCount = tickets.filter((t) => OPEN_TICKET_STATUSES.includes(t.status)).length;
+  const countEl = document.getElementById('headerOpenTicketsCount');
+  if (countEl) countEl.textContent = String(openCount);
+}
+
+function fillSlots<T>(
+  prefix: string,
+  items: T[],
+  getTitle: (item: T) => string,
+  getDesc: (item: T) => string,
+  getTime: (item: T) => string
+): void {
+  for (let i = 0; i < 4; i++) {
+    const slot = document.getElementById(`${prefix}Slot${i}`);
+    if (!slot) continue;
+    const item = items[i];
+    if (!item) {
+      slot.style.display = 'none';
+      continue;
+    }
+    slot.style.display = '';
+    const title = slot.querySelector(`.${prefix}Title`);
+    const desc = slot.querySelector(`.${prefix}Desc`);
+    const time = slot.querySelector(`.${prefix}Time`);
+    if (title) title.textContent = getTitle(item);
+    if (desc) desc.textContent = getDesc(item);
+    if (time) time.textContent = getTime(item);
+  }
+
+  const emptyEl = document.getElementById(`${prefix}Empty`);
+  if (emptyEl) emptyEl.style.display = items.length === 0 ? '' : 'none';
 }
 
 function wireLogout(): void {

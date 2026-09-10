@@ -32,12 +32,17 @@ site and the admin panel are unaffected — they're still the React app in
   redirects to `/login` if not, populates the shared header (name, role,
   avatar), and wires the logout link.
 - `ts/dashboard.ts`, `ts/wallet.ts`, `ts/account.ts`, `ts/settings.ts`,
-  `ts/transaction.ts`, and `ts/plans.ts` each drive one page's real data,
-  using the exact same service layer the React admin/client pages already
-  use, just called from vanilla TS instead of React hooks. `ts/format.ts`
-  and `ts/walletActivity.ts` hold logic shared by more than one page
+  `ts/transaction.ts`, `ts/plans.ts`, `ts/notifications.ts`, and
+  `ts/message.ts` each drive one page's real data, using the exact same
+  service layer the React admin/client pages already use, just called
+  from vanilla TS instead of React hooks. `ts/format.ts` and
+  `ts/walletActivity.ts` hold logic shared by more than one page
   (currency/date formatting, and the Wallet Activity list used on both
   `my-wallet.html` and `account.html`).
+- The header's Notifications and Support Tickets dropdown previews are
+  the same markup on every page, so `ts/shell.ts` itself populates them
+  (real recent notifications, real open ticket count) right after the
+  auth check — no per-page module needs to duplicate that.
 - After login, `LoginPage.tsx` in the React app sends **clients** to
   `/client-app/index.html` with a real page navigation (not react-router)
   since this is a different app; **admins** still go to `/admin` inside
@@ -47,6 +52,12 @@ site and the admin panel are unaffected — they're still the React app in
   rather than duplicating those forms here — same Supabase session, same
   origin, so navigating between the two apps is seamless. Critso's fixed
   page set has no page of its own for any of the three.
+- `tsconfig.json` in this directory is a standalone TypeScript project for
+  everything under `ts/`, checked via `npm run typecheck:client-app`
+  (also run as part of `npm run build`). The root `tsconfig.app.json` only
+  includes `src/`, so without this, type errors in `client-app/ts/*.ts`
+  passed silently — Vite's build step transpiles but doesn't type-check.
+  This was caught and fixed while wiring `message.ts`.
 
 ## What's been cut or repurposed from the original template
 
@@ -73,6 +84,17 @@ have no equivalent on this platform:
   real Investment Plans browser instead (rate, min/max, duration, an
   Invest link). The sidebar/header nav label changed from "Crypto" to
   "Plans" to match, across all 8 pages.
+- `message.html`'s fake peer-to-peer chat with other end users (Cameron
+  Williamson, Ralph Edwards, etc.) — there's no messaging-between-clients
+  feature on this platform, but there is a real 1:1 conversation with
+  support, so the page is repurposed into the client's Support Center:
+  a real ticket list, a "New Ticket" form, and a thread view with replies,
+  all backed by `supportService`.
+- `notifications.html` and the header's Notifications/Support dropdown
+  previews (on every page) — the fake "Discount available" / "Order
+  shipped" items and the fake user avatars in the message preview are
+  replaced with real notifications and real ticket previews; unused
+  preview slots are hidden rather than padded with anything fake.
 
 Nothing on these pages fetches or displays fabricated per-item history
 (sparkline trend data, 24h change on a per-plan basis, etc.) where no real
@@ -81,14 +103,6 @@ than faked, consistent with the rest of this app.
 
 ## Status
 
-`index.html`, `my-wallet.html`, `account.html`, `settings.html`,
-`transaction.html`, and `crypto.html` (now "Plans") are fully wired to
-real data, each through its own `ts/*.ts` module.
-
-`notifications.html` and `message.html` were out of scope for this pass
-and are still 100% static Critso demo content — they don't even load
-`ts/shell.ts`, so unlike every other page here they have no auth guard
-and no real header (name/avatar/logout). They're reachable today from
-the header's notification/message dropdowns on every wired page, so a
-client can click through to a page that isn't gated and shows fake data.
-They need the same treatment as the rest of this app.
+All 8 pages are fully wired to real data, each through its own
+`ts/*.ts` module, with a real auth guard and a real header (name,
+avatar, logout, notification/ticket previews) via `ts/shell.ts`.

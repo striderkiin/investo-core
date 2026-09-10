@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && tsc --noEmit -p client-app/tsconfig.json && vite build",
+    "typecheck:client-app": "tsc --noEmit -p client-app/tsconfig.json",
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run",
