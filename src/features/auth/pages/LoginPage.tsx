@@ -1,22 +1,29 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth';
 import { isAdminRole } from '../../../types/roles';
 import { AuthCard } from '../../../components/public/AuthCard';
 
 export function LoginPage() {
   const { login, session, profile, isConfigured } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Clients land on the client dashboard, which lives outside this React app
+  // as a separate static multi-page app under /client-app (see
+  // client-app/README.md) and so needs a real page navigation rather than
+  // react-router's <Navigate>.
   if (session && profile) {
-    const redirectTo = (location.state as { from?: string } | null)?.from ?? (isAdminRole(profile.role) ? '/admin' : '/dashboard');
-    return <Navigate to={redirectTo} replace />;
+    const stateFrom = (location.state as { from?: string } | null)?.from;
+    if (!isAdminRole(profile.role)) {
+      window.location.replace(stateFrom ?? '/client-app/index.html');
+      return null;
+    }
+    return <Navigate to={stateFrom ?? '/admin'} replace />;
   }
 
   async function handleSubmit(event: FormEvent) {
@@ -24,8 +31,9 @@ export function LoginPage() {
     setError(null);
     setIsSubmitting(true);
     try {
+      // Redirect itself happens above once `session`/`profile` update and this
+      // component re-renders — role isn't known synchronously here yet.
       await login({ email, password });
-      navigate('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to log in. Please try again.');
     } finally {
