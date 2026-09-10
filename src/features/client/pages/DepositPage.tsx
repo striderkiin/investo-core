@@ -115,8 +115,7 @@ export function DepositPage() {
 
       <div className="row g-4">
         <div className="col-12 col-lg-5">
-          <div className="card ic-card">
-            <div className="card-body">
+          <div className="wg-box style-1">
               {session ? (
                 <div className="text-center">
                   <span className={`badge text-bg-${STATUS_VARIANT[session.deposit.status]} text-capitalize mb-3`}>
@@ -197,42 +196,37 @@ export function DepositPage() {
                   </button>
                 </form>
               )}
-            </div>
           </div>
         </div>
 
         <div className="col-12 col-lg-7">
-          <h3 className="h6">Deposit History</h3>
-          {deposits.length === 0 ? (
-            <EmptyState icon="bi-arrow-down-circle" title="No deposits yet" message="Your deposit history will appear here." />
-          ) : (
-            <div className="table-responsive">
-              <table className="table align-middle">
-                <thead>
-                  <tr>
-                    <th scope="col">Date</th>
-                    <th scope="col">Amount</th>
-                    <th scope="col">Network</th>
-                    <th scope="col">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {deposits.map((deposit) => (
-                    <tr key={deposit.id}>
-                      <td>{new Date(deposit.createdAt).toLocaleString()}</td>
-                      <td>
-                        {deposit.amount} {deposit.currency}
-                      </td>
-                      <td>{deposit.network}</td>
-                      <td>
-                        <span className={`badge text-bg-${STATUS_VARIANT[deposit.status]} text-capitalize`}>{deposit.status}</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <div className="wg-box h-100">
+            <div className="title mb-3">
+              <div className="label-01">Deposit History</div>
             </div>
-          )}
+            {deposits.length === 0 ? (
+              <EmptyState icon="bi-arrow-down-circle" title="No deposits yet" message="Your deposit history will appear here." />
+            ) : (
+              <ul className="list-wallet-activity">
+                {deposits.map((deposit) => (
+                  <li key={deposit.id}>
+                    <div className="wallet-activity-item">
+                      <div className="icon">
+                        <i className="bi bi-arrow-down-circle" aria-hidden="true" />
+                      </div>
+                      <div className="content">
+                        <div className="mb-1 f14-bold">
+                          {deposit.amount} {deposit.currency} <span className="text-secondary small">via {deposit.network}</span>
+                        </div>
+                        <div className="f12-medium text-secondary">{new Date(deposit.createdAt).toLocaleString()}</div>
+                      </div>
+                      <span className={`badge text-bg-${STATUS_VARIANT[deposit.status]} text-capitalize`}>{deposit.status}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       </div>
     </div>

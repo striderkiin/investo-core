@@ -190,3 +190,45 @@
   border-color: var(--ic-primary);
   color: #080808;
 }
+
+/* Wallet/deposit activity row ("wallet-activity-item") — ported from
+   my-wallet.html's "Wallet Activity" list, adapted from Critso's
+   proportional-width layout (built for an avatar image column) to a
+   fixed-size icon badge since deposit rows have no per-item image. */
+.ic-client-critso .list-wallet-activity {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ic-client-critso .wallet-activity-item {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.ic-client-critso .wallet-activity-item .icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--ic-primary) 16%, transparent);
+  color: var(--ic-primary);
+  font-size: 1.1rem;
+}
+
+.ic-client-critso .wallet-activity-item .content {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.ic-client-critso .wallet-activity-item .price {
+  font-weight: 700;
+  white-space: nowrap;
+}
