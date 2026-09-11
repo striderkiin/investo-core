@@ -2,10 +2,11 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, Navigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth';
+import { isAdminRole } from '../../../types/roles';
 import { AuthCard } from '../../../components/public/AuthCard';
 
 export function RegisterPage() {
-  const { register, session, isConfigured } = useAuth();
+  const { register, session, profile, isConfigured } = useAuth();
   const [searchParams] = useSearchParams();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -16,8 +17,14 @@ export function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [registered, setRegistered] = useState(false);
 
-  if (session) {
-    return <Navigate to="/dashboard" replace />;
+  // Clients land on the client dashboard, which lives outside this React app
+  // as a separate static multi-page app under /client-app (see LoginPage).
+  if (session && profile) {
+    if (!isAdminRole(profile.role)) {
+      window.location.replace('/client-app/index.html');
+      return null;
+    }
+    return <Navigate to="/admin" replace />;
   }
 
   if (registered) {

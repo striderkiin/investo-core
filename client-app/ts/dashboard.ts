@@ -10,7 +10,20 @@ const financialService = createFinancialService();
 const marketService = createMarketService();
 const investmentService = createInvestmentService();
 
-const GOLD_SHADES = ['#c6a15b', '#8a6a34', '#e4c98a', '#5c4826', '#f0dfb8'];
+// Stable per-plan colors (not array-position-based) so a given plan is
+// always the same color regardless of which/how-many plans a client holds.
+// Kept within the brand's black/white/gold family — light-to-dark by tier.
+const PLAN_COLORS: Record<string, string> = {
+  Starter: '#f0dfb8',
+  Growth: '#c6a15b',
+  Professional: '#8a6a34',
+  Elite: '#3d2f18',
+};
+const FALLBACK_SHADES = ['#c6a15b', '#8a6a34', '#e4c98a', '#5c4826', '#f0dfb8'];
+
+function colorForPlan(name: string, fallbackIndex: number): string {
+  return PLAN_COLORS[name] ?? FALLBACK_SHADES[fallbackIndex % FALLBACK_SHADES.length];
+}
 
 function formatCurrency(value: number): string {
   return `$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -104,7 +117,7 @@ async function renderPortfolioComposition(userId: string): Promise<void> {
     chart: { height: 260, type: 'donut' },
     labels: holdings.map((h) => h.name),
     series: holdings.map((h) => Number(h.amount.toFixed(2))),
-    colors: GOLD_SHADES.slice(0, holdings.length),
+    colors: holdings.map((h, i) => colorForPlan(h.name, i)),
     legend: { show: false },
     dataLabels: { enabled: false },
     plotOptions: { pie: { donut: { size: '70%' } } },

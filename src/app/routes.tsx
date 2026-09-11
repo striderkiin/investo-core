@@ -1,6 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { PublicLayout } from '../components/layout/PublicLayout';
-import { ClientLayout } from '../components/layout/ClientLayout';
 import { AdminLayout } from '../components/layout/AdminLayout';
 import { ProtectedRoute } from '../features/auth/ProtectedRoute';
 
@@ -14,16 +13,6 @@ import { LoginPage } from '../features/auth/pages/LoginPage';
 import { RegisterPage } from '../features/auth/pages/RegisterPage';
 import { ForgotPasswordPage } from '../features/auth/pages/ForgotPasswordPage';
 import { ResetPasswordPage } from '../features/auth/pages/ResetPasswordPage';
-
-import { DashboardHomePage } from '../features/client/pages/DashboardHomePage';
-import { InvestmentsPage } from '../features/client/pages/InvestmentsPage';
-import { DepositPage } from '../features/client/pages/DepositPage';
-import { WithdrawPage } from '../features/client/pages/WithdrawPage';
-import { ClientTransactionsPage } from '../features/client/pages/ClientTransactionsPage';
-import { ReferralPage } from '../features/client/pages/ReferralPage';
-import { ClientNotificationsPage } from '../features/client/pages/ClientNotificationsPage';
-import { SupportPage } from '../features/client/pages/SupportPage';
-import { ClientSettingsPage } from '../features/client/pages/ClientSettingsPage';
 
 import { AdminOverviewPage } from '../features/admin/pages/AdminOverviewPage';
 import { FinancialCenterPage } from '../features/admin/pages/FinancialCenterPage';
@@ -65,24 +54,6 @@ export function AppRoutes() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
-      </Route>
-
-      <Route
-        element={
-          <ProtectedRoute>
-            <ClientLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route path="/dashboard" element={<DashboardHomePage />} />
-        <Route path="/dashboard/investments" element={<InvestmentsPage />} />
-        <Route path="/dashboard/deposit" element={<DepositPage />} />
-        <Route path="/dashboard/withdraw" element={<WithdrawPage />} />
-        <Route path="/dashboard/transactions" element={<ClientTransactionsPage />} />
-        <Route path="/dashboard/referral" element={<ReferralPage />} />
-        <Route path="/dashboard/notifications" element={<ClientNotificationsPage />} />
-        <Route path="/dashboard/support" element={<SupportPage />} />
-        <Route path="/dashboard/settings" element={<ClientSettingsPage />} />
       </Route>
 
       <Route
