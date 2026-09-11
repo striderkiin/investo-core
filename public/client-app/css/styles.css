@@ -6276,12 +6276,18 @@ select {
     width: 30%;
     order: 3;
   }
-  .table-list-crypto .list-crypto-content tr td:nth-child(5), .table-list-crypto .list-crypto-content tr td:nth-child(4) {
-    display: none;
-  }
   .table-list-crypto .list-crypto-content tr td:nth-child(3) {
     order: 2;
     width: 70%;
+    text-align: end;
+  }
+  .table-list-crypto .list-crypto-content tr td:nth-child(4) {
+    order: 5;
+    width: 50%;
+  }
+  .table-list-crypto .list-crypto-content tr td:nth-child(5) {
+    order: 6;
+    width: 50%;
     text-align: end;
   }
   .table-list-crypto .list-crypto-content tr td:nth-child(6) {
@@ -6323,8 +6329,14 @@ select {
     max-width: 33.33%;
     order: 3;
   }
-  .table-list-transaction .list-transaction-content tr td:nth-child(3), .table-list-transaction .list-transaction-content tr td:nth-child(4) {
-    display: none;
+  .table-list-transaction .list-transaction-content tr td:nth-child(3) {
+    order: 5;
+    width: 50%;
+  }
+  .table-list-transaction .list-transaction-content tr td:nth-child(4) {
+    order: 6;
+    width: 50%;
+    text-align: end;
   }
   .table-list-transaction .list-transaction-content tr td:nth-child(5) {
     order: 4;

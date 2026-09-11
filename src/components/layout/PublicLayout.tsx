@@ -1,3 +1,5 @@
+import { useRef } from 'react';
+import { Collapse } from 'bootstrap';
 import { Link, NavLink, Outlet } from 'react-router-dom';
 import { EnvironmentBadge } from './EnvironmentBadge';
 import { useBranding } from '../../hooks/useBranding';
@@ -12,6 +14,18 @@ const NAV_LINKS = [
 
 export function PublicLayout() {
   const { branding } = useBranding();
+  const navRef = useRef<HTMLDivElement>(null);
+
+  // Clicking a Link inside the mobile menu is a client-side route change,
+  // not a page load — Bootstrap's own data-bs-toggle collapse never sees a
+  // reason to close, so it stays expanded over the next page until the
+  // user manually taps the toggler again. Close it explicitly on any
+  // in-menu navigation.
+  function closeMobileNav() {
+    if (navRef.current) {
+      Collapse.getOrCreateInstance(navRef.current, { toggle: false }).hide();
+    }
+  }
 
   return (
     <div className="ic-public d-flex flex-column min-vh-100">
@@ -36,7 +50,7 @@ export function PublicLayout() {
           >
             <i className="bi bi-list fs-3" aria-hidden="true" />
           </button>
-          <div className="collapse navbar-collapse" id="publicNav">
+          <div className="collapse navbar-collapse" id="publicNav" ref={navRef} onClick={closeMobileNav}>
             <ul className="navbar-nav mx-auto my-3 my-lg-0 gap-lg-2">
               {NAV_LINKS.map((link) =>
                 link.end ? (

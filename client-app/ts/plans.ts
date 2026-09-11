@@ -32,7 +32,7 @@ function renderRows(plans: InvestmentPlan[]): void {
             <div class="f12-medium">${formatCurrency(plan.minAmount)} - ${formatCurrency(plan.maxAmount)}</div>
           </td>
           <td>
-            <div class="f12-medium">${plan.durationDays} days</div>
+            <div class="f12-medium" data-title="Duration : ">${plan.durationDays} days</div>
           </td>
           <td>
             <div class="box-status bg-YellowGreen">
