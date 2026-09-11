@@ -9,10 +9,12 @@ let allPlans: InvestmentPlan[] = [];
 
 function renderRows(plans: InvestmentPlan[]): void {
   const tbody = document.getElementById('planRows');
-  if (!tbody) return;
+  const mobileList = document.getElementById('plansMobileList');
+  if (!tbody || !mobileList) return;
 
   if (plans.length === 0) {
     tbody.innerHTML = '<tr><td colspan="6" class="f14-regular text-Gray text-center py-4">No plans found.</td></tr>';
+    mobileList.innerHTML = '<p class="f14-regular text-Gray text-center py-4">No plans found.</p>';
     return;
   }
 
@@ -47,6 +49,42 @@ function renderRows(plans: InvestmentPlan[]): void {
             </a>
           </td>
         </tr>`
+    )
+    .join('');
+
+  // The desktop table above is a fixed-width grid — reflowing it into a
+  // stacked mobile layout via CSS (order/width tricks on the same <td>s)
+  // kept breaking as soon as real content lengths varied, so mobile gets
+  // its own purpose-built card markup instead (see .ic-plan-card in
+  // styles.css), populated in parallel from the same data.
+  mobileList.innerHTML = plans
+    .map(
+      (plan) => `
+        <div class="ic-plan-card">
+          <div class="ic-plan-card-header">
+            <span class="ic-plan-card-name">${plan.name}</span>
+            <span class="ic-plan-card-range">${formatCurrency(plan.minAmount)} - ${formatCurrency(plan.maxAmount)}</span>
+          </div>
+          <div class="ic-plan-card-row">
+            <span class="ic-plan-card-label">Rate</span>
+            <span class="ic-plan-card-value">${plan.rate}% / ${plan.rateType}</span>
+          </div>
+          <div class="ic-plan-card-row">
+            <span class="ic-plan-card-label">Duration</span>
+            <span class="ic-plan-card-value">${plan.durationDays} days</span>
+          </div>
+          <div class="ic-plan-card-row">
+            <span class="ic-plan-card-label">Status</span>
+            <span class="box-status bg-YellowGreen">
+              <i class="icon icon-check"></i>
+              <span class="font-poppins">ACTIVE</span>
+            </span>
+          </div>
+          <a href="/#pricing" class="tf-btn-default f12-bold style-1 ic-plan-card-cta">
+            Invest
+            <i class="icon-send1"></i>
+          </a>
+        </div>`
     )
     .join('');
 }

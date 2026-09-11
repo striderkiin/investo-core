@@ -4968,6 +4968,78 @@ select {
   width: 137px;
 }
 
+/* Purpose-built mobile cards for Investment Plans and Transactions (below
+   the lg breakpoint, where .table-list-crypto/.table-list-transaction are
+   d-none). The desktop table's fixed-width grid doesn't reflow cleanly
+   into a stacked layout via CSS alone once real content lengths vary, so
+   these render from the same data as a plain, always-labeled list instead. */
+.ic-plan-card,
+.ic-tx-card {
+  background-color: var(--White);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.ic-plan-card-header,
+.ic-tx-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 10px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--LightGray);
+}
+.ic-plan-card-name {
+  font-weight: 700;
+  font-size: 14px;
+}
+.ic-plan-card-range {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--GrayDark);
+  text-align: right;
+}
+.ic-tx-card-date {
+  font-weight: 700;
+  font-size: 13px;
+}
+.ic-tx-card-time {
+  font-size: 12px;
+  color: var(--GrayDark);
+}
+.ic-plan-card-row,
+.ic-tx-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
+}
+.ic-plan-card-label,
+.ic-tx-card-label {
+  font-size: 13px;
+  color: var(--GrayDark);
+  flex-shrink: 0;
+}
+.ic-plan-card-value,
+.ic-tx-card-value {
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+}
+.ic-tx-card-ref {
+  font-family: monospace;
+}
+.ic-plan-card-cta {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 12px;
+}
+
 .tf-table-item {
   border-radius: 8px;
   background-color: var(--Gainsboro);
