@@ -8,16 +8,20 @@ import type { InvestmentPlan } from '../../../types/database';
 import { useAuth } from '../../../hooks/useAuth';
 import { useBranding } from '../../../hooks/useBranding';
 import { PublicSection, staggerContainer, staggerItem } from '../../../components/public/PublicSection';
+import { IconBadge } from '../../../components/public/IconBadge';
+import { HeroVisual } from '../../../components/public/HeroVisual';
+import { HowItWorksFlow } from '../../../components/public/HowItWorksFlow';
+import { IconTrendUp, IconShieldCheck, IconPeople, IconPiggyBank, IconLock, IconEye, IconLightning, IconMail } from '../../../components/public/icons';
 
 const contactService = createContactService();
 const investmentService = createInvestmentService();
 const planAmountFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 
 const BENEFITS = [
-  { icon: 'bi-graph-up-arrow', title: 'Live Market Data', text: 'Real-time charts and up-to-the-minute pricing.' },
-  { icon: 'bi-shield-check', title: 'Secure by Design', text: 'Role-based access, full audit logging, server-side validation.' },
-  { icon: 'bi-people', title: 'Referral Program', text: 'Earn rewards for every investor you bring in.' },
-  { icon: 'bi-piggy-bank', title: 'Flexible Plans', text: 'From steady starter returns to our top tier.' },
+  { icon: IconTrendUp, title: 'Live Market Data', text: 'Real-time charts and up-to-the-minute pricing.' },
+  { icon: IconShieldCheck, title: 'Secure by Design', text: 'Role-based access, full audit logging, server-side validation.' },
+  { icon: IconPeople, title: 'Referral Program', text: 'Earn rewards for every investor you bring in.' },
+  { icon: IconPiggyBank, title: 'Flexible Plans', text: 'From steady starter returns to our top tier.' },
 ];
 
 const STATS = [
@@ -27,59 +31,80 @@ const STATS = [
 ];
 
 const BEST_FEATURES = [
-  { icon: 'bi-lock', title: 'Security First', text: 'Every balance-affecting action runs through server-side, audited logic, never trusted from the browser.' },
-  { icon: 'bi-eye', title: 'Transparency', text: 'Clear, real-time status on every deposit, withdrawal, and investment, with no black boxes.' },
-  { icon: 'bi-lightning-charge', title: 'Built for Scale', text: 'A modular architecture designed to grow from a handful of investors to a full platform.' },
+  { icon: IconLock, title: 'Security First', text: 'Every balance-affecting action runs through server-side, audited logic, never trusted from the browser.' },
+  { icon: IconEye, title: 'Transparency', text: 'Clear, real-time status on every deposit, withdrawal, and investment, with no black boxes.' },
+  { icon: IconLightning, title: 'Built for Scale', text: 'A modular architecture designed to grow from a handful of investors to a full platform.' },
 ];
 
-const FAQS = [
+const FAQ_GROUPS = [
   {
-    question: 'How do I get started?',
-    answer: 'Create a free account, verify your email, then make a deposit from your dashboard to activate an investment plan that fits your goals.',
+    category: 'Getting Started',
+    items: [
+      {
+        question: 'How do I get started?',
+        answer: 'Create a free account, verify your email, then make a deposit from your dashboard to activate an investment plan that fits your goals.',
+      },
+    ],
   },
   {
-    question: 'How are investment plan rates determined?',
-    answer: 'Rates, minimums, maximums, and durations for each plan are shown above. They can change for future investments at any time.',
+    category: 'Investment Plans',
+    items: [
+      {
+        question: 'How are investment plan rates determined?',
+        answer: 'Rates, minimums, maximums, and durations for each plan are shown above. They can change for future investments at any time.',
+      },
+    ],
   },
   {
-    question: 'How long do deposits take to confirm?',
-    answer:
-      'Deposits are confirmed automatically once our backend verifies the payment. We never mark a deposit as complete based on the browser alone, so confirmation timing depends on the payment method used.',
+    category: 'Deposits & Withdrawals',
+    items: [
+      {
+        question: 'How long do deposits take to confirm?',
+        answer:
+          'Deposits are confirmed automatically once our backend verifies the payment. We never mark a deposit as complete based on the browser alone, so confirmation timing depends on the payment method used.',
+      },
+      {
+        question: 'How do withdrawals work?',
+        answer:
+          'Request a withdrawal from your dashboard with your amount and destination. It moves through review and processing, and you receive real-time status updates until it completes.',
+      },
+    ],
   },
   {
-    question: 'How do withdrawals work?',
-    answer:
-      'Request a withdrawal from your dashboard with your amount and destination. It moves through review and processing, and you receive real-time status updates until it completes.',
+    category: 'Referrals',
+    items: [
+      {
+        question: 'Is there a referral program?',
+        answer: 'Yes, every account gets a referral code and link. Track your direct referrals, earnings, and bonuses from your dashboard.',
+      },
+    ],
   },
   {
-    question: 'Is there a referral program?',
-    answer: 'Yes, every account gets a referral code and link. Track your direct referrals, earnings, and bonuses from your dashboard.',
-  },
-  {
-    question: 'How is my account secured?',
-    answer:
-      'Every account supports two-factor authentication, and you can view and terminate active sessions at any time from Settings, Security. All financial actions are validated server-side.',
-  },
-  {
-    question: 'What if I need help?',
-    answer: "Open a ticket from your dashboard's Support Center once logged in, or use the contact form below if you don't have an account yet.",
+    category: 'Security & Support',
+    items: [
+      {
+        question: 'How is my account secured?',
+        answer:
+          'Every account supports two-factor authentication, and you can view and terminate active sessions at any time from Settings, Security. All financial actions are validated server-side.',
+      },
+      {
+        question: 'What if I need help?',
+        answer: "Open a ticket from your dashboard's Support Center once logged in, or use the contact form below if you don't have an account yet.",
+      },
+    ],
   },
 ];
 
-function FaqItem({ question, answer, index }: { question: string; answer: string; index: number }) {
-  const [open, setOpen] = useState(index === 0);
+function FaqRow({ question, answer, defaultOpen }: { question: string; answer: string; defaultOpen: boolean }) {
+  const [open, setOpen] = useState(defaultOpen);
 
   return (
-    <motion.div className="ic-public-card mb-3 overflow-hidden" variants={staggerItem}>
-      <button
-        type="button"
-        className="btn w-100 text-start d-flex justify-content-between align-items-center p-4 border-0 bg-transparent"
-        style={{ color: 'var(--pub-text)' }}
-        onClick={() => setOpen((o) => !o)}
-        aria-expanded={open}
-      >
+    <motion.div className={`ic-faq-row ${open ? 'is-open' : ''}`} variants={staggerItem}>
+      <button type="button" className="ic-faq-row-button" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
         <span className="fw-semibold">{question}</span>
-        <motion.i className="bi bi-chevron-down" animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.25 }} aria-hidden="true" />
+        <span className="ic-faq-icon">
+          <i className="bi bi-plus" aria-hidden="true" />
+        </span>
       </button>
       <motion.div
         initial={false}
@@ -87,7 +112,7 @@ function FaqItem({ question, answer, index }: { question: string; answer: string
         transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
         style={{ overflow: 'hidden' }}
       >
-        <p className="px-4 pb-4 mb-0 small">{answer}</p>
+        <p className="pb-3 mb-0 small">{answer}</p>
       </motion.div>
     </motion.div>
   );
@@ -260,28 +285,38 @@ export function LandingPage() {
                 </Link>
               </div>
             </motion.div>
-            <div className="col-12 col-lg-5 d-none d-lg-block" aria-hidden="true" />
+            <div className="col-12 col-lg-5 d-none d-lg-block" aria-hidden="true">
+              <HeroVisual />
+            </div>
           </div>
         </div>
       </section>
 
       <PublicSection className="container py-5">
         <div className="row g-4 g-lg-0">
-          {BENEFITS.map((benefit, index) => (
-            <div
-              className="col-12 col-md-6 col-lg-3 px-lg-4"
-              key={benefit.title}
-              style={index > 0 ? { borderLeft: '1px solid var(--pub-border)' } : undefined}
-            >
-              <i className={`bi ${benefit.icon} fs-4 mb-3 d-block`} style={{ color: 'var(--pub-accent)' }} aria-hidden="true" />
-              <h2 className="h6">{benefit.title}</h2>
-              <p className="small mb-0">{benefit.text}</p>
-            </div>
-          ))}
+          {BENEFITS.map((benefit, index) => {
+            const Icon = benefit.icon;
+            return (
+              <div
+                className="col-12 col-md-6 col-lg-3 px-lg-4"
+                key={benefit.title}
+                style={index > 0 ? { borderLeft: '1px solid var(--pub-border)' } : undefined}
+              >
+                <div className="mb-3">
+                  <IconBadge index={index} size={44}>
+                    <Icon width={20} height={20} />
+                  </IconBadge>
+                </div>
+                <h2 className="h6">{benefit.title}</h2>
+                <p className="small mb-0">{benefit.text}</p>
+              </div>
+            );
+          })}
         </div>
       </PublicSection>
 
-      <PublicSection as="div" id="about" className="container py-5" style={{ maxWidth: 960 }}>
+      <PublicSection as="div" id="about" className="ic-public-band-light py-5">
+        <div className="container" style={{ maxWidth: 960 }}>
         <div className="row g-5 align-items-center">
           <div className="col-12 col-lg-6">
             <span className="ic-public-eyebrow mb-3 d-inline-flex">About</span>
@@ -299,19 +334,18 @@ export function LandingPage() {
             <div className="row g-3">
               {STATS.map((stat) => (
                 <div className="col-12 col-sm-6" key={stat.label}>
-                  <div className="ic-public-card p-4 h-100">
-                    <div className="h3 mb-1 ic-public-accent-text" style={{ fontFamily: 'var(--pub-font-display)' }}>
+                  <div className="ic-public-card ic-public-stat-card p-4 h-100">
+                    <div className="ic-public-stat-value mb-1 ic-public-accent-text">
                       {stat.value}
                       {stat.suffix}
                     </div>
-                    <div className="small" style={{ color: 'var(--pub-text-subtle)' }}>
-                      {stat.label}
-                    </div>
+                    <div className="ic-public-stat-label">{stat.label}</div>
                   </div>
                 </div>
               ))}
             </div>
           </div>
+        </div>
         </div>
       </PublicSection>
 
@@ -319,17 +353,27 @@ export function LandingPage() {
         <div className="text-center mb-5">
           <h2 className="h3 mb-2">Why choose us</h2>
         </div>
-        <motion.div className="row g-4" variants={staggerContainer} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-80px' }}>
-          {BEST_FEATURES.map((feature) => (
-            <motion.div className="col-12 col-md-4" key={feature.title} variants={staggerItem}>
-              <div className="ic-public-card h-100 p-4 text-center">
-                <i className={`bi ${feature.icon} fs-1 mb-3`} style={{ color: 'var(--pub-accent)' }} aria-hidden="true" />
-                <h3 className="h6">{feature.title}</h3>
-                <p className="small mb-0">{feature.text}</p>
-              </div>
-            </motion.div>
-          ))}
+        <motion.div className="row g-4 mb-5" variants={staggerContainer} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-80px' }}>
+          {BEST_FEATURES.map((feature) => {
+            const Icon = feature.icon;
+            return (
+              <motion.div className="col-12 col-md-4" key={feature.title} variants={staggerItem}>
+                <div className="ic-public-card ic-public-card-interactive h-100 p-4 text-center">
+                  <div className="mb-3">
+                    <IconBadge size={56}>
+                      <Icon width={26} height={26} />
+                    </IconBadge>
+                  </div>
+                  <h3 className="h6 mb-0">{feature.title}</h3>
+                  <hr className="ic-public-title-rule" />
+                  <p className="small mb-0">{feature.text}</p>
+                </div>
+              </motion.div>
+            );
+          })}
         </motion.div>
+
+        <HowItWorksFlow />
       </PublicSection>
 
       <PublicSection as="div" id="pricing" className="border-top border-bottom py-5" style={{ borderColor: 'var(--pub-border)' }}>
@@ -349,7 +393,7 @@ export function LandingPage() {
                 const highlighted = index === 1;
                 return (
                   <motion.div className="col-12 col-md-6 col-lg-3" key={plan.id} variants={staggerItem}>
-                    <div className={`ic-public-card h-100 p-4 d-flex flex-column ${highlighted ? 'ic-public-card-highlight' : ''}`}>
+                    <div className={`ic-public-card ic-public-card-interactive h-100 p-4 d-flex flex-column ${highlighted ? 'ic-public-card-highlight' : ''}`}>
                       {highlighted && <span className="ic-public-badge align-self-start mb-2">Most Popular</span>}
                       <h3 className="h5 mb-3">{plan.name}</h3>
                       <div className="mb-3">
@@ -385,23 +429,39 @@ export function LandingPage() {
           <h2 className="h3 mb-0">Frequently asked questions</h2>
         </div>
         <motion.div variants={staggerContainer} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-80px' }}>
-          {FAQS.map((faq, index) => (
-            <FaqItem key={faq.question} question={faq.question} answer={faq.answer} index={index} />
+          {FAQ_GROUPS.map((group, groupIndex) => (
+            <div key={group.category}>
+              <div className="ic-faq-category">{group.category}</div>
+              {group.items.map((faq, itemIndex) => (
+                <FaqRow key={faq.question} question={faq.question} answer={faq.answer} defaultOpen={groupIndex === 0 && itemIndex === 0} />
+              ))}
+            </div>
           ))}
         </motion.div>
       </PublicSection>
 
-      <PublicSection as="div" id="contact" className="container py-5 border-top" style={{ maxWidth: 640, borderColor: 'var(--pub-border)' }}>
+      <PublicSection as="div" id="contact" className="container py-5 border-top" style={{ borderColor: 'var(--pub-border)' }}>
         <div className="text-center mb-5">
           <span className="ic-public-eyebrow mb-2 d-inline-flex">Contact</span>
-          <h2 className="h3 mb-2">Get in touch</h2>
-          <p className="mb-0">
-            Have a question about {branding.siteName}, a deposit, or a withdrawal? Send us a message and our team
-            will get back to you. Already have an account? You can also open a ticket from your dashboard&apos;s
-            Support Center for the fastest response.
-          </p>
+          <h2 className="h3 mb-0">Get in touch</h2>
         </div>
-        <ContactSection />
+        <div className="row g-5" style={{ maxWidth: 840, margin: '0 auto' }}>
+          <div className="col-12 col-lg-4">
+            <div className="mb-3">
+              <IconBadge size={48}>
+                <IconMail width={22} height={22} />
+              </IconBadge>
+            </div>
+            <p className="mb-0">
+              Have a question about {branding.siteName}, a deposit, or a withdrawal? Send us a message and our team
+              will get back to you. Already have an account? You can also open a ticket from your dashboard&apos;s
+              Support Center for the fastest response.
+            </p>
+          </div>
+          <div className="col-12 col-lg-8 ps-lg-5 ic-public-contact-info">
+            <ContactSection />
+          </div>
+        </div>
       </PublicSection>
 
       <PublicSection className="container py-5 text-center">

@@ -358,3 +358,242 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ---------------------------------------------------------------------
+   Icon badge: replaces bare glyphs in plain outline circles. Tint fill +
+   hover lift on the badge, hover stroke shift on the SVG itself (that's
+   the part that reads as a "designed element" rather than a static icon).
+   --------------------------------------------------------------------- */
+.ic-icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--pub-accent) 14%, transparent);
+  color: var(--pub-accent);
+  transition: background-color 0.25s ease, transform 0.25s ease;
+}
+
+.ic-icon-badge svg {
+  width: 50%;
+  height: 50%;
+  transition: stroke 0.25s ease;
+}
+
+.ic-icon-badge:hover {
+  background: color-mix(in srgb, var(--pub-accent) 24%, transparent);
+  transform: translateY(-2px);
+}
+
+.ic-icon-badge:hover svg {
+  stroke: var(--pub-accent-light);
+}
+
+/* A badge sitting on the warm-white band needs a fill that still reads as
+   a tint rather than disappearing into the light background. */
+.ic-public-band-light .ic-icon-badge {
+  background: color-mix(in srgb, var(--pub-accent) 16%, white);
+}
+
+/* ---------------------------------------------------------------------
+   Warm-white section band — the one deliberate light section in an
+   otherwise dark page, for rhythm rather than reading as one long scroll.
+   --------------------------------------------------------------------- */
+.ic-public-band-light {
+  background: #f5f3ee;
+  color: #1a1712;
+}
+
+.ic-public-band-light h1,
+.ic-public-band-light h2,
+.ic-public-band-light h3,
+.ic-public-band-light h4,
+.ic-public-band-light h5 {
+  color: #1a1712;
+}
+
+.ic-public-band-light p,
+.ic-public-band-light .text-secondary {
+  color: #5c574c !important;
+}
+
+.ic-public-band-light .ic-public-card {
+  background: #1a1712;
+  border-color: rgba(26, 23, 18, 0.12);
+  color: #f5f3ee;
+}
+
+.ic-public-band-light .ic-public-card p {
+  color: rgba(245, 243, 238, 0.72) !important;
+}
+
+/* Stat card hierarchy: bigger number, small uppercase caption, a thin gold
+   top-border accent — the plain "number in a box" was the most generic
+   element on the page after the hero. */
+.ic-public-stat-card {
+  border-top: 2px solid var(--pub-accent);
+}
+
+.ic-public-stat-value {
+  font-family: var(--pub-font-display);
+  font-size: 2.25rem;
+  line-height: 1;
+}
+
+.ic-public-stat-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Title underline accent used on "why choose us" cards. */
+.ic-public-title-rule {
+  display: block;
+  width: 28px;
+  height: 2px;
+  background: var(--pub-accent);
+  margin: 0.5rem auto 0.75rem;
+  border: none;
+}
+
+/* Card hover/press states — anything that stays a card gets real tactile
+   feedback instead of a static appearance. */
+.ic-public-card-interactive {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.ic-public-card-interactive:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--pub-accent) 55%, transparent);
+  box-shadow: 0 12px 32px -12px color-mix(in srgb, var(--pub-accent) 45%, transparent);
+}
+
+.ic-public-card-interactive:active {
+  transform: scale(0.97);
+  box-shadow: none;
+}
+
+.ic-public-card-highlight {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--pub-accent) 30%, transparent), 0 16px 40px -16px color-mix(in srgb, var(--pub-accent) 55%, transparent);
+}
+
+@media (min-width: 992px) {
+  .ic-public-card-highlight {
+    transform: scale(1.03);
+  }
+}
+
+/* ---------------------------------------------------------------------
+   How It Works flow diagram — a thin connecting line runs behind the
+   nodes on desktop; on mobile the row stacks and the line is dropped
+   rather than forced to wrap awkwardly.
+   --------------------------------------------------------------------- */
+.ic-flow-line {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .ic-flow-line {
+    display: block;
+    position: absolute;
+    top: 24px;
+    left: 12.5%;
+    right: 12.5%;
+    height: 1px;
+    background: var(--pub-border-strong);
+    z-index: 0;
+  }
+}
+
+.ic-flow-node {
+  position: relative;
+  z-index: 1;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--pub-bg);
+  border: 1px solid var(--pub-accent);
+  color: var(--pub-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------------------------------------------------------------------
+   FAQ — flat list, no card. Hairline dividers and typography carry the
+   section; only the expand icon gets a shape.
+   --------------------------------------------------------------------- */
+.ic-faq-category {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pub-text-subtle);
+  margin: 2rem 0 0.5rem;
+}
+
+.ic-faq-category:first-child {
+  margin-top: 0;
+}
+
+.ic-faq-row {
+  border-bottom: 1px solid var(--pub-border);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.ic-faq-row:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.ic-faq-row.is-open {
+  border-bottom-color: var(--pub-accent);
+}
+
+.ic-faq-row-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: inherit;
+  text-align: left;
+  padding: 1.1rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.ic-faq-icon {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--pub-border-strong);
+  color: var(--pub-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.ic-faq-row.is-open .ic-faq-icon {
+  transform: rotate(45deg);
+  border-color: var(--pub-accent);
+}
+
+/* ---------------------------------------------------------------------
+   Contact form — gold focus ring and consistent corner radius already
+   come from .ic-public-form-control; this covers the two-column layout.
+   --------------------------------------------------------------------- */
+.ic-public-contact-info {
+  border-left: 1px solid var(--pub-border);
+}
+
+@media (max-width: 991.98px) {
+  .ic-public-contact-info {
+    border-left: none;
+    border-top: 1px solid var(--pub-border);
+    padding-top: 2rem;
+    margin-top: 0.5rem;
+  }
+}
