@@ -12,14 +12,17 @@ const investmentService = createInvestmentService();
 
 // Stable per-plan colors (not array-position-based) so a given plan is
 // always the same color regardless of which/how-many plans a client holds.
-// Kept within the brand's black/white/gold family — light-to-dark by tier.
+// Ramped by saturation/vibrancy rather than just lightness — the cheapest
+// tier reads as a dull, muted sandstone and the top tier as a bold, vivid
+// gold, so "which plan is bigger" is legible at a glance. Stays within the
+// brand's black/white/gold family — no blue/purple.
 const PLAN_COLORS: Record<string, string> = {
-  Starter: '#f0dfb8',
-  Growth: '#c6a15b',
-  Professional: '#8a6a34',
-  Elite: '#3d2f18',
+  Starter: '#a89b83',
+  Growth: '#c3953f',
+  Professional: '#e0a52e',
+  Elite: '#ffb300',
 };
-const FALLBACK_SHADES = ['#c6a15b', '#8a6a34', '#e4c98a', '#5c4826', '#f0dfb8'];
+const FALLBACK_SHADES = ['#c3953f', '#e0a52e', '#ffb300', '#a89b83', '#8a6a34'];
 
 function colorForPlan(name: string, fallbackIndex: number): string {
   return PLAN_COLORS[name] ?? FALLBACK_SHADES[fallbackIndex % FALLBACK_SHADES.length];
@@ -114,13 +117,25 @@ async function renderPortfolioComposition(userId: string): Promise<void> {
   }
 
   new ApexCharts(container, {
-    chart: { height: 260, type: 'donut' },
+    chart: {
+      height: 260,
+      type: 'donut',
+      animations: {
+        enabled: true,
+        easing: 'easeinout',
+        speed: 700,
+        animateGradually: { enabled: true, delay: 120 },
+        dynamicAnimation: { enabled: true, speed: 350 },
+      },
+    },
     labels: holdings.map((h) => h.name),
     series: holdings.map((h) => Number(h.amount.toFixed(2))),
     colors: holdings.map((h, i) => colorForPlan(h.name, i)),
     legend: { show: false },
     dataLabels: { enabled: false },
-    plotOptions: { pie: { donut: { size: '70%' } } },
+    plotOptions: { pie: { donut: { size: '70%' }, expandOnClick: true } },
+    states: { hover: { filter: { type: 'lighten', value: 0.08 } } },
+    stroke: { width: 2, lineCap: 'round' },
     tooltip: { y: { formatter: (val: number) => formatCurrency(val) } },
   }).render();
 }
