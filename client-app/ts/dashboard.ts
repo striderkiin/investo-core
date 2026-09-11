@@ -27,6 +27,14 @@ async function renderStatTiles(userId: string): Promise<void> {
   setText('statAvailableBalance', formatCurrency(summary.availableBalance));
   setText('statTotalInvested', formatCurrency(summary.totalInvested));
   setText('statTotalEarnings', formatCurrency(summary.totalEarnings));
+
+  // Total balance = available + invested + bonus; surface the bonus portion
+  // so the total doesn't look unexplained when it's non-zero.
+  const captionEl = document.getElementById('statBonusCaption');
+  if (captionEl && summary.bonusBalance > 0) {
+    captionEl.textContent = `Includes ${formatCurrency(summary.bonusBalance)} bonus`;
+    captionEl.style.display = '';
+  }
 }
 
 async function renderMarketOverview(): Promise<void> {

@@ -20,7 +20,6 @@
     <link rel="stylesheet" type="text/css" href="css/animation.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap-select.min.css">
-    <link rel="stylesheet" type="text/css" href="css/swiper-bundle.min.css">
     <link rel="stylesheet" type="text/css" href="css/styles.css">
 
 
@@ -130,15 +129,15 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="bottom">
+                        <a href="crypto.html" class="bottom" style="text-decoration:none;">
                             <div class="image">
                                 <img src="images/item/bot.png" alt="">
                             </div>
                             <div class="content">
-                                <p class="f12-regular text-White">For more features</p>
-                                <p class="f12-bold text-White">Upgrade to Pro</p>
+                                <p class="f12-regular text-White">Want higher returns?</p>
+                                <p class="f12-bold text-White">Upgrade your plan</p>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 </div>
                 <!-- /section-menu-left -->
@@ -364,38 +363,37 @@
                                                 </div>
                                             </div>
                                             <div class="mb-32">
-                                                <div class="swiper tf-sw-card ">
-                                                    <div class="swiper-wrapper">
-                                                        <div class="swiper-slide">
-                                                            <div class="my-card-item bg-1">
-                                                                <div class="number">
-                                                                    <div class="f12-medium text-GrayDark">Total Balance</div>
-                                                                    <div class="label-01" id="walletTotalBalance">$0.00</div>
-                                                                </div>
+                                                <div class="row g-3">
+                                                    <div class="col-6 col-lg-3">
+                                                        <div class="my-card-item bg-1">
+                                                            <div class="number">
+                                                                <div class="f12-medium text-GrayDark">Total Balance</div>
+                                                                <div class="label-01" id="walletTotalBalance">$0.00</div>
+                                                                <div class="f12-medium text-GrayDark" id="walletBonusCaption" style="display:none;"></div>
                                                             </div>
                                                         </div>
-                                                        <div class="swiper-slide">
-                                                            <div class="my-card-item bg-2">
-                                                                <div class="number">
-                                                                    <div class="f12-medium text-GrayDark">Available Balance</div>
-                                                                    <div class="label-01" id="walletAvailableBalance">$0.00</div>
-                                                                </div>
+                                                    </div>
+                                                    <div class="col-6 col-lg-3">
+                                                        <div class="my-card-item bg-2">
+                                                            <div class="number">
+                                                                <div class="f12-medium text-GrayDark">Available Balance</div>
+                                                                <div class="label-01" id="walletAvailableBalance">$0.00</div>
                                                             </div>
                                                         </div>
-                                                        <div class="swiper-slide">
-                                                            <div class="my-card-item bg-3">
-                                                                <div class="number">
-                                                                    <div class="f12-medium text-GrayDark">Total Invested</div>
-                                                                    <div class="label-01" id="walletTotalInvested">$0.00</div>
-                                                                </div>
+                                                    </div>
+                                                    <div class="col-6 col-lg-3">
+                                                        <div class="my-card-item bg-3">
+                                                            <div class="number">
+                                                                <div class="f12-medium text-GrayDark">Total Invested</div>
+                                                                <div class="label-01" id="walletTotalInvested">$0.00</div>
                                                             </div>
                                                         </div>
-                                                        <div class="swiper-slide">
-                                                            <div class="my-card-item bg-4">
-                                                                <div class="number">
-                                                                    <div class="f12-medium text-GrayDark">Total Earnings</div>
-                                                                    <div class="label-01 text-White" id="walletTotalEarnings">$0.00</div>
-                                                                </div>
+                                                    </div>
+                                                    <div class="col-6 col-lg-3">
+                                                        <div class="my-card-item bg-4">
+                                                            <div class="number">
+                                                                <div class="f12-medium text-GrayDark">Total Earnings</div>
+                                                                <div class="label-01 text-White" id="walletTotalEarnings">$0.00</div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -473,8 +471,6 @@
     <!-- Javascript -->
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script src="js/swiper-bundle.min.js"></script>
-    <script src="js/carousel.js"></script>
     <script src="js/bootstrap-select.min.js"></script>
     <script src="js/apexcharts/apexcharts.js"></script>
     <!-- <script src="js/switcher.js"></script> -->

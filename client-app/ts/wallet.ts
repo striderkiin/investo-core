@@ -22,6 +22,14 @@ async function renderBalances(userId: string): Promise<void> {
   setText('walletAvailableBalance', formatCurrency(summary.availableBalance));
   setText('walletTotalInvested', formatCurrency(summary.totalInvested));
   setText('walletTotalEarnings', formatCurrency(summary.totalEarnings));
+
+  // Total balance = available + invested + bonus; surface the bonus portion
+  // so the total doesn't look unexplained when it's non-zero.
+  const captionEl = document.getElementById('walletBonusCaption');
+  if (captionEl && summary.bonusBalance > 0) {
+    captionEl.textContent = `Includes ${formatCurrency(summary.bonusBalance)} bonus`;
+    captionEl.style.display = '';
+  }
 }
 
 async function renderMarketChart(): Promise<void> {

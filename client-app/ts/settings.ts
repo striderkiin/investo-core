@@ -1,9 +1,15 @@
 import { requireClientSession } from './shell';
 import { createSecurityService } from '../../src/services/api/securityService';
 import { createAuthService } from '../../src/services/auth/authService';
+import { createUserService } from '../../src/services/api/userService';
+import { createReferralService } from '../../src/services/api/referralService';
+import type { Profile } from '../../src/types/database';
+import { formatCurrency } from './format';
 
 const securityService = createSecurityService();
 const authService = createAuthService();
+const userService = createUserService();
+const referralService = createReferralService();
 
 let enrolledFactorId: string | null = null;
 
@@ -123,12 +129,52 @@ function wirePasswordReset(): void {
   });
 }
 
+function renderProfile(profile: Profile): void {
+  const nameInput = document.getElementById('profileFullNameInput') as HTMLInputElement | null;
+  const emailInput = document.getElementById('profileEmailInput') as HTMLInputElement | null;
+  if (nameInput) nameInput.value = profile.fullName;
+  if (emailInput) emailInput.value = profile.email;
+
+  setText('profileAccountStatus', profile.accountStatus.replace('_', ' '));
+  setText('profileMemberSince', new Date(profile.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }));
+}
+
+function wireProfileSave(profile: Profile): void {
+  const button = document.getElementById('profileSaveButton');
+  const nameInput = document.getElementById('profileFullNameInput') as HTMLInputElement | null;
+  if (!button || !nameInput) return;
+
+  button.addEventListener('click', () => {
+    const fullName = nameInput.value.trim();
+    if (!fullName) return;
+    void userService.updateProfile(profile.id, { fullName }).then(() => {
+      window.alert('Profile updated.');
+    });
+  });
+}
+
+async function renderReferral(profile: Profile): Promise<void> {
+  const linkInput = document.getElementById('referralLinkInput') as HTMLInputElement | null;
+  if (linkInput) linkInput.value = `${window.location.origin}/register?ref=${profile.referralCode}`;
+
+  const copyButton = document.getElementById('referralCopyButton');
+  copyButton?.addEventListener('click', () => {
+    if (linkInput) void navigator.clipboard.writeText(linkInput.value);
+  });
+
+  const [referrals, earnings] = await Promise.all([referralService.listMyReferrals(profile.id), referralService.getTotalEarnings(profile.id)]);
+  setText('referralCount', String(referrals.length));
+  setText('referralEarnings', formatCurrency(earnings));
+}
+
 async function main() {
   const profile = await requireClientSession();
+  renderProfile(profile);
+  wireProfileSave(profile);
   wireTwoFa();
   wireSessionManagement();
   wirePasswordReset();
-  await Promise.all([loadTwoFaStatus(), loadSessions(profile.id)]);
+  await Promise.all([loadTwoFaStatus(), loadSessions(profile.id), renderReferral(profile)]);
 }
 
 void main();

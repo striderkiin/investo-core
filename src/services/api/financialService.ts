@@ -19,6 +19,7 @@ export interface PortfolioSummary {
   totalInvested: number;
   totalEarnings: number;
   pendingWithdrawals: number;
+  bonusBalance: number;
 }
 
 export function createFinancialService(client: SupabaseClient = getSupabaseClient()) {
@@ -66,7 +67,7 @@ export function createFinancialService(client: SupabaseClient = getSupabaseClien
     async getPortfolioSummary(userId: string): Promise<PortfolioSummary> {
       const [{ data: profile, error: profileError }, { data: investments, error: investmentsError }, { data: withdrawals, error: withdrawalsError }] =
         await Promise.all([
-          client.from('profiles').select('total_balance, available_balance, invested_balance').eq('id', userId).single(),
+          client.from('profiles').select('total_balance, available_balance, invested_balance, bonus_balance').eq('id', userId).single(),
           client.from('investments').select('current_earnings').eq('user_id', userId),
           client.from('withdrawals').select('amount, status').eq('user_id', userId),
         ]);
@@ -86,6 +87,7 @@ export function createFinancialService(client: SupabaseClient = getSupabaseClien
         totalInvested: Number(profile.invested_balance),
         totalEarnings,
         pendingWithdrawals,
+        bonusBalance: Number(profile.bonus_balance),
       };
     },
   };
