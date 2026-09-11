@@ -59,6 +59,14 @@ these files for a *different* project.
   Requires the `pg_cron` extension to be available on your project — if the
   `create extension` line fails, enable it first via Dashboard → Database →
   Extensions → pg_cron.
+- **010_schema_bootstrap_social_proof_demo_ticker.sql** — migration 0022,
+  adds a standalone "Demo Activity Ticker": a `demo_mode_enabled` toggle on
+  `social_proof_settings` plus a `social_proof_demo_activities` table of
+  canned, fictional marketing messages, seeded with 52 starter rows. Unlike
+  the real Social Proof event system (006), this is anon-readable by design
+  since it renders on the logged-out landing page too — it's explicit
+  operator-authored placeholder content, never real user activity. Run
+  AFTER 006.
 
 **Legal pages**: Terms, Privacy, Risk Disclosure, and Refund Policy
 (`src/features/public/pages/{Terms,Privacy,RiskDisclosure,RefundPolicy}Page.tsx`)

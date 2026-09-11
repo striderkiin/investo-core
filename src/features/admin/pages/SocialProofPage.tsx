@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createSocialProofService } from '../../../services/api/socialProofService';
-import type { SocialProofEvent, SocialProofMetric, SocialProofSettings, SocialProofTemplate } from '../../../types/database';
+import type { SocialProofDemoActivity, SocialProofDemoEventType, SocialProofEvent, SocialProofMetric, SocialProofSettings, SocialProofTemplate } from '../../../types/database';
 import { LoadingScreen } from '../../../components/common/LoadingScreen';
 import { ErrorState } from '../../../components/common/ErrorState';
 import { useToast } from '../../../hooks/useToast';
@@ -18,6 +18,15 @@ const EVENT_TYPE_LABELS: Record<string, string> = {
 };
 const ALL_EVENT_TYPES = Object.keys(EVENT_TYPE_LABELS);
 
+const DEMO_EVENT_TYPES: SocialProofDemoEventType[] = ['deposit', 'investment', 'withdrawal', 'market', 'account'];
+const DEMO_EVENT_TYPE_LABELS: Record<SocialProofDemoEventType, string> = {
+  deposit: 'Deposit',
+  investment: 'Investment',
+  withdrawal: 'Withdrawal',
+  market: 'Market',
+  account: 'Account',
+};
+
 function toggleInArray(list: string[], value: string): string[] {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
 }
@@ -30,6 +39,9 @@ export function SocialProofPage() {
   const [settings, setSettings] = useState<SocialProofSettings | null>(null);
   const [templates, setTemplates] = useState<SocialProofTemplate[]>([]);
   const [metrics, setMetrics] = useState<SocialProofMetric[]>([]);
+  const [demoActivities, setDemoActivities] = useState<SocialProofDemoActivity[]>([]);
+  const [newDemoMessage, setNewDemoMessage] = useState('');
+  const [newDemoType, setNewDemoType] = useState<SocialProofDemoEventType>('deposit');
   const [previewEvent, setPreviewEvent] = useState<SocialProofEvent | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -38,10 +50,16 @@ export function SocialProofPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const [s, t, m] = await Promise.all([socialProofService.getSettings(), socialProofService.listTemplates(), socialProofService.getAnalytics()]);
+      const [s, t, m, d] = await Promise.all([
+        socialProofService.getSettings(),
+        socialProofService.listTemplates(),
+        socialProofService.getAnalytics(),
+        socialProofService.listAllDemoActivities(),
+      ]);
       setSettings(s);
       setTemplates(t);
       setMetrics(m);
+      setDemoActivities(d);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load social proof settings');
     } finally {
@@ -69,6 +87,48 @@ export function SocialProofPage() {
       showSuccess('Template updated.');
     } catch (err) {
       showError(err instanceof Error ? err.message : 'Failed to save template');
+    }
+  }
+
+  async function saveDemoMessage(id: string, message: string) {
+    try {
+      const updated = await socialProofService.updateDemoActivity(id, { message });
+      setDemoActivities((prev) => prev.map((a) => (a.id === id ? updated : a)));
+      showSuccess('Activity updated.');
+    } catch (err) {
+      showError(err instanceof Error ? err.message : 'Failed to save activity');
+    }
+  }
+
+  async function toggleDemoActive(id: string, isActive: boolean) {
+    try {
+      const updated = await socialProofService.updateDemoActivity(id, { isActive });
+      setDemoActivities((prev) => prev.map((a) => (a.id === id ? updated : a)));
+    } catch (err) {
+      showError(err instanceof Error ? err.message : 'Failed to update activity');
+    }
+  }
+
+  async function deleteDemoActivityRow(id: string) {
+    if (!window.confirm('Remove this activity from the ticker pool?')) return;
+    try {
+      await socialProofService.deleteDemoActivity(id);
+      setDemoActivities((prev) => prev.filter((a) => a.id !== id));
+    } catch (err) {
+      showError(err instanceof Error ? err.message : 'Failed to delete activity');
+    }
+  }
+
+  async function addDemoActivity() {
+    const message = newDemoMessage.trim();
+    if (!message) return;
+    try {
+      const created = await socialProofService.createDemoActivity(newDemoType, message);
+      setDemoActivities((prev) => [...prev, created]);
+      setNewDemoMessage('');
+      showSuccess('Activity added.');
+    } catch (err) {
+      showError(err instanceof Error ? err.message : 'Failed to add activity');
     }
   }
 
@@ -113,6 +173,87 @@ export function SocialProofPage() {
   return (
     <div className="d-flex flex-column gap-4">
       <h2 className="h4 mb-0">Social Proof &amp; Activity</h2>
+
+      <div className="card ic-card border-primary">
+        <div className="card-body">
+          <div className="d-flex justify-content-between align-items-center mb-2">
+            <h3 className="h6 mb-0">Demo Activity Ticker</h3>
+            <span className={`badge text-bg-${settings.demoModeEnabled ? 'success' : 'secondary'}`}>
+              {settings.demoModeEnabled ? '● ON — Visible to all visitors' : '● OFF'}
+            </span>
+          </div>
+          <p className="small text-secondary">
+            A rotating toast of canned, fictional activity messages (not tied to real users) for marketing purposes. Shown
+            everywhere — the public landing page, the client dashboard, and this admin panel — independent of the real
+            production Social Proof system below. Uses the same Popup Position setting.
+          </p>
+          <div className="form-check form-switch mb-3">
+            <input
+              className="form-check-input"
+              type="checkbox"
+              role="switch"
+              id="spDemoEnabled"
+              checked={settings.demoModeEnabled}
+              disabled={!canManage}
+              onChange={(e) => persist({ demoModeEnabled: e.target.checked })}
+            />
+            <label className="form-check-label" htmlFor="spDemoEnabled">
+              {settings.demoModeEnabled ? 'ON' : 'OFF'}
+            </label>
+          </div>
+
+          <div className="d-flex flex-column gap-2 mb-3" style={{ maxHeight: 320, overflowY: 'auto' }}>
+            {demoActivities.map((activity) => (
+              <div className="d-flex gap-2 align-items-center" key={activity.id}>
+                <span className="badge text-bg-secondary text-capitalize" style={{ minWidth: 90 }}>
+                  {DEMO_EVENT_TYPE_LABELS[activity.eventType]}
+                </span>
+                <input
+                  type="text"
+                  className="form-control form-control-sm"
+                  defaultValue={activity.message}
+                  disabled={!canManage}
+                  onBlur={(e) => e.target.value !== activity.message && saveDemoMessage(activity.id, e.target.value)}
+                />
+                <div className="form-check form-switch mb-0" title="Active in rotation">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    checked={activity.isActive}
+                    disabled={!canManage}
+                    onChange={(e) => toggleDemoActive(activity.id, e.target.checked)}
+                  />
+                </div>
+                <button type="button" className="btn btn-sm btn-outline-danger" disabled={!canManage} onClick={() => deleteDemoActivityRow(activity.id)}>
+                  <i className="bi bi-trash" aria-hidden="true" />
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div className="d-flex gap-2">
+            <select className="form-select form-select-sm" style={{ maxWidth: 140 }} value={newDemoType} disabled={!canManage} onChange={(e) => setNewDemoType(e.target.value as SocialProofDemoEventType)}>
+              {DEMO_EVENT_TYPES.map((type) => (
+                <option key={type} value={type}>
+                  {DEMO_EVENT_TYPE_LABELS[type]}
+                </option>
+              ))}
+            </select>
+            <input
+              type="text"
+              className="form-control form-control-sm"
+              placeholder="e.g. Jordan P. just deposited $1,000"
+              value={newDemoMessage}
+              disabled={!canManage}
+              onChange={(e) => setNewDemoMessage(e.target.value)}
+            />
+            <button type="button" className="btn btn-sm btn-primary" disabled={!canManage || !newDemoMessage.trim()} onClick={addDemoActivity}>
+              Add
+            </button>
+          </div>
+        </div>
+      </div>
 
       <div className="card ic-card">
         <div className="card-body">

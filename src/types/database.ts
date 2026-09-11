@@ -295,6 +295,7 @@ export type SocialProofBroadcastScope = 'production' | 'client_test';
 export interface SocialProofSettings {
   id: string;
   enabled: boolean;
+  demoModeEnabled: boolean;
   testModeEnabled: boolean;
   popupPosition: SocialProofPopupPosition;
   displayDurationSeconds: number;
@@ -315,6 +316,18 @@ export interface SocialProofTemplate {
   id: string;
   eventType: string;
   template: string;
+  updatedAt: string;
+}
+
+export type SocialProofDemoEventType = 'deposit' | 'investment' | 'withdrawal' | 'market' | 'account';
+
+export interface SocialProofDemoActivity {
+  id: string;
+  eventType: SocialProofDemoEventType;
+  message: string;
+  sortOrder: number;
+  isActive: boolean;
+  createdAt: string;
   updatedAt: string;
 }
 

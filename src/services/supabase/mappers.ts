@@ -29,6 +29,8 @@ import type {
   Referral,
   ReferralReward,
   SocialProofBroadcastScope,
+  SocialProofDemoActivity,
+  SocialProofDemoEventType,
   SocialProofEvent,
   SocialProofEventSource,
   SocialProofMetric,
@@ -545,6 +547,7 @@ export function mapMarketOverrideHistoryRow(row: MarketOverrideHistoryRow): Mark
 export interface SocialProofSettingsRow {
   id: string;
   enabled: boolean;
+  demo_mode_enabled: boolean;
   test_mode_enabled: boolean;
   popup_position: SocialProofPopupPosition;
   display_duration_seconds: number;
@@ -565,6 +568,7 @@ export function mapSocialProofSettingsRow(row: SocialProofSettingsRow): SocialPr
   return {
     id: row.id,
     enabled: row.enabled,
+    demoModeEnabled: row.demo_mode_enabled,
     testModeEnabled: row.test_mode_enabled,
     popupPosition: row.popup_position,
     displayDurationSeconds: row.display_duration_seconds,
@@ -591,6 +595,28 @@ export interface SocialProofTemplateRow {
 
 export function mapSocialProofTemplateRow(row: SocialProofTemplateRow): SocialProofTemplate {
   return { id: row.id, eventType: row.event_type, template: row.template, updatedAt: row.updated_at };
+}
+
+export interface SocialProofDemoActivityRow {
+  id: string;
+  event_type: SocialProofDemoEventType;
+  message: string;
+  sort_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export function mapSocialProofDemoActivityRow(row: SocialProofDemoActivityRow): SocialProofDemoActivity {
+  return {
+    id: row.id,
+    eventType: row.event_type,
+    message: row.message,
+    sortOrder: row.sort_order,
+    isActive: row.is_active,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
 }
 
 export interface SocialProofEventRow {

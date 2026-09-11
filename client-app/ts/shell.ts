@@ -4,6 +4,7 @@ import { createNotificationService } from '../../src/services/api/notificationSe
 import { createSupportService } from '../../src/services/api/supportService';
 import type { Profile, SupportTicketStatus } from '../../src/types/database';
 import { formatRelativeTime } from './format';
+import { mountDemoTicker } from './demoTicker';
 
 const authService = createAuthService();
 const notificationService = createNotificationService();
@@ -49,6 +50,7 @@ export async function requireClientSession(): Promise<Profile> {
   populateHeader(profile);
   wireLogout();
   void populateHeaderWidgets(profile);
+  mountDemoTicker();
   return profile;
 }
 

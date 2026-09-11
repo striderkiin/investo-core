@@ -1,18 +1,20 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { getSupabaseClient } from '../supabase/client';
 import {
+  mapSocialProofDemoActivityRow,
   mapSocialProofEventRow,
   mapSocialProofMetricRow,
   mapSocialProofSettingsRow,
   mapSocialProofTemplateRow,
 } from '../supabase/mappers';
 import type {
+  SocialProofDemoActivityRow,
   SocialProofEventRow,
   SocialProofMetricRow,
   SocialProofSettingsRow,
   SocialProofTemplateRow,
 } from '../supabase/mappers';
-import type { SocialProofEvent, SocialProofMetric, SocialProofSettings, SocialProofTemplate } from '../../types/database';
+import type { SocialProofDemoActivity, SocialProofDemoEventType, SocialProofEvent, SocialProofMetric, SocialProofSettings, SocialProofTemplate } from '../../types/database';
 
 export function createSocialProofService(client: SupabaseClient = getSupabaseClient()) {
   return {
@@ -25,6 +27,7 @@ export function createSocialProofService(client: SupabaseClient = getSupabaseCli
     async updateSettings(id: string, updates: Partial<Omit<SocialProofSettings, 'id' | 'updatedAt'>>): Promise<SocialProofSettings> {
       const payload: Record<string, unknown> = {};
       if (updates.enabled !== undefined) payload.enabled = updates.enabled;
+      if (updates.demoModeEnabled !== undefined) payload.demo_mode_enabled = updates.demoModeEnabled;
       if (updates.testModeEnabled !== undefined) payload.test_mode_enabled = updates.testModeEnabled;
       if (updates.popupPosition !== undefined) payload.popup_position = updates.popupPosition;
       if (updates.displayDurationSeconds !== undefined) payload.display_duration_seconds = updates.displayDurationSeconds;
@@ -54,6 +57,49 @@ export function createSocialProofService(client: SupabaseClient = getSupabaseCli
       const { data, error } = await client.from('social_proof_templates').update({ template }).eq('id', id).select('*').single();
       if (error) throw error;
       return mapSocialProofTemplateRow(data as SocialProofTemplateRow);
+    },
+
+    /** Active-only pool for the public/client-facing demo ticker. */
+    async listDemoActivities(): Promise<SocialProofDemoActivity[]> {
+      const { data, error } = await client
+        .from('social_proof_demo_activities')
+        .select('*')
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true });
+      if (error) throw error;
+      return (data as SocialProofDemoActivityRow[]).map(mapSocialProofDemoActivityRow);
+    },
+
+    /** Full pool (including inactive) for the admin management list. */
+    async listAllDemoActivities(): Promise<SocialProofDemoActivity[]> {
+      const { data, error } = await client.from('social_proof_demo_activities').select('*').order('sort_order', { ascending: true });
+      if (error) throw error;
+      return (data as SocialProofDemoActivityRow[]).map(mapSocialProofDemoActivityRow);
+    },
+
+    async createDemoActivity(eventType: SocialProofDemoEventType, message: string): Promise<SocialProofDemoActivity> {
+      const { data, error } = await client
+        .from('social_proof_demo_activities')
+        .insert({ event_type: eventType, message, sort_order: 0 })
+        .select('*')
+        .single();
+      if (error) throw error;
+      return mapSocialProofDemoActivityRow(data as SocialProofDemoActivityRow);
+    },
+
+    async updateDemoActivity(id: string, updates: Partial<{ message: string; isActive: boolean }>): Promise<SocialProofDemoActivity> {
+      const payload: Record<string, unknown> = {};
+      if (updates.message !== undefined) payload.message = updates.message;
+      if (updates.isActive !== undefined) payload.is_active = updates.isActive;
+
+      const { data, error } = await client.from('social_proof_demo_activities').update(payload).eq('id', id).select('*').single();
+      if (error) throw error;
+      return mapSocialProofDemoActivityRow(data as SocialProofDemoActivityRow);
+    },
+
+    async deleteDemoActivity(id: string): Promise<void> {
+      const { error } = await client.from('social_proof_demo_activities').delete().eq('id', id);
+      if (error) throw error;
     },
 
     /** Recent events for the client-facing popup feed — production + any active client_test broadcasts. */
