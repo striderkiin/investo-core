@@ -5,6 +5,8 @@ import { createSupportService } from '../../src/services/api/supportService';
 import type { Profile, SupportTicketStatus } from '../../src/types/database';
 import { formatRelativeTime } from './format';
 import { mountDemoTicker } from './demoTicker';
+import { mountSocialProofPopup } from './socialProofPopup';
+import { applyMaintenanceGuard } from './maintenanceGuard';
 
 const authService = createAuthService();
 const notificationService = createNotificationService();
@@ -47,10 +49,16 @@ export async function requireClientSession(): Promise<Profile> {
     throw new Error('Not a client account');
   }
 
+  const blocked = await applyMaintenanceGuard();
+  if (blocked) {
+    throw new Error('Client access restricted for maintenance');
+  }
+
   populateHeader(profile);
   wireLogout();
   void populateHeaderWidgets(profile);
   mountDemoTicker();
+  mountSocialProofPopup();
   return profile;
 }
 
