@@ -3,11 +3,15 @@ import type { FormEvent } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { createContactService } from '../../../services/api/contactService';
+import { createInvestmentService } from '../../../services/api/investmentService';
+import type { InvestmentPlan } from '../../../types/database';
 import { useAuth } from '../../../hooks/useAuth';
 import { useBranding } from '../../../hooks/useBranding';
 import { PublicSection, staggerContainer, staggerItem } from '../../../components/public/PublicSection';
 
 const contactService = createContactService();
+const investmentService = createInvestmentService();
+const planAmountFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 
 const BENEFITS = [
   { icon: 'bi-graph-up-arrow', title: 'Live Market Data', text: 'Real-time charts and up-to-the-minute pricing.' },
@@ -26,22 +30,6 @@ const BEST_FEATURES = [
   { icon: 'bi-lock', title: 'Security First', text: 'Every balance-affecting action runs through server-side, audited logic, never trusted from the browser.' },
   { icon: 'bi-eye', title: 'Transparency', text: 'Clear, real-time status on every deposit, withdrawal, and investment, with no black boxes.' },
   { icon: 'bi-lightning-charge', title: 'Built for Scale', text: 'A modular architecture designed to grow from a handful of investors to a full platform.' },
-];
-
-type PricingTier = {
-  name: string;
-  rate: string;
-  rateLabel: string;
-  minAmount: string;
-  maxAmount: string;
-  durationDays: number;
-  highlighted?: boolean;
-};
-
-const PRICING_TIERS: PricingTier[] = [
-  { name: 'Starter', rate: '1.2%', rateLabel: 'daily', minAmount: '$100', maxAmount: '$999', durationDays: 30 },
-  { name: 'Growth', rate: '1.8%', rateLabel: 'daily', minAmount: '$1,000', maxAmount: '$4,999', durationDays: 60, highlighted: true },
-  { name: 'Elite', rate: '2.5%', rateLabel: 'daily', minAmount: '$5,000', maxAmount: '$25,000', durationDays: 90 },
 ];
 
 const FAQS = [
@@ -222,6 +210,8 @@ function ContactSection() {
 export function LandingPage() {
   const { branding } = useBranding();
   const location = useLocation();
+  const [plans, setPlans] = useState<InvestmentPlan[]>([]);
+  const [plansLoading, setPlansLoading] = useState(true);
 
   useEffect(() => {
     if (!location.hash) return;
@@ -231,6 +221,14 @@ export function LandingPage() {
     });
     return () => cancelAnimationFrame(raf);
   }, [location.hash]);
+
+  useEffect(() => {
+    investmentService
+      .listPlans()
+      .then(setPlans)
+      .catch((err) => console.error('Failed to load investment plans', err))
+      .finally(() => setPlansLoading(false));
+  }, []);
 
   return (
     <>
@@ -341,33 +339,43 @@ export function LandingPage() {
             <h2 className="h3 mb-0">Pick the plan that fits your goals</h2>
           </div>
 
-          <motion.div className="row g-4 justify-content-center" variants={staggerContainer} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-80px' }}>
-            {PRICING_TIERS.map((tier) => (
-              <motion.div className="col-12 col-md-6 col-lg-4" key={tier.name} variants={staggerItem}>
-                <div className={`ic-public-card h-100 p-4 d-flex flex-column ${tier.highlighted ? 'ic-public-card-highlight' : ''}`}>
-                  {tier.highlighted && <span className="ic-public-badge align-self-start mb-2">Most Popular</span>}
-                  <h3 className="h5 mb-3">{tier.name}</h3>
-                  <div className="mb-3">
-                    <span className="display-6 ic-public-accent-text" style={{ fontFamily: 'var(--pub-font-display)' }}>
-                      {tier.rate}
-                    </span>
-                    <span className="small"> / {tier.rateLabel}</span>
-                  </div>
-                  <ul className="list-unstyled small mb-4 flex-grow-1">
-                    <li className="mb-1">
-                      <i className="bi bi-check2" style={{ color: 'var(--pub-accent)' }} aria-hidden="true" /> {tier.minAmount} to {tier.maxAmount}
-                    </li>
-                    <li className="mb-1">
-                      <i className="bi bi-check2" style={{ color: 'var(--pub-accent)' }} aria-hidden="true" /> {tier.durationDays}-day duration
-                    </li>
-                  </ul>
-                  <Link to="/register" className="btn ic-public-btn-outline mt-auto">
-                    Get Started
-                  </Link>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
+          {plansLoading ? (
+            <p className="text-center small mb-0">Loading plans…</p>
+          ) : plans.length === 0 ? (
+            <p className="text-center small mb-0">Plans are being updated. Check back shortly.</p>
+          ) : (
+            <motion.div className="row g-4 justify-content-center" variants={staggerContainer} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-80px' }}>
+              {plans.map((plan, index) => {
+                const highlighted = index === 1;
+                return (
+                  <motion.div className="col-12 col-md-6 col-lg-3" key={plan.id} variants={staggerItem}>
+                    <div className={`ic-public-card h-100 p-4 d-flex flex-column ${highlighted ? 'ic-public-card-highlight' : ''}`}>
+                      {highlighted && <span className="ic-public-badge align-self-start mb-2">Most Popular</span>}
+                      <h3 className="h5 mb-3">{plan.name}</h3>
+                      <div className="mb-3">
+                        <span className="display-6 ic-public-accent-text" style={{ fontFamily: 'var(--pub-font-display)' }}>
+                          {plan.rate}%
+                        </span>
+                        <span className="small"> / {plan.rateType}</span>
+                      </div>
+                      <ul className="list-unstyled small mb-4 flex-grow-1">
+                        <li className="mb-1">
+                          <i className="bi bi-check2" style={{ color: 'var(--pub-accent)' }} aria-hidden="true" /> {planAmountFormatter.format(plan.minAmount)} to{' '}
+                          {planAmountFormatter.format(plan.maxAmount)}
+                        </li>
+                        <li className="mb-1">
+                          <i className="bi bi-check2" style={{ color: 'var(--pub-accent)' }} aria-hidden="true" /> {plan.durationDays}-day duration
+                        </li>
+                      </ul>
+                      <Link to="/register" className="btn ic-public-btn-outline mt-auto">
+                        Get Started
+                      </Link>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          )}
         </div>
       </PublicSection>
 
