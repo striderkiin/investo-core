@@ -446,7 +446,7 @@
                                         </div>
                                         <div class="right">
                                             <div class="account-security-item d-block mb-24">
-                                                <div class="content-item mb-24">
+                                                <div class="content-item">
                                                     <div class="icon flex-shrink-0">
                                                         <i class="icon-mouse-square"></i>
                                                     </div>
@@ -456,25 +456,6 @@
                                                     </div>
                                                     <a href="javascript:void(0);" class="flex-shrink-0 f12-medium" id="terminateSessionsButton">Sign out others</a>
                                                 </div>
-                                                <div class="content-item">
-                                                    <div class="icon flex-shrink-0">
-                                                        <i class="icon-login"></i>
-                                                    </div>
-                                                    <div class="flex-grow">
-                                                        <div class="mb-6 f12-bold">Login Password</div>
-                                                        <div class="f12-regular text-GrayDark">Change the password used to sign in</div>
-                                                    </div>
-                                                    <a href="javascript:void(0);" class="flex-shrink-0 f12-medium" id="passwordResetToggle">Reset</a>
-                                                </div>
-                                                <form id="passwordResetForm" style="display:none;" class="mt-16">
-                                                    <div class="mb-8">
-                                                        <input type="password" id="newPasswordInput" class="form-control" placeholder="New password" minlength="8">
-                                                    </div>
-                                                    <div class="mb-8">
-                                                        <input type="password" id="confirmPasswordInput" class="form-control" placeholder="Confirm new password">
-                                                    </div>
-                                                    <button type="submit" class="tf-button f12-bold">Update Password</button>
-                                                </form>
                                             </div>
                                             <div class="account-security-item d-block mb-24">
                                                 <div class="content-item mb-16">
@@ -492,12 +473,41 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="wg-box style-1 p-32 gap16 bg-Gainsboro shadow-none mb-23">
+                                        <h5>Change Password</h5>
+                                        <p class="f12-regular text-GrayDark mb-16">Update the password you use to sign in.</p>
+                                        <form id="passwordResetForm" style="max-width:360px;">
+                                            <div class="mb-8">
+                                                <label class="f12-bold mb-6 d-block">New password</label>
+                                                <input type="password" id="newPasswordInput" class="form-control" placeholder="New password" minlength="8">
+                                            </div>
+                                            <div class="mb-16">
+                                                <label class="f12-bold mb-6 d-block">Confirm new password</label>
+                                                <input type="password" id="confirmPasswordInput" class="form-control" placeholder="Confirm new password">
+                                            </div>
+                                            <button type="submit" class="tf-button f12-bold">Update Password</button>
+                                        </form>
+                                    </div>
+                                    <div class="wg-box style-1 p-32 gap16 bg-Gainsboro shadow-none mb-23">
+                                        <h5 class="text-Salmon">Delete Account</h5>
+                                        <p class="f12-regular text-GrayDark mb-16">
+                                            Closing your account is permanent. Because it can involve active investments and balances, a team member reviews and confirms every request rather than deleting it instantly. Submitting this opens a support ticket — we'll follow up there.
+                                        </p>
+                                        <div id="deleteAccountForm">
+                                            <div class="mb-16" style="max-width:480px;">
+                                                <label class="f12-bold mb-6 d-block">Reason (optional)</label>
+                                                <textarea id="deleteAccountReason" class="form-control" rows="2" placeholder="Let us know why you're leaving (optional)"></textarea>
+                                            </div>
+                                            <button type="button" id="deleteAccountButton" class="tf-button f12-bold" style="background:var(--Salmon); border-color:var(--Salmon); color:white;">Request Account Deletion</button>
+                                        </div>
+                                        <p class="f12-regular text-GrayDark mt-16" id="deleteAccountConfirmation" style="display:none;">Your deletion request has been submitted. Our support team will reach out to confirm next steps.</p>
+                                    </div>
                                 </div>
                             </div>
                             <!-- /main-content-wrap -->
                         </div>
                         <!-- /main-content-wrap -->
-                        
+
                     </div>
                     <!-- /main-content -->
                 </div>

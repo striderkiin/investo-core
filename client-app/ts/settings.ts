@@ -3,6 +3,7 @@ import { createSecurityService } from '../../src/services/api/securityService';
 import { createAuthService } from '../../src/services/auth/authService';
 import { createUserService } from '../../src/services/api/userService';
 import { createReferralService } from '../../src/services/api/referralService';
+import { createSupportService } from '../../src/services/api/supportService';
 import type { Profile } from '../../src/types/database';
 import { formatCurrency } from './format';
 
@@ -10,6 +11,7 @@ const securityService = createSecurityService();
 const authService = createAuthService();
 const userService = createUserService();
 const referralService = createReferralService();
+const supportService = createSupportService();
 
 let enrolledFactorId: string | null = null;
 
@@ -100,15 +102,10 @@ function wireSessionManagement(): void {
 }
 
 function wirePasswordReset(): void {
-  const toggle = document.getElementById('passwordResetToggle');
   const form = document.getElementById('passwordResetForm') as HTMLFormElement | null;
   const newPasswordInput = document.getElementById('newPasswordInput') as HTMLInputElement | null;
   const confirmPasswordInput = document.getElementById('confirmPasswordInput') as HTMLInputElement | null;
-  if (!toggle || !form || !newPasswordInput || !confirmPasswordInput) return;
-
-  toggle.addEventListener('click', () => {
-    form.style.display = form.style.display === 'block' ? 'none' : 'block';
-  });
+  if (!form || !newPasswordInput || !confirmPasswordInput) return;
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -123,9 +120,28 @@ function wirePasswordReset(): void {
     void authService.updatePassword(newPasswordInput.value).then(() => {
       newPasswordInput.value = '';
       confirmPasswordInput.value = '';
-      form.style.display = 'none';
       window.alert('Password updated.');
     });
+  });
+}
+
+function wireDeleteAccount(profile: Profile): void {
+  const form = document.getElementById('deleteAccountForm');
+  const reasonInput = document.getElementById('deleteAccountReason') as HTMLTextAreaElement | null;
+  const button = document.getElementById('deleteAccountButton');
+  const confirmation = document.getElementById('deleteAccountConfirmation');
+  if (!form || !button || !confirmation) return;
+
+  button.addEventListener('click', () => {
+    if (!window.confirm('Are you sure you want to request deletion of your account? This will notify our support team.')) return;
+
+    const reason = reasonInput?.value.trim() || 'I would like to request deletion of my account.';
+    void supportService
+      .createTicket(profile.id, 'Account deletion request', 'account', reason)
+      .then(() => {
+        form.style.display = 'none';
+        confirmation.style.display = 'block';
+      });
   });
 }
 
@@ -174,6 +190,7 @@ async function main() {
   wireTwoFa();
   wireSessionManagement();
   wirePasswordReset();
+  wireDeleteAccount(profile);
   await Promise.all([loadTwoFaStatus(), loadSessions(profile.id), renderReferral(profile)]);
 }
 

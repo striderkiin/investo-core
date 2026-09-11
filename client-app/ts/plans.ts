@@ -41,7 +41,7 @@ function renderRows(plans: InvestmentPlan[]): void {
             </div>
           </td>
           <td>
-            <a href="/dashboard/investments" class="tf-btn-default f12-bold style-1">
+            <a href="/#pricing" class="tf-btn-default f12-bold style-1">
               Invest
               <i class="icon-send1"></i>
             </a>
