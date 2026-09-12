@@ -34,12 +34,16 @@
    lines ~6816-6849), which is what every section actually relies on for
    its side margins. Without this, content sits flush against the
    viewport edge instead of matching the source's gutter. */
+/* Mobile gutter bumped from 16px to 24px (and the small-tablet tier from
+   24px to 28px) per user feedback that the page felt "zoomed in" on
+   phones — text was sitting too close to the screen edge. Desktop
+   (md and up) is untouched since that's where it read fine. */
 @utility container {
   margin-inline: auto;
   max-width: calc(var(--tw-spacing) * 360);
-  padding-inline: calc(var(--tw-spacing) * 4);
+  padding-inline: calc(var(--tw-spacing) * 6);
   @media (width >= 640px) {
-    padding-inline: calc(var(--tw-spacing) * 6);
+    padding-inline: calc(var(--tw-spacing) * 7);
   }
   @media (width >= 769px) {
     padding-inline: calc(var(--tw-spacing) * 8);
@@ -54,9 +58,9 @@
 @utility container-lg {
   margin-inline: auto;
   max-width: calc(var(--tw-spacing) * 410);
-  padding-inline: calc(var(--tw-spacing) * 4);
+  padding-inline: calc(var(--tw-spacing) * 6);
   @media (width >= 640px) {
-    padding-inline: calc(var(--tw-spacing) * 6);
+    padding-inline: calc(var(--tw-spacing) * 7);
   }
   @media (width >= 769px) {
     padding-inline: calc(var(--tw-spacing) * 8);
