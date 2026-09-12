@@ -244,56 +244,56 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* ===== 3.2 Feature area — verbatim from index-two.php lines 63-109 + features.php ===== */}
+      {/* ===== 3.2 Feature area — content verbatim from index-two.php lines 63-109 + features.php; the
+           card-on-card treatment (a rounded bg-secondary panel holding four more rounded mini-cards)
+           is dropped per the user's call-out that the page reads as generic "everything in a rounded
+           box" template filler — this now sits directly on the page canvas like every other section. ===== */}
       <section className="section-spacing-lg-md">
         <div className="tw:container-lg">
-          <div className="tw:pt-10 tw:pb-4 tw:px-4 tw:sm:p-10 tw:xl:p-18 tw:2xl:p-25 tw:bg-secondary tw:rounded-2xl tw:md:rounded-3xl tw:relative tw:z-1 tw:overflow-hidden">
-            <img className="tw:w-full tw:absolute tw:bottom-0 tw:select-none tw:left-0 tw:-z-1" src={`${S}/img/home-v2/feature/bg-shape.webp`} alt="background-shape" />
-            <div className="tw:flex tw:xl:items-start tw:justify-between tw:gap-10 tw:flex-col tw:lg:flex-row tw:relative">
-              <div className="tw:max-w-175 tw:lg:max-w-135 tw:w-full tw:lg:self-start">
-                <div className="tw:flex tw:items-center tw:gap-2.5">
-                  <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
-                  <p className="tw:m-0! tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide">WHY INVESTO</p>
+          <div className="tw:flex tw:xl:items-start tw:justify-between tw:gap-10 tw:gap-y-12 tw:flex-col tw:lg:flex-row">
+            <div className="tw:max-w-175 tw:lg:max-w-135 tw:w-full tw:lg:self-start">
+              <div className="tw:flex tw:items-center tw:gap-2.5">
+                <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
+                <p className="tw:m-0! tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide">WHY INVESTO</p>
+              </div>
+              <h2 className="tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">Built for the Next Generation of Investors</h2>
+              <p className="tw:mt-4 tw:text-base tw:sm:text-lg tw:text-paragraph_black">
+                We give modern investors the tools, security, and clarity needed to manage capital with confidence.
+              </p>
+              <ul className="tw:flex tw:flex-col tw:gap-4 tw:mt-9 tw:text-paragraph_black">
+                <li className="tw:text-base tw:flex tw:items-start tw:gap-3">
+                  <svg className="tw:w-5 tw:h-5 tw:fill-current tw:mt-1">
+                    <use href="#tmnlList-01" />
+                  </svg>
+                  <span className="tw:flex-1">Live Market Data: real-time charts and up-to-the-minute pricing across every plan.</span>
+                </li>
+                <li className="tw:text-base tw:flex tw:items-start tw:gap-3">
+                  <svg className="tw:w-5 tw:h-5 tw:fill-current tw:mt-1">
+                    <use href="#tmnlList-02" />
+                  </svg>
+                  <span className="tw:flex-1">Secure by Design: role-based access, full audit logging, and server-side validation on every account.</span>
+                </li>
+                <li className="tw:text-base tw:flex tw:items-start tw:gap-3">
+                  <svg className="tw:w-5 tw:h-5 tw:fill-current tw:mt-1">
+                    <use href="#tmnlList-03" />
+                  </svg>
+                  <span className="tw:flex-1">Referral Program: earn rewards for every investor you bring onto the platform.</span>
+                </li>
+              </ul>
+            </div>
+            <div className="tw:lg:max-w-165 tw:w-full tw:grid tw:sm:grid-cols-2 tw:gap-x-6 tw:gap-y-10 tw:max-xl:flex-1">
+              {[
+                { img: `${S}/img/home-v2/feature/feature-icon-01.svg`, title: 'Real-Time Tracking', desc: 'Watch your balances, returns, and transaction history update live from your dashboard.' },
+                { img: `${S}/img/home-v2/feature/feature-icon-02.svg`, title: 'Bank-Grade Security', desc: 'Two-factor authentication, session controls, and server-validated transactions on every account.' },
+                { img: `${S}/img/home-v2/feature/feature-icon-03.svg`, title: 'Transparent Reporting', desc: 'A full, auditable ledger of every deposit, investment, and withdrawal, never a black box.' },
+                { img: `${S}/img/home-v2/feature/feature-icon-04.svg`, title: 'Referral Rewards', desc: 'Every account gets a referral code and link, with earnings tracked automatically.' },
+              ].map((item) => (
+                <div key={item.title}>
+                  <img className="tw:w-10" src={item.img} alt="feature icon" />
+                  <h3 className="tw:mt-5! tw:text-lg tw:md:text-xl tw:font-semibold tw:text-title_black">{item.title}</h3>
+                  <p className="tw:mt-3 tw:text-base tw:text-paragraph_black">{item.desc}</p>
                 </div>
-                <h2 className="tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:font-bold tw:leading-tight tw:text-title_white tw:mt-4! tw:md:mt-5!">Built for the Next Generation of Investors</h2>
-                <p className="tw:mt-4 tw:text-base tw:sm:text-lg tw:text-paragraph_white">
-                  We give modern investors the tools, security, and clarity needed to manage capital with confidence.
-                </p>
-                <ul className="tw:flex tw:flex-col tw:gap-4 tw:mt-9 tw:text-paragraph_white">
-                  <li className="tw:text-base tw:flex tw:items-start tw:gap-3">
-                    <svg className="tw:w-5 tw:h-5 tw:fill-current tw:mt-1">
-                      <use href="#tmnlList-01" />
-                    </svg>
-                    <span className="tw:flex-1">Live Market Data: real-time charts and up-to-the-minute pricing across every plan.</span>
-                  </li>
-                  <li className="tw:text-base tw:flex tw:items-start tw:gap-3">
-                    <svg className="tw:w-5 tw:h-5 tw:fill-current tw:mt-1">
-                      <use href="#tmnlList-02" />
-                    </svg>
-                    <span className="tw:flex-1">Secure by Design: role-based access, full audit logging, and server-side validation on every account.</span>
-                  </li>
-                  <li className="tw:text-base tw:flex tw:items-start tw:gap-3">
-                    <svg className="tw:w-5 tw:h-5 tw:fill-current tw:mt-1">
-                      <use href="#tmnlList-03" />
-                    </svg>
-                    <span className="tw:flex-1">Referral Program: earn rewards for every investor you bring onto the platform.</span>
-                  </li>
-                </ul>
-              </div>
-              <div className="tw:lg:max-w-165 tw:w-full tw:grid tw:sm:grid-cols-2 tw:lg:grid-cols-1 tw:xl:grid-cols-2 tw:gap-4 tw:sm:gap-6 tw:max-xl:flex-1">
-                {[
-                  { img: `${S}/img/home-v2/feature/feature-icon-01.svg`, title: 'Real-Time Tracking', desc: 'Watch your balances, returns, and transaction history update live from your dashboard.' },
-                  { img: `${S}/img/home-v2/feature/feature-icon-02.svg`, title: 'Bank-Grade Security', desc: 'Two-factor authentication, session controls, and server-validated transactions on every account.' },
-                  { img: `${S}/img/home-v2/feature/feature-icon-03.svg`, title: 'Transparent Reporting', desc: 'A full, auditable ledger of every deposit, investment, and withdrawal, never a black box.' },
-                  { img: `${S}/img/home-v2/feature/feature-icon-04.svg`, title: 'Referral Rewards', desc: 'Every account gets a referral code and link, with earnings tracked automatically.' },
-                ].map((item) => (
-                  <div className="tw:p-5 tw:sm:p-6 tw:lg:p-8 tw:rounded-2xl tw:bg-black/5 tw:border tw:border-black/10 tw:backdrop-blur-[34px]" key={item.title}>
-                    <img className="tw:w-12" src={item.img} alt="feature icon" />
-                    <h3 className="tw:mt-6! tw:md:mt-9! tw:text-lg tw:md:text-xl tw:font-semibold tw:text-title_white">{item.title}</h3>
-                    <p className="tw:mt-3 tw:text-base tw:text-paragraph_white">{item.desc}</p>
-                  </div>
-                ))}
-              </div>
+              ))}
             </div>
           </div>
         </div>
@@ -447,117 +447,119 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* ===== 3.5 Growth calculator — structure verbatim from roi-calculator.php, fields/copy/logic rebuilt around Investo's real plan data ===== */}
+      {/* ===== 3.5 Growth calculator — structure verbatim from roi-calculator.php, fields/copy/logic
+           rebuilt around Investo's real plan data. The card-on-cards-on-a-card treatment (a rounded
+           bg-secondary panel holding three more rounded glass cards) is dropped per the user's
+           call-out that the page reads as generic "everything in a rounded box" template filler —
+           this now sits directly on the page canvas, with a divider line standing in for the CTA
+           card's border instead of another box. ===== */}
       <section className="section-spacing-lg-md">
         <div className="tw:container-lg">
-          <div className="tw:pt-10 tw:pb-4 tw:px-4 tw:sm:p-10 tw:xl:p-18 tw:2xl:p-25 tw:bg-secondary tw:rounded-2xl tw:md:rounded-3xl tw:relative tw:z-1 tw:overflow-hidden">
-            <img className="tw:w-full tw:hidden tw:md:block tw:xl:h-full tw:absolute tw:top-0 tw:left-0 tw:-z-1" src={`${S}/img/home-v1/roi-calculator-bg-shape.webp`} alt="background-shape" />
-            <div className="tw:flex tw:items-start tw:justify-between tw:gap-4 tw:md:gap-10 tw:mb-12 tw:sm:mb-14 tw:md:mb-16 tw:lg:mb-20 tw:flex-col tw:md:flex-row tw:max-w-125 tw:md:max-w-full">
-              <div className="tw:md:max-w-170 tw:w-full">
-                <div className="tw:flex tw:items-center tw:gap-2.5">
-                  <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
-                  <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide">RETURN CALCULATOR</span>
-                </div>
-                <h2 className="tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:font-bold tw:leading-tight tw:text-title_white tw:mt-4! tw:md:mt-5!">See What Your Money Could Earn</h2>
+          <div className="tw:flex tw:items-start tw:justify-between tw:gap-4 tw:md:gap-10 tw:mb-12 tw:sm:mb-14 tw:md:mb-16 tw:lg:mb-20 tw:flex-col tw:md:flex-row tw:max-w-125 tw:md:max-w-full">
+            <div className="tw:md:max-w-170 tw:w-full">
+              <div className="tw:flex tw:items-center tw:gap-2.5">
+                <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
+                <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide">RETURN CALCULATOR</span>
               </div>
-              <p className="tw:md:max-w-115 tw:w-full tw:text-base tw:sm:text-lg tw:text-paragraph_white">
-                Pick a plan and an amount to see a live projection based on that plan&apos;s real fixed rate and duration.
-              </p>
+              <h2 className="tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">See What Your Money Could Earn</h2>
             </div>
-            {plansLoading ? (
-              <p className="tw:text-center tw:text-paragraph_white">Loading plans…</p>
-            ) : !calcPlan || !projection ? (
-              <p className="tw:text-center tw:text-paragraph_white">Plans are being updated. Check back shortly.</p>
-            ) : (
-              <div className="tw:flex tw:items-start tw:gap-6 tw:flex-col tw:lg:flex-row">
-                <div className="tw:lg:max-w-87 tw:w-full">
-                  <form className="home-1-roi-calculator tw:grid tw:sm:grid-cols-2 tw:lg:flex tw:lg:flex-col tw:gap-6 tw:w-full" onSubmit={(e) => e.preventDefault()}>
-                    <div className="select-box-dark">
-                      <label className="tw:text-base tw:font-normal tw:leading-normal tw:text-title_white tw:mb-2 tw:block">Investment Plan</label>
-                      <select
-                        className="select-active"
-                        value={calcPlanId}
-                        onChange={(e) => {
-                          const plan = plans.find((p) => p.id === e.target.value);
-                          setCalcPlanId(e.target.value);
-                          if (plan) setCalcAmount(plan.minAmount);
-                        }}
-                      >
-                        {plans.map((plan) => (
-                          <option key={plan.id} value={plan.id}>
-                            {plan.name}
-                          </option>
-                        ))}
-                      </select>
+            <p className="tw:md:max-w-115 tw:w-full tw:text-base tw:sm:text-lg tw:text-paragraph_black">
+              Pick a plan and an amount to see a live projection based on that plan&apos;s real fixed rate and duration.
+            </p>
+          </div>
+          {plansLoading ? (
+            <p className="tw:text-center tw:text-paragraph_black">Loading plans…</p>
+          ) : !calcPlan || !projection ? (
+            <p className="tw:text-center tw:text-paragraph_black">Plans are being updated. Check back shortly.</p>
+          ) : (
+            <div className="tw:flex tw:items-start tw:gap-10 tw:flex-col tw:lg:flex-row">
+              <div className="tw:lg:max-w-87 tw:w-full">
+                <form className="home-1-roi-calculator tw:grid tw:sm:grid-cols-2 tw:lg:flex tw:lg:flex-col tw:gap-6 tw:w-full" onSubmit={(e) => e.preventDefault()}>
+                  <div className="select-box-dark">
+                    <label className="tw:text-base tw:font-normal tw:leading-normal tw:text-title_black tw:mb-2 tw:block">Investment Plan</label>
+                    <select
+                      className="select-active"
+                      value={calcPlanId}
+                      onChange={(e) => {
+                        const plan = plans.find((p) => p.id === e.target.value);
+                        setCalcPlanId(e.target.value);
+                        if (plan) setCalcAmount(plan.minAmount);
+                      }}
+                    >
+                      {plans.map((plan) => (
+                        <option key={plan.id} value={plan.id}>
+                          {plan.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="tw:text-base tw:font-normal tw:leading-normal tw:text-title_black tw:mb-2 tw:block">Investment Amount</label>
+                    <div className="tw:relative">
+                      <input
+                        className="tw:h-10 tw:w-full tw:bg-white/5 tw:border tw:border-white/10 tw:rounded-[100px] tw:cursor-pointer tw:text-base tw:font-semibold tw:text-title_black tw:flex tw:items-center tw:relative tw:pl-9 tw:pr-5 tw:appearance-none tw:outline-none tw:duration-300 focus:tw:border-primary"
+                        type="number"
+                        min={calcPlan.minAmount}
+                        max={calcPlan.maxAmount}
+                        value={calcAmount}
+                        onChange={(e) => setCalcAmount(Number(e.target.value))}
+                      />
+                      <span className="tw:text-base tw:font-semibold tw:text-title_black tw:absolute tw:top-1/2 tw:transform tw:-translate-1/2 tw:left-6.25">$</span>
                     </div>
-                    <div>
-                      <label className="tw:text-base tw:font-normal tw:leading-normal tw:text-title_white tw:mb-2 tw:block">Investment Amount</label>
-                      <div className="tw:relative">
-                        <input
-                          className="tw:h-10 tw:w-full tw:bg-black/5 tw:border tw:border-black/10 tw:backdrop-blur-[34px] tw:rounded-[100px] tw:cursor-pointer tw:text-base tw:font-semibold tw:text-title_white tw:flex tw:items-center tw:relative tw:pl-9 tw:pr-5 tw:appearance-none tw:outline-none tw:duration-300 focus:tw:border-primary"
-                          type="number"
-                          min={calcPlan.minAmount}
-                          max={calcPlan.maxAmount}
-                          value={calcAmount}
-                          onChange={(e) => setCalcAmount(Number(e.target.value))}
-                        />
-                        <span className="tw:text-base tw:font-semibold tw:text-title_white tw:absolute tw:top-1/2 tw:transform tw:-translate-1/2 tw:left-6.25">$</span>
-                      </div>
-                      <p className="tw:text-sm tw:mt-2 tw:text-paragraph_white">
-                        {money.format(calcPlan.minAmount)} – {money.format(calcPlan.maxAmount)} range · {calcPlan.rate}% {calcPlan.rateType} · {calcPlan.durationDays}-day duration
-                      </p>
-                    </div>
-                  </form>
-                </div>
-                <div className="tw:md:max-w-227 tw:w-full tw:grid tw:gap-6">
-                  <div className="tw:p-5 tw:sm:p-6 tw:bg-black/5 tw:border tw:border-black/10 tw:rounded-2xl tw:backdrop-blur-[34px] tw:text-center">
-                    <h3 className="tw:text-title_white tw:font-bold tw:text-2xl tw:md:text-3xl tw:lg:text-4xl tw:leading-none">{money.format(projection.total)}</h3>
-                    <p className="tw:text-base tw:sm:text-lg tw:mt-3 tw:text-title_white tw:font-medium">
-                      Projected value after {calcPlan.durationDays} days ({money.format(projection.profit)} profit)
+                    <p className="tw:text-sm tw:mt-2 tw:text-paragraph_black">
+                      {money.format(calcPlan.minAmount)} – {money.format(calcPlan.maxAmount)} range · {calcPlan.rate}% {calcPlan.rateType} · {calcPlan.durationDays}-day duration
                     </p>
                   </div>
-                  <div className="tw:w-full tw:h-56 tw:sm:h-64 tw:p-3 tw:sm:p-6 tw:bg-black/5 tw:border tw:border-black/10 tw:rounded-2xl tw:backdrop-blur-[34px] tw:overflow-hidden">
-                    <Line
-                      data={{
-                        labels: projection.labels,
-                        datasets: [
-                          {
-                            label: 'Projected value',
-                            data: projection.values,
-                            borderColor: '#c6a15b',
-                            backgroundColor: 'rgba(198, 161, 91, 0.15)',
-                            fill: true,
-                            tension: 0.35,
-                            pointRadius: 0,
-                          },
-                        ],
-                      }}
-                      options={{
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => money.format(ctx.parsed.y ?? 0) } } },
-                        scales: { x: { display: false }, y: { display: false } },
-                      }}
-                    />
+                </form>
+              </div>
+              <div className="tw:md:max-w-227 tw:w-full tw:grid tw:gap-8">
+                <div className="tw:text-center">
+                  <h3 className="tw:text-title_black tw:font-bold tw:text-3xl tw:md:text-4xl tw:lg:text-5xl tw:leading-none">{money.format(projection.total)}</h3>
+                  <p className="tw:text-base tw:sm:text-lg tw:mt-3 tw:text-paragraph_black">
+                    Projected value after {calcPlan.durationDays} days ({money.format(projection.profit)} profit)
+                  </p>
+                </div>
+                <div className="tw:w-full tw:h-56 tw:sm:h-64">
+                  <Line
+                    data={{
+                      labels: projection.labels,
+                      datasets: [
+                        {
+                          label: 'Projected value',
+                          data: projection.values,
+                          borderColor: '#c6a15b',
+                          backgroundColor: 'rgba(198, 161, 91, 0.15)',
+                          fill: true,
+                          tension: 0.35,
+                          pointRadius: 0,
+                        },
+                      ],
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => money.format(ctx.parsed.y ?? 0) } } },
+                      scales: { x: { display: false }, y: { display: false } },
+                    }}
+                  />
+                </div>
+                <div className="tw:pt-8 tw:border-t tw:border-border tw:flex tw:items-start tw:lg:items-center tw:justify-between tw:gap-4 tw:lg:gap-6 tw:flex-col tw:lg:flex-row">
+                  <div className="tw:flex-1">
+                    <p className="tw:text-title_black tw:text-lg tw:font-semibold">Ready to Put Your Capital to Work?</p>
+                    <p className="tw:text-base tw:mt-3 tw:text-paragraph_black tw:max-w-154.25">Create a free account and fund your first plan in minutes, then track everything live from your dashboard.</p>
                   </div>
-                  <div className="tw:p-5 tw:sm:p-6 tw:bg-black/5 tw:border tw:border-black/10 tw:rounded-2xl tw:backdrop-blur-[34px] tw:flex tw:items-start tw:lg:items-center tw:justify-between tw:gap-4 tw:lg:gap-6 tw:flex-col tw:lg:flex-row">
-                    <div className="tw:flex-1">
-                      <p className="tw:text-title_white tw:text-lg tw:font-semibold">Ready to Put Your Capital to Work?</p>
-                      <p className="tw:text-base tw:mt-3 tw:text-paragraph_white tw:max-w-154.25">Create a free account and fund your first plan in minutes, then track everything live from your dashboard.</p>
-                    </div>
-                    <div className="tw:w-fit">
-                      <Link to="/register" className="button-autline-white tw:w-fit">
-                        Create free account
-                        <svg className="tw:w-2.75 tw:h-2.75 tw:fill-current">
-                          <use href="#buttonArrow" />
-                        </svg>
-                      </Link>
-                    </div>
+                  <div className="tw:w-fit">
+                    <Link to="/register" className="button-primary tw:w-fit">
+                      Create free account
+                      <svg className="tw:w-2.75 tw:h-2.75 tw:fill-current">
+                        <use href="#buttonArrow" />
+                      </svg>
+                    </Link>
                   </div>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </section>
 
