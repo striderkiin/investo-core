@@ -3,7 +3,8 @@ import type { FormEvent } from 'react';
 import { useLocation } from 'react-router-dom';
 import { createContactService } from '../../../services/api/contactService';
 import { createSocialLinksService } from '../../../services/api/socialLinksService';
-import type { SocialLink } from '../../../types/database';
+import { createInvestmentService } from '../../../services/api/investmentService';
+import type { InvestmentPlan, SocialLink } from '../../../types/database';
 import { useAuth } from '../../../hooks/useAuth';
 import { IconBadge } from '../../../components/public/IconBadge';
 import { SocialLinksRow } from '../../../components/public/SocialLinksRow';
@@ -12,7 +13,9 @@ import { SecureVestAccordion } from '../../../components/public/securevest/Secur
 
 const contactService = createContactService();
 const socialLinksService = createSocialLinksService();
+const investmentService = createInvestmentService();
 const S = '/securevest';
+const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 
 function ContactSection() {
   const { profile } = useAuth();
@@ -100,6 +103,8 @@ export function LandingPage() {
   const location = useLocation();
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [accordionActive, setAccordionActive] = useState(0);
+  const [plans, setPlans] = useState<InvestmentPlan[]>([]);
+  const [plansLoading, setPlansLoading] = useState(true);
 
   useEffect(() => {
     if (!location.hash) return;
@@ -115,6 +120,14 @@ export function LandingPage() {
       .listEnabled()
       .then(setSocialLinks)
       .catch((err) => console.error('Failed to load social links', err));
+  }, []);
+
+  useEffect(() => {
+    investmentService
+      .listPlans()
+      .then(setPlans)
+      .catch((err) => console.error('Failed to load investment plans', err))
+      .finally(() => setPlansLoading(false));
   }, []);
 
   return (
@@ -311,92 +324,82 @@ export function LandingPage() {
           </div>
           <div>
             {/* Monthly/Yearly toggle (services.php lines 68-93) excluded per the brief — no equivalent in Investo's model */}
-            <div className="pricing-table tw:grid tw:grid-cols-1 tw:sm:grid-cols-2 tw:lg:grid-cols-3 tw:gap-6 tw:mt-11.75">
-              {/* Card 1 — Essential */}
-              <div>
-                <div className="tw:bg-background tw:border tw:border-border tw:rounded-2xl tw:p-6 tw:xl:p-8 tw:transition tw:duration-300 tw:flex tw:flex-col tw:justify-between tw:gap-10 tw:md:gap-12 tw:h-full">
-                  <div>
-                    <p className="tw:text-paragraph_black tw:text-lg tw:font-semibold tw:leading-none">Essential</p>
-                    <div className="tw:mt-5 tw:mb-4 tw:flex tw:flex-wrap">
-                      <h2 className="price tw:text-5xl tw:xl:text-[64px] tw:leading-none tw:text-title_black">$19</h2>
-                      <p className="tw:text-paragraph_black tw:text-base tw:font-normal tw:leading-none tw:items-end tw:flex tw:gap-0.5 tw:pb-2.5">
-                        per <span className="period">/ month</span>
-                      </p>
+            {plansLoading ? (
+              <p className="tw:text-center tw:text-paragraph_black tw:mt-11.75">Loading plans…</p>
+            ) : plans.length === 0 ? (
+              <p className="tw:text-center tw:text-paragraph_black tw:mt-11.75">Plans are being updated. Check back shortly.</p>
+            ) : (
+              <div className="pricing-table tw:grid tw:grid-cols-1 tw:sm:grid-cols-2 tw:lg:grid-cols-4 tw:gap-6 tw:mt-11.75">
+                {plans.slice(0, 4).map((plan, index) => {
+                  const highlighted = index === 1;
+                  const bullets = [
+                    `${plan.rate}% ${plan.rateType} return`,
+                    `${money.format(plan.minAmount)} – ${money.format(plan.maxAmount)} deposit range`,
+                    `${plan.durationDays}-day fixed duration`,
+                    'Real-time dashboard tracking',
+                  ];
+                  return (
+                    <div key={plan.id}>
+                      <div
+                        className={
+                          highlighted
+                            ? 'tw:bg-secondary tw:border tw:border-secondary tw:rounded-2xl tw:p-6 tw:xl:p-8 tw:flex tw:flex-col tw:justify-between tw:gap-10 tw:md:gap-12'
+                            : 'tw:bg-background tw:border tw:border-border tw:rounded-2xl tw:p-6 tw:xl:p-8 tw:transition tw:duration-300 tw:flex tw:flex-col tw:justify-between tw:gap-10 tw:md:gap-12 tw:h-full'
+                        }
+                      >
+                        <div>
+                          <p className={highlighted ? 'tw:text-lg tw:font-semibold tw:leading-none tw:text-paragraph_white' : 'tw:text-paragraph_black tw:text-lg tw:font-semibold tw:leading-none'}>
+                            {plan.name}
+                          </p>
+                          <div className="tw:mt-5 tw:mb-4 tw:flex tw:flex-wrap">
+                            <h2 className={highlighted ? 'price tw:text-5xl tw:xl:text-[64px] tw:leading-none tw:text-title_white' : 'price tw:text-5xl tw:xl:text-[64px] tw:leading-none tw:text-title_black'}>
+                              {plan.rate}%
+                            </h2>
+                            <p
+                              className={
+                                highlighted
+                                  ? 'tw:text-paragraph_white tw:text-base tw:font-normal tw:leading-none tw:items-end tw:flex tw:gap-0.5 tw:pb-2.5'
+                                  : 'tw:text-paragraph_black tw:text-base tw:font-normal tw:leading-none tw:items-end tw:flex tw:gap-0.5 tw:pb-2.5'
+                              }
+                            >
+                              per <span className="period">/ {plan.rateType}</span>
+                            </p>
+                          </div>
+                          <p className={highlighted ? 'tw:text-paragraph_white tw:text-base tw:font-normal' : 'tw:text-paragraph_black tw:text-base tw:font-normal'}>{plan.description}</p>
+                        </div>
+                        <div>
+                          <ul className="tw:space-y-3">
+                            {bullets.map((f) => (
+                              <li
+                                key={f}
+                                className={
+                                  highlighted
+                                    ? 'tw:flex tw:gap-2 tw:items-start tw:leading-normal tw:text-base tw:font-normal tw:text-paragraph_white'
+                                    : 'tw:flex tw:gap-2 tw:items-start tw:leading-normal tw:text-base tw:font-normal tw:text-paragraph_black'
+                                }
+                              >
+                                <i className="bi bi-check2-circle" style={{ color: highlighted ? 'var(--tw-color-primary)' : undefined }} aria-hidden="true" />
+                                {f}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <a
+                          href="/register"
+                          className={
+                            highlighted
+                              ? 'tw:w-full tw:px-6 tw:py-4 tw:text-base tw:leading-none tw:font-semibold tw:text-title_white tw:bg-primary tw:rounded-full tw:cursor-pointer tw:text-center tw:justify-center!'
+                              : 'tw:w-full tw:px-6 tw:py-4 tw:text-base tw:leading-none tw:font-semibold tw:text-title_white tw:bg-title_black tw:rounded-full tw:cursor-pointer hover:tw:text-title_white hover:tw:bg-primary tw:transition tw:duration-300 tw:text-center tw:justify-center!'
+                          }
+                        >
+                          Get Started Today
+                        </a>
+                      </div>
                     </div>
-                    <p className="tw:text-paragraph_black tw:text-base tw:font-normal">Perfect for individuals starting their financial journey.</p>
-                  </div>
-                  <div>
-                    <ul className="tw:space-y-3">
-                      {['Free International Transfers', 'Standard Savings Interest', 'Basic Budgeting Tools', 'Virtual Debit Card', 'No Monthly Maintenance Fee'].map((f) => (
-                        <li key={f} className="tw:flex tw:gap-2 tw:items-start tw:leading-normal tw:text-base tw:font-normal tw:text-paragraph_black">
-                          <i className="bi bi-check2-circle tw:text-black" aria-hidden="true" />
-                          {f}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <a href="/contact" className="tw:w-full tw:px-6 tw:py-4 tw:text-base tw:leading-none tw:font-semibold tw:text-title_white tw:bg-title_black tw:rounded-full tw:cursor-pointer hover:tw:text-title_white hover:tw:bg-primary tw:transition tw:duration-300 tw:text-center tw:justify-center!">
-                    Get Started Today
-                  </a>
-                </div>
+                  );
+                })}
               </div>
-              {/* Card 2 — Professional */}
-              <div>
-                <div className="tw:bg-secondary tw:border tw:border-secondary tw:rounded-2xl tw:p-6 tw:xl:p-8 tw:flex tw:flex-col tw:justify-between tw:gap-10 tw:md:gap-12">
-                  <div>
-                    <p className="tw:text-lg tw:font-semibold tw:leading-none tw:text-paragraph_white">Professional</p>
-                    <div className="tw:mt-5 tw:mb-4 tw:flex tw:flex-wrap">
-                      <h2 className="price tw:text-5xl tw:xl:text-[64px] tw:leading-none tw:text-title_white">$49</h2>
-                      <p className="tw:text-paragraph_white tw:text-base tw:font-normal tw:leading-none tw:items-end tw:flex tw:gap-0.5 tw:pb-2.5">
-                        per <span className="period">/ month</span>
-                      </p>
-                    </div>
-                    <p className="tw:text-paragraph_white tw:text-base tw:font-normal tw:flex tw:items-end tw:leading-normal">Advanced tools for serious investors and high-growth savers.</p>
-                  </div>
-                  <div>
-                    <ul className="tw:space-y-3">
-                      {['Priority 24/7 Support', 'High-Yield Savings (4.5% APY)', 'Advanced Portfolio Analytics', 'Physical Metal Debit Card', 'Automated Tax-Loss Harvesting'].map((f) => (
-                        <li key={f} className="tw:flex tw:gap-2 tw:items-start tw:leading-normal tw:text-base tw:font-normal tw:text-paragraph_white">
-                          <i className="bi bi-check2-circle" style={{ color: 'var(--tw-color-primary)' }} aria-hidden="true" />
-                          {f}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <a href="/contact" className="tw:w-full tw:px-6 tw:py-4 tw:text-base tw:leading-none tw:font-semibold tw:text-title_white tw:bg-primary tw:rounded-full tw:cursor-pointer tw:text-center tw:justify-center!">
-                    Get Started Today
-                  </a>
-                </div>
-              </div>
-              {/* Card 3 — Enterprise */}
-              <div>
-                <div className="tw:bg-background tw:border tw:border-border tw:rounded-2xl tw:p-6 tw:xl:p-8 tw:transition tw:duration-300 tw:flex tw:flex-col tw:justify-between tw:gap-10 tw:md:gap-12 tw:h-full">
-                  <div>
-                    <p className="tw:text-paragraph_black tw:text-lg tw:font-semibold tw:leading-none">Enterprise</p>
-                    <div className="tw:mt-5 tw:mb-4 tw:flex tw:flex-wrap">
-                      <h2 className="price tw:text-5xl tw:xl:text-[64px] tw:leading-none tw:text-title_black">$99</h2>
-                      <p className="tw:text-paragraph_black tw:text-base tw:font-normal tw:leading-none tw:items-end tw:flex tw:gap-0.5 tw:pb-2.5">
-                        per <span className="period">/ month</span>
-                      </p>
-                    </div>
-                    <p className="tw:text-paragraph_black tw:text-base tw:font-normal">Complete wealth management for high-net-worth individuals.</p>
-                  </div>
-                  <div>
-                    <ul className="tw:space-y-3">
-                      {['Dedicated Wealth Manager', 'Custom Investment Strategies', 'Zero Foreign Exchange Fees', 'Unlimited Lounge Access', 'Estate Planning Services'].map((f) => (
-                        <li key={f} className="tw:flex tw:gap-2 tw:items-start tw:leading-normal tw:text-base tw:font-normal tw:text-paragraph_black">
-                          <i className="bi bi-check2-circle tw:text-black" aria-hidden="true" />
-                          {f}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <a href="/contact" className="tw:w-full tw:px-6 tw:py-4 tw:text-base tw:leading-none tw:font-semibold tw:text-title_white tw:bg-title_black tw:rounded-full tw:cursor-pointer hover:tw:text-title_white hover:tw:bg-primary tw:transition tw:duration-300 tw:text-center tw:justify-center!">
-                    Get Started Today
-                  </a>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </section>

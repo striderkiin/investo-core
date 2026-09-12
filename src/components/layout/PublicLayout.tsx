@@ -1,5 +1,4 @@
 import { useRef } from 'react';
-import { Collapse } from 'bootstrap';
 import { Link, NavLink, Outlet } from 'react-router-dom';
 import { useBranding } from '../../hooks/useBranding';
 import { SvgSymbols } from '../public/securevest/SvgSymbols';
@@ -17,15 +16,23 @@ const NAV_LINKS = [
 export function PublicLayout() {
   const { branding } = useBranding();
   const navRef = useRef<HTMLDivElement>(null);
+  const togglerRef = useRef<HTMLButtonElement>(null);
 
   // Clicking a Link inside the mobile menu is a client-side route change,
   // not a page load — Bootstrap's own data-bs-toggle collapse never sees a
   // reason to close, so it stays expanded over the next page until the
   // user manually taps the toggler again. Close it explicitly on any
-  // in-menu navigation.
+  // in-menu navigation — by clicking the toggler programmatically rather
+  // than instantiating our own bootstrap.Collapse here: main.tsx already
+  // loads bootstrap.bundle.min.js (which self-inits the data-api collapse
+  // instance for this element), and importing Collapse from the 'bootstrap'
+  // package separately pulls in a second module instance with its own
+  // instance registry — the two then fight over the same element's open/
+  // closed state, which is exactly why a second tap on the toggler used to
+  // stop closing the menu.
   function closeMobileNav() {
-    if (navRef.current) {
-      Collapse.getOrCreateInstance(navRef.current, { toggle: false }).hide();
+    if (navRef.current?.classList.contains('show')) {
+      togglerRef.current?.click();
     }
   }
 
@@ -43,6 +50,7 @@ export function PublicLayout() {
             {branding.logoText ?? branding.siteName}
           </Link>
           <button
+            ref={togglerRef}
             className="navbar-toggler border-0 text-white"
             type="button"
             data-bs-toggle="collapse"
