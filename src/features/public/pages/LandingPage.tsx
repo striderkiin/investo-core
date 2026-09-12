@@ -107,7 +107,7 @@ function ContactSection() {
 export function LandingPage() {
   const location = useLocation();
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
-  const [accordionActive, setAccordionActive] = useState(0);
+  const [accordionActive, setAccordionActive] = useState<number | null>(0);
   const [plans, setPlans] = useState<InvestmentPlan[]>([]);
   const [plansLoading, setPlansLoading] = useState(true);
   const [calcPlanId, setCalcPlanId] = useState('');

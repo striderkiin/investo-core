@@ -31,25 +31,27 @@ const ITEMS = [
  * The source (assets/js/main.js) drives this with GSAP: click-to-select,
  * a 5s auto-rotate that pauses on hover, and a crossfading thumbnail image
  * synced to the active index. Reimplemented here with plain state — same
- * click/active behavior, same active-index sync exposed to the parent for
- * the image column, without pulling in GSAP for one interaction.
+ * click/active behavior, without pulling in GSAP for one interaction.
+ * Only one item is open at a time, and tapping the open item toggles it
+ * closed (unlike the source, which always kept exactly one open).
  */
-export function SecureVestAccordion({ activeIndex, onSelect }: { activeIndex: number; onSelect: (index: number) => void }) {
+export function SecureVestAccordion({ activeIndex, onSelect }: { activeIndex: number | null; onSelect: (index: number | null) => void }) {
   return (
     <>
       {ITEMS.map((item, index) => {
         const active = index === activeIndex;
+        const toggle = () => onSelect(active ? null : index);
         return (
           <div className={`next-gen-item${active ? ' active' : ''}`} data-index={index} key={item.title}>
             <div
               className="next-gen-header tw:cursor-pointer tw:flex tw:justify-between tw:items-center tw:gap-4"
-              onClick={() => onSelect(index)}
+              onClick={toggle}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  onSelect(index);
+                  toggle();
                 }
               }}
             >
