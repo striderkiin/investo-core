@@ -137,7 +137,7 @@ export function PublicLayout() {
             <div className="tw:w-full tw:lg:w-px tw:h-px tw:lg:h-auto tw:bg-white/10" />
             <div className="tw:py-10 tw:lg:py-12.5 tw:lg:max-w-115 tw:w-full tw:grid tw:grid-cols-2 tw:sm:flex tw:items-start tw:justify-between tw:gap-10">
               <div>
-                <h3 className="tw:mb-6! tw:text-white tw:text-xl tw:md:text-2xl tw:font-semibold tw:leading-none!">Platform</h3>
+                <h3 className="tw:mb-6! tw:text-white tw:text-lg tw:md:text-xl tw:font-semibold tw:leading-none!">Platform</h3>
                 <ul className="tw:list-none tw:flex tw:flex-col tw:items-start tw:gap-3 tw:sm:gap-5">
                   <li>
                     <Link className="tw:text-paragraph_white tw:leading-none tw:duration-300 hover:tw:text-primary tw:block" to="/#pricing">
@@ -162,7 +162,7 @@ export function PublicLayout() {
                 </ul>
               </div>
               <div>
-                <h3 className="tw:mb-6! tw:text-white tw:text-xl tw:md:text-2xl tw:font-semibold tw:leading-none!">Legal</h3>
+                <h3 className="tw:mb-6! tw:text-white tw:text-lg tw:md:text-xl tw:font-semibold tw:leading-none!">Legal</h3>
                 <ul className="tw:list-none tw:flex tw:flex-col tw:items-start tw:gap-3 tw:sm:gap-5">
                   <li>
                     <Link className="tw:text-paragraph_white tw:leading-none tw:duration-300 hover:tw:text-primary tw:block" to="/terms">

@@ -194,7 +194,7 @@ export function LandingPage() {
                 <img className="rotate" src={`${S}/img/title-icon.svg`} alt="title-icon" />
                 <p className="tw:m-0! tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-secondary tw:uppercase tw:tracking-wide">INVESTMENT INFRASTRUCTURE</p>
               </div>
-              <h1 className="tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px] tw:font-bold tw:leading-[1.1]! tw:text-title_black tw:mt-4! tw:md:mt-5!">
+              <h1 className="tw:text-[28px] tw:sm:text-3xl tw:md:text-4xl tw:lg:text-5xl tw:xl:text-[56px] tw:font-bold tw:leading-[1.15]! tw:text-title_black tw:mt-4! tw:md:mt-5!">
                 Your capital. In full view.
               </h1>
               <p className="tw:text-base tw:text-paragraph_black tw:mt-4">
@@ -256,7 +256,7 @@ export function LandingPage() {
                 <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
                 <p className="tw:m-0! tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide">WHY INVESTO</p>
               </div>
-              <h2 className="tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">Built for the Next Generation of Investors</h2>
+              <h2 className="tw:text-2xl tw:sm:text-[28px] tw:md:text-3xl tw:lg:text-4xl tw:xl:text-[40px] tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">Built for the Next Generation of Investors</h2>
               <p className="tw:mt-4 tw:text-base tw:sm:text-lg tw:text-paragraph_black">
                 We give modern investors the tools, security, and clarity needed to manage capital with confidence.
               </p>
@@ -308,7 +308,7 @@ export function LandingPage() {
                 <img className="rotate" src={`${S}/img/title-icon.svg`} alt="title-icon" />
                 <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-secondary tw:uppercase tw:tracking-wide tw:block">PLATFORM RELIABILITY</span>
               </div>
-              <h2 className="tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">Built for Trust, Measured in Numbers</h2>
+              <h2 className="tw:text-2xl tw:sm:text-[28px] tw:md:text-3xl tw:lg:text-4xl tw:xl:text-[40px] tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">Built for Trust, Measured in Numbers</h2>
             </div>
             <p className="tw:md:max-w-115 tw:w-full tw:text-base tw:sm:text-lg tw:text-paragraph_black">
               We measure our own success by the reliability and transparency of the platform you depend on.
@@ -323,7 +323,7 @@ export function LandingPage() {
                 <h2 className="counter tw:text-primary tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">4</h2>
               </div>
               <div>
-                <h3 className="tw:text-title_white tw:text-xl tw:md:text-2xl tw:font-semibold">Investment Plans</h3>
+                <h3 className="tw:text-title_white tw:text-lg tw:md:text-xl tw:font-semibold">Investment Plans</h3>
                 <p className="tw:pt-3 tw:sm:pt-4 tw:text-paragraph_white tw:text-base tw:leading-normal">From steady starter returns to our top tier, each with a fixed rate and duration.</p>
               </div>
             </div>
@@ -332,7 +332,7 @@ export function LandingPage() {
                 <h2 className="counter tw:text-primary tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">24/7</h2>
               </div>
               <div>
-                <h3 className="tw:text-white tw:text-xl tw:md:text-2xl tw:font-semibold">Platform Availability</h3>
+                <h3 className="tw:text-white tw:text-lg tw:md:text-xl tw:font-semibold">Platform Availability</h3>
                 <p className="tw:pt-3 tw:sm:pt-4 tw:text-white/80 tw:text-base tw:leading-[1.5]">Manage deposits, withdrawals, and investments from your dashboard any time.</p>
               </div>
             </div>
@@ -347,7 +347,7 @@ export function LandingPage() {
                 <h2 className="tw:text-primary tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">%</h2>
               </div>
               <div>
-                <h3 className="tw:text-white tw:text-xl tw:md:text-2xl tw:font-semibold">Server-Validated Transactions</h3>
+                <h3 className="tw:text-white tw:text-lg tw:md:text-xl tw:font-semibold">Server-Validated Transactions</h3>
                 <p className="tw:pt-3 tw:sm:pt-4 tw:text-white/80 tw:text-base tw:leading-[1.5]">Every balance-affecting action runs through audited, server-side logic, never the browser.</p>
               </div>
             </div>
@@ -364,7 +364,7 @@ export function LandingPage() {
                 <img className="rotate" src={`${S}/img/title-icon.svg`} alt="title-icon" />
                 <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-secondary tw:uppercase tw:tracking-wide tw:block">PRICING PLAN</span>
               </div>
-              <h2 className="tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">Choose the Plan that Best Fits Your Goals</h2>
+              <h2 className="tw:text-2xl tw:sm:text-[28px] tw:md:text-3xl tw:lg:text-4xl tw:xl:text-[40px] tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">Choose the Plan that Best Fits Your Goals</h2>
             </div>
             <p className="tw:md:max-w-115 tw:w-full tw:text-base tw:sm:text-lg tw:text-paragraph_black">
               Every plan has a fixed rate, deposit range, and duration, no hidden fees, no surprises.
@@ -461,7 +461,7 @@ export function LandingPage() {
                 <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
                 <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide">RETURN CALCULATOR</span>
               </div>
-              <h2 className="tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">See What Your Money Could Earn</h2>
+              <h2 className="tw:text-2xl tw:sm:text-[28px] tw:md:text-3xl tw:lg:text-4xl tw:xl:text-[40px] tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">See What Your Money Could Earn</h2>
             </div>
             <p className="tw:md:max-w-115 tw:w-full tw:text-base tw:sm:text-lg tw:text-paragraph_black">
               Pick a plan and an amount to see a live projection based on that plan&apos;s real fixed rate and duration.
@@ -572,7 +572,7 @@ export function LandingPage() {
                 <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
                 <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide">FREQUENTLY ASKED QUESTIONS</span>
               </div>
-              <h2 className="tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:font-bold tw:leading-tight tw:text-title_white tw:mt-4! tw:md:mt-5!">Everything You Need to Know</h2>
+              <h2 className="tw:text-2xl tw:sm:text-[28px] tw:md:text-3xl tw:lg:text-4xl tw:xl:text-[40px] tw:font-bold tw:leading-tight tw:text-title_white tw:mt-4! tw:md:mt-5!">Everything You Need to Know</h2>
             </div>
             <p className="tw:md:max-w-115 tw:w-full tw:text-base tw:sm:text-lg tw:text-paragraph_white">
               Answers to the questions we hear most about getting started, rates, deposits, withdrawals, and account security.

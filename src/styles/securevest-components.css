@@ -32,12 +32,14 @@ footer.sv-page [class*='tw:text-paragraph_white'] { color: rgba(255, 255, 255, 0
 footer.sv-page [class*='tw:border-paragraph_white'] { border-color: rgba(255, 255, 255, 0.3) !important; }
 footer.sv-page input[class*='placeholder:tw:text-paragraph_white']::placeholder { color: rgba(255, 255, 255, 0.5) !important; }
 
-/* Step 2 recolor pass — font swap: Fugaz One for headings, Merriweather for
-   body copy, system sans left alone for nav/button/label chrome. */
+/* Font swap: Playfair Display for headings (a formal serif that doesn't
+   shout the way the earlier bold display font did, at any size),
+   Merriweather for body copy, system sans left alone for nav/button/label
+   chrome. */
 .sv-page h1,
 .sv-page h2,
 .sv-page h3 {
-  font-family: 'Fugaz One', system-ui, sans-serif;
+  font-family: 'Playfair Display', Georgia, serif;
 }
 .sv-page p {
   font-family: 'Merriweather', Georgia, serif;

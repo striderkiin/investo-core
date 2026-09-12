@@ -59,7 +59,7 @@ export function SecureVestAccordion({ activeIndex, onSelect }: { activeIndex: nu
                 <span className="next-gen-number tw:text-lg tw:font-semibold tw:leading-normal tw:text-paragraph_white tw:duration-300">{String(index + 1).padStart(2, '0')}</span>
                 <div className="tw:flex-1">
                   <div className="tw:flex tw:items-center tw:justify-between tw:gap-4 tw:mb-2 tw:md:mb-3">
-                    <h3 className="tw:text-xl tw:md:text-2xl tw:font-semibold tw:text-title_white tw:flex-1">{item.title}</h3>
+                    <h3 className="tw:text-lg tw:md:text-xl tw:font-semibold tw:text-title_white tw:flex-1">{item.title}</h3>
                     <button type="button" aria-label="Toggle section" className="excellence-accordion-toogle tw:w-4.75 tw:h-2.25">
                       <svg className="tw:w-4.75 tw:h-2.25 tw:fill-none tw:text-primary">
                         <use href="#excellence-accortion-arrow" />
