@@ -1,7 +1,6 @@
 import { useRef } from 'react';
 import { Collapse } from 'bootstrap';
 import { Link, NavLink, Outlet } from 'react-router-dom';
-import { EnvironmentBadge } from './EnvironmentBadge';
 import { useBranding } from '../../hooks/useBranding';
 import { SvgSymbols } from '../public/securevest/SvgSymbols';
 
@@ -73,7 +72,6 @@ export function PublicLayout() {
               )}
             </ul>
             <div className="d-flex align-items-center gap-2">
-              <EnvironmentBadge />
               <Link to="/login" className="btn ic-public-btn-outline btn-sm">
                 Log In
               </Link>
