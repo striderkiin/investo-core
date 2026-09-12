@@ -19,9 +19,29 @@
 .sv-page [class*='tw:text-paragraph_black'] { color: var(--tw-color-paragraph_black) !important; }
 .sv-page [class*='tw:text-paragraph_white'] { color: var(--tw-color-paragraph_white) !important; }
 .sv-page [class*='tw:text-white']:not([class*='tw:text-white/']) { color: #fff !important; }
+/* The hero/feature eyebrows are <p> tags carrying text-secondary/text-primary
+   (matching the source exactly) — same !important clash as above. */
+.sv-page p[class*='tw:text-secondary'] { color: var(--tw-color-secondary) !important; }
+.sv-page p[class*='tw:text-primary'] { color: var(--tw-color-primary) !important; }
 
-/* No font swap at this checkpoint — this is the verbatim-assembly step,
-   fonts/colors stay SecureVest's own until a separate recolor pass. */
+/* Footer recolor exception: it stays black (see PublicLayout.tsx) while
+   paragraph_white flips dark everywhere else for the now-light secondary
+   blocks. Pin the footer's own paragraph_white/border-paragraph_white back
+   to light-on-black so its body text and dividers stay legible. */
+footer.sv-page [class*='tw:text-paragraph_white'] { color: rgba(255, 255, 255, 0.7) !important; }
+footer.sv-page [class*='tw:border-paragraph_white'] { border-color: rgba(255, 255, 255, 0.3) !important; }
+footer.sv-page input[class*='placeholder:tw:text-paragraph_white']::placeholder { color: rgba(255, 255, 255, 0.5) !important; }
+
+/* Step 2 recolor pass — font swap: Fugaz One for headings, Merriweather for
+   body copy, system sans left alone for nav/button/label chrome. */
+.sv-page h1,
+.sv-page h2,
+.sv-page h3 {
+  font-family: 'Fugaz One', system-ui, sans-serif;
+}
+.sv-page p {
+  font-family: 'Merriweather', Georgia, serif;
+}
 
 .sv-page .button-primary,
 .sv-page .button-autline-white {
@@ -54,7 +74,11 @@
 .sv-page .button-primary {
   border-color: transparent;
   background-color: var(--tw-color-primary);
-  color: var(--tw-color-title_black);
+  /* Dark text on the gold button regardless of which way title_black/
+     title_white currently resolve — the source paired this button with
+     whichever token was dark at the time, title_white is the one that's
+     actually dark post-recolor. */
+  color: var(--tw-color-title_white);
 }
 .sv-page .button-primary::before {
   content: '';
@@ -70,21 +94,26 @@
   transform: translate(-50%);
 }
 .sv-page .button-primary:hover {
-  border-color: var(--tw-color-white, #fff);
-  color: var(--tw-color-white, #fff);
+  /* Hover fills with `secondary` (now light) via ::before, so hover text/
+     border need to stay dark too. */
+  border-color: var(--tw-color-title_white);
+  color: var(--tw-color-title_white);
 }
 .sv-page .button-primary:hover::before {
   top: -40%;
 }
+/* button-autline-white is only ever used sitting on a (now light) secondary
+   card in this build, so it's defined dark-on-light rather than literal
+   white-on-transparent. */
 .sv-page .button-autline-white {
-  border-color: var(--tw-color-white, #fff);
+  border-color: var(--tw-color-title_white);
   background-color: transparent;
-  color: var(--tw-color-white, #fff);
+  color: var(--tw-color-title_white);
 }
 .sv-page .button-autline-white::before {
   content: '';
   z-index: -1;
-  background: var(--tw-color-white, #fff);
+  background: var(--tw-color-title_white);
   border-radius: 50%;
   width: 200%;
   height: 200%;
@@ -194,11 +223,11 @@
   cursor: pointer;
   align-items: center;
   border-radius: 100px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.05);
   padding-inline: 1.25rem;
   font-size: 1rem;
-  color: #fff;
+  color: var(--tw-color-title_white);
 }
 .sv-page .select-active:focus {
   border-color: var(--tw-color-primary);

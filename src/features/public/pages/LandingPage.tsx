@@ -120,7 +120,7 @@ export function LandingPage() {
   return (
     <div className="sv-page">
       {/* ===== 3.1 Hero — verbatim from index-two.php lines 14-60 ===== */}
-      <section className="tw:py-14 tw:md:py-20 tw:lg:py-24 tw:xl:py-27 tw:bg-[#F8F5F2] tw:relative tw:z-1">
+      <section className="tw:py-14 tw:md:py-20 tw:lg:py-24 tw:xl:py-27 tw:bg-[#080808] tw:relative tw:z-1">
         <img className="tw:hidden tw:lg:block tw:absolute tw:top-[4%] tw:left-0 tw:-z-1" src={`${S}/img/home-v2/banner/background-shape.webp`} alt="background-shape" />
         <div className="tw:container">
           <div className="tw:flex tw:items-center tw:justify-between tw:gap-10 tw:flex-col tw:md:flex-row">
@@ -141,7 +141,7 @@ export function LandingPage() {
                   Download App
                 </a>
                 <a
-                  className="video-popup tw:w-10 tw:md:w-12 tw:h-10 tw:md:h-12 tw:rounded-full tw:bg-title_black tw:flex tw:items-center tw:justify-center tw:text-white"
+                  className="video-popup tw:w-10 tw:md:w-12 tw:h-10 tw:md:h-12 tw:rounded-full tw:bg-title_black tw:flex tw:items-center tw:justify-center tw:text-title_white"
                   href="https://www.youtube.com/embed/S_CGed6E610?si=8usIVmgCLNXWZE_K"
                 >
                   <svg className="tw:fill-current tw:w-3.25 tw:h-3.75">
@@ -165,13 +165,13 @@ export function LandingPage() {
               {/* Counter Up */}
               <div className="tw:absolute tw:bottom-0 tw:max-[380px]:right-1/2 tw:transform tw:max-[380px]:translate-x-1/2 tw:right-0 tw:lg:right-auto tw:lg:left-[50%] tw:z-1 tw:p-4 tw:lg:p-6 tw:bg-secondary tw:rounded-xl tw:lg:rounded-2xl tw:shadow-[0px_4px_24px_0px_rgba(0,0,0,0.1)]">
                 <div className="tw:flex">
-                  <h2 className="counter tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:text-white tw:font-bold tw:leading-none!">10</h2>
-                  <h2 className="tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:text-white tw:font-bold tw:leading-none!">+</h2>
+                  <h2 className="counter tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:text-title_white tw:font-bold tw:leading-none!">10</h2>
+                  <h2 className="tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:text-title_white tw:font-bold tw:leading-none!">+</h2>
                 </div>
                 <div className="tw:mt-2 tw:lg:mt-4 tw:flex tw:flex-col tw:gap-1.75">
-                  <p className="tw:text-sm tw:text-white tw:font-semibold">Years Of Experience</p>
-                  <svg width="136" height="5" viewBox="0 0 136 5" fill="none">
-                    <path d="M0.75 3.75601C18.75 1.256 77.75 -0.743972 135.25 2.25601" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+                  <p className="tw:text-sm tw:text-title_white tw:font-semibold">Years Of Experience</p>
+                  <svg width="136" height="5" viewBox="0 0 136 5" fill="none" className="tw:text-title_white">
+                    <path d="M0.75 3.75601C18.75 1.256 77.75 -0.743972 135.25 2.25601" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                   </svg>
                 </div>
               </div>
@@ -223,9 +223,9 @@ export function LandingPage() {
                   { img: `${S}/img/home-v2/feature/feature-icon-03.svg`, title: 'Multi-User Collaboration', desc: 'Assign roles and manage team spending with granular permission controls and real-time activity tracking.' },
                   { img: `${S}/img/home-v2/feature/feature-icon-04.svg`, title: 'Vault-Level Protection', desc: 'Utilize our data-driven system to monitor account integrity and ensure your assets remain secure 24/7.' },
                 ].map((item) => (
-                  <div className="tw:p-5 tw:sm:p-6 tw:lg:p-8 tw:rounded-2xl tw:bg-white/10 tw:border tw:border-white/10 tw:backdrop-blur-[34px]" key={item.title}>
+                  <div className="tw:p-5 tw:sm:p-6 tw:lg:p-8 tw:rounded-2xl tw:bg-black/5 tw:border tw:border-black/10 tw:backdrop-blur-[34px]" key={item.title}>
                     <img className="tw:w-12" src={item.img} alt="feature icon" />
-                    <h3 className="tw:mt-6 tw:md:mt-9 tw:text-lg tw:md:text-xl tw:font-semibold tw:text-white">{item.title}</h3>
+                    <h3 className="tw:mt-6 tw:md:mt-9 tw:text-lg tw:md:text-xl tw:font-semibold tw:text-title_white">{item.title}</h3>
                     <p className="tw:mt-3 tw:text-base tw:text-paragraph_white">{item.desc}</p>
                   </div>
                 ))}
@@ -261,8 +261,8 @@ export function LandingPage() {
                 </h2>
               </div>
               <div>
-                <h3 className="tw:text-white tw:text-xl tw:md:text-2xl tw:font-semibold">Unexpected Fee Structure</h3>
-                <p className="tw:pt-3 tw:sm:pt-4 tw:text-white/80 tw:text-base tw:leading-normal">Experience complete transparency with zero hidden costs, ensuring your capital.</p>
+                <h3 className="tw:text-title_white tw:text-xl tw:md:text-2xl tw:font-semibold">Unexpected Fee Structure</h3>
+                <p className="tw:pt-3 tw:sm:pt-4 tw:text-paragraph_white tw:text-base tw:leading-normal">Experience complete transparency with zero hidden costs, ensuring your capital.</p>
               </div>
             </div>
             <div className="tw:bg-[#621348] tw:p-5 tw:sm:p-8 tw:rounded-2xl tw:flex tw:flex-col tw:justify-between tw:gap-5">
@@ -335,7 +335,7 @@ export function LandingPage() {
                       ))}
                     </ul>
                   </div>
-                  <a href="/contact" className="tw:w-full tw:px-6 tw:py-4 tw:text-base tw:leading-none tw:font-semibold tw:text-title_white tw:bg-title_black tw:rounded-full tw:cursor-pointer hover:tw:text-title_black hover:tw:bg-primary tw:transition tw:duration-300 tw:text-center tw:justify-center!">
+                  <a href="/contact" className="tw:w-full tw:px-6 tw:py-4 tw:text-base tw:leading-none tw:font-semibold tw:text-title_white tw:bg-title_black tw:rounded-full tw:cursor-pointer hover:tw:text-title_white hover:tw:bg-primary tw:transition tw:duration-300 tw:text-center tw:justify-center!">
                     Get Started Today
                   </a>
                 </div>
@@ -357,13 +357,13 @@ export function LandingPage() {
                     <ul className="tw:space-y-3">
                       {['Priority 24/7 Support', 'High-Yield Savings (4.5% APY)', 'Advanced Portfolio Analytics', 'Physical Metal Debit Card', 'Automated Tax-Loss Harvesting'].map((f) => (
                         <li key={f} className="tw:flex tw:gap-2 tw:items-start tw:leading-normal tw:text-base tw:font-normal tw:text-paragraph_white">
-                          <i className="bi bi-check2-circle" style={{ color: '#D1DE6F' }} aria-hidden="true" />
+                          <i className="bi bi-check2-circle" style={{ color: 'var(--tw-color-primary)' }} aria-hidden="true" />
                           {f}
                         </li>
                       ))}
                     </ul>
                   </div>
-                  <a href="/contact" className="tw:w-full tw:px-6 tw:py-4 tw:text-base tw:leading-none tw:font-semibold tw:text-title_black tw:bg-primary tw:rounded-full tw:cursor-pointer tw:text-center tw:justify-center!">
+                  <a href="/contact" className="tw:w-full tw:px-6 tw:py-4 tw:text-base tw:leading-none tw:font-semibold tw:text-title_white tw:bg-primary tw:rounded-full tw:cursor-pointer tw:text-center tw:justify-center!">
                     Get Started Today
                   </a>
                 </div>
@@ -391,7 +391,7 @@ export function LandingPage() {
                       ))}
                     </ul>
                   </div>
-                  <a href="/contact" className="tw:w-full tw:px-6 tw:py-4 tw:text-base tw:leading-none tw:font-semibold tw:text-title_white tw:bg-title_black tw:rounded-full tw:cursor-pointer hover:tw:text-title_black hover:tw:bg-primary tw:transition tw:duration-300 tw:text-center tw:justify-center!">
+                  <a href="/contact" className="tw:w-full tw:px-6 tw:py-4 tw:text-base tw:leading-none tw:font-semibold tw:text-title_white tw:bg-title_black tw:rounded-full tw:cursor-pointer hover:tw:text-title_white hover:tw:bg-primary tw:transition tw:duration-300 tw:text-center tw:justify-center!">
                     Get Started Today
                   </a>
                 </div>
@@ -422,7 +422,7 @@ export function LandingPage() {
               <div className="tw:lg:max-w-87 tw:w-full">
                 <form className="home-1-roi-calculator tw:grid tw:sm:grid-cols-2 tw:lg:flex tw:lg:flex-col tw:gap-6 tw:w-full" onSubmit={(e) => e.preventDefault()}>
                   <div className="select-box-dark">
-                    <label className="tw:text-base tw:font-normal tw:leading-normal tw:text-white tw:mb-2 tw:block">Investment Horizon (Years)</label>
+                    <label className="tw:text-base tw:font-normal tw:leading-normal tw:text-title_white tw:mb-2 tw:block">Investment Horizon (Years)</label>
                     <select className="select-active" defaultValue="1">
                       <option value="1">10</option>
                       <option value="2">20</option>
@@ -432,7 +432,7 @@ export function LandingPage() {
                     </select>
                   </div>
                   <div className="select-box-dark">
-                    <label className="tw:text-base tw:font-normal tw:leading-normal tw:text-white tw:mb-2 tw:block">Risk Tolerance Profile</label>
+                    <label className="tw:text-base tw:font-normal tw:leading-normal tw:text-title_white tw:mb-2 tw:block">Risk Tolerance Profile</label>
                     <select className="select-active" defaultValue="1">
                       <option value="1">Balanced</option>
                       <option value="2">Conservative</option>
@@ -442,7 +442,7 @@ export function LandingPage() {
                     </select>
                   </div>
                   <div className="select-box-dark">
-                    <label className="tw:text-base tw:font-normal tw:leading-normal tw:text-white tw:mb-2 tw:block">Asset Allocation Strategy</label>
+                    <label className="tw:text-base tw:font-normal tw:leading-normal tw:text-title_white tw:mb-2 tw:block">Asset Allocation Strategy</label>
                     <select className="select-active" defaultValue="1">
                       <option value="1">Diversified Growth</option>
                       <option value="2">Income Focused</option>
@@ -452,40 +452,40 @@ export function LandingPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="tw:text-base tw:font-normal tw:leading-normal tw:text-white tw:mb-2 tw:block">Expected Annual Return (%)</label>
+                    <label className="tw:text-base tw:font-normal tw:leading-normal tw:text-title_white tw:mb-2 tw:block">Expected Annual Return (%)</label>
                     <div className="tw:relative">
                       <input
-                        className="tw:h-10 tw:w-full tw:bg-white/10 tw:border tw:border-white/10 tw:backdrop-blur-[34px] tw:rounded-[100px] tw:cursor-pointer tw:text-base tw:font-semibold tw:text-white tw:flex tw:items-center tw:relative tw:pl-5 tw:pr-9 tw:appearance-none tw:outline-none tw:duration-300 focus:tw:border-primary"
+                        className="tw:h-10 tw:w-full tw:bg-black/5 tw:border tw:border-black/10 tw:backdrop-blur-[34px] tw:rounded-[100px] tw:cursor-pointer tw:text-base tw:font-semibold tw:text-title_white tw:flex tw:items-center tw:relative tw:pl-5 tw:pr-9 tw:appearance-none tw:outline-none tw:duration-300 focus:tw:border-primary"
                         type="number"
                         defaultValue={7}
                       />
-                      <span className="tw:text-base tw:font-semibold tw:text-white tw:absolute tw:top-1/2 tw:transform tw:-translate-1/2 tw:right-5">%</span>
+                      <span className="tw:text-base tw:font-semibold tw:text-title_white tw:absolute tw:top-1/2 tw:transform tw:-translate-1/2 tw:right-5">%</span>
                     </div>
                   </div>
                   <div>
-                    <label className="tw:text-base tw:font-normal tw:leading-normal tw:text-white tw:mb-2 tw:block">Initial Principal Investment</label>
+                    <label className="tw:text-base tw:font-normal tw:leading-normal tw:text-title_white tw:mb-2 tw:block">Initial Principal Investment</label>
                     <div className="tw:relative">
                       <input
-                        className="tw:h-10 tw:w-full tw:bg-white/10 tw:border tw:border-white/10 tw:backdrop-blur-[34px] tw:rounded-[100px] tw:cursor-pointer tw:text-base tw:font-semibold tw:text-white tw:flex tw:items-center tw:relative tw:pl-9 tw:pr-5 tw:appearance-none tw:outline-none tw:duration-300 focus:tw:border-primary"
+                        className="tw:h-10 tw:w-full tw:bg-black/5 tw:border tw:border-black/10 tw:backdrop-blur-[34px] tw:rounded-[100px] tw:cursor-pointer tw:text-base tw:font-semibold tw:text-title_white tw:flex tw:items-center tw:relative tw:pl-9 tw:pr-5 tw:appearance-none tw:outline-none tw:duration-300 focus:tw:border-primary"
                         type="number"
                         defaultValue={100000}
                       />
-                      <span className="tw:text-base tw:font-semibold tw:text-white tw:absolute tw:top-1/2 tw:transform tw:-translate-1/2 tw:left-6.25">$</span>
+                      <span className="tw:text-base tw:font-semibold tw:text-title_white tw:absolute tw:top-1/2 tw:transform tw:-translate-1/2 tw:left-6.25">$</span>
                     </div>
                   </div>
                   <div>
-                    <label className="tw:text-base tw:font-normal tw:leading-normal tw:text-white tw:mb-2 tw:block">Recurring Monthly Deposit</label>
+                    <label className="tw:text-base tw:font-normal tw:leading-normal tw:text-title_white tw:mb-2 tw:block">Recurring Monthly Deposit</label>
                     <div className="tw:relative">
                       <input
-                        className="tw:h-10 tw:w-full tw:bg-white/10 tw:border tw:border-white/10 tw:backdrop-blur-[34px] tw:rounded-[100px] tw:cursor-pointer tw:text-base tw:font-semibold tw:text-white tw:flex tw:items-center tw:relative tw:pl-9 tw:pr-5 tw:appearance-none tw:outline-none tw:duration-300 focus:tw:border-primary"
+                        className="tw:h-10 tw:w-full tw:bg-black/5 tw:border tw:border-black/10 tw:backdrop-blur-[34px] tw:rounded-[100px] tw:cursor-pointer tw:text-base tw:font-semibold tw:text-title_white tw:flex tw:items-center tw:relative tw:pl-9 tw:pr-5 tw:appearance-none tw:outline-none tw:duration-300 focus:tw:border-primary"
                         type="number"
                         defaultValue={1000}
                       />
-                      <span className="tw:text-base tw:font-semibold tw:text-white tw:absolute tw:top-1/2 tw:transform tw:-translate-1/2 tw:left-6.25">$</span>
+                      <span className="tw:text-base tw:font-semibold tw:text-title_white tw:absolute tw:top-1/2 tw:transform tw:-translate-1/2 tw:left-6.25">$</span>
                     </div>
                   </div>
                   <div className="select-box-dark">
-                    <label className="tw:text-base tw:font-normal tw:leading-normal tw:text-white tw:mb-2 tw:block">Compound Frequency</label>
+                    <label className="tw:text-base tw:font-normal tw:leading-normal tw:text-title_white tw:mb-2 tw:block">Compound Frequency</label>
                     <select className="select-active" defaultValue="1">
                       <option value="1">Monthly</option>
                       <option value="2">Quarterly</option>
@@ -502,16 +502,16 @@ export function LandingPage() {
                 </form>
               </div>
               <div className="tw:md:max-w-227 tw:w-full tw:grid tw:gap-6">
-                <div className="tw:p-5 tw:sm:p-6 tw:bg-white/10 tw:border tw:border-white/10 tw:rounded-2xl tw:backdrop-blur-[34px] tw:text-center">
-                  <h3 className="tw:text-white tw:font-bold tw:text-2xl tw:md:text-3xl tw:lg:text-4xl tw:leading-none">$374,051</h3>
-                  <p className="tw:text-base tw:sm:text-lg tw:mt-3 tw:text-white tw:font-medium">Total Investment fund after 10 years</p>
+                <div className="tw:p-5 tw:sm:p-6 tw:bg-black/5 tw:border tw:border-black/10 tw:rounded-2xl tw:backdrop-blur-[34px] tw:text-center">
+                  <h3 className="tw:text-title_white tw:font-bold tw:text-2xl tw:md:text-3xl tw:lg:text-4xl tw:leading-none">$374,051</h3>
+                  <p className="tw:text-base tw:sm:text-lg tw:mt-3 tw:text-title_white tw:font-medium">Total Investment fund after 10 years</p>
                 </div>
-                <div className="tw:w-full tw:p-3 tw:sm:p-6 tw:bg-white/10 tw:border tw:border-white/10 tw:rounded-2xl tw:backdrop-blur-[34px] tw:overflow-hidden">
+                <div className="tw:w-full tw:p-3 tw:sm:p-6 tw:bg-black/5 tw:border tw:border-black/10 tw:rounded-2xl tw:backdrop-blur-[34px] tw:overflow-hidden">
                   <canvas id="investmentChart" />
                 </div>
-                <div className="tw:p-5 tw:sm:p-6 tw:bg-white/10 tw:border tw:border-white/10 tw:rounded-2xl tw:backdrop-blur-[34px] tw:flex tw:items-start tw:lg:items-center tw:justify-between tw:gap-4 tw:lg:gap-6 tw:flex-col tw:lg:flex-row">
+                <div className="tw:p-5 tw:sm:p-6 tw:bg-black/5 tw:border tw:border-black/10 tw:rounded-2xl tw:backdrop-blur-[34px] tw:flex tw:items-start tw:lg:items-center tw:justify-between tw:gap-4 tw:lg:gap-6 tw:flex-col tw:lg:flex-row">
                   <div className="tw:flex-1">
-                    <p className="tw:text-white tw:text-lg tw:font-semibold">Get Started On Planning Your Finances</p>
+                    <p className="tw:text-title_white tw:text-lg tw:font-semibold">Get Started On Planning Your Finances</p>
                     <p className="tw:text-base tw:mt-3 tw:text-paragraph_white tw:max-w-154.25">Our AI-driven AdvisorMatch tool will help you find a certified specialist to plan your custom portfolio.</p>
                   </div>
                   <div className="tw:w-fit">

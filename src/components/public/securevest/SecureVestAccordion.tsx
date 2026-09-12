@@ -49,7 +49,7 @@ export function SecureVestAccordion({ activeIndex, onSelect }: { activeIndex: nu
               }}
             >
               <div className="tw:flex tw:items-start tw:gap-4 tw:md:gap-6 tw:lg:gap-9">
-                <span className="next-gen-number tw:text-lg tw:font-semibold tw:leading-normal tw:text-[#CCCCCC] tw:duration-300">{String(index + 1).padStart(2, '0')}</span>
+                <span className="next-gen-number tw:text-lg tw:font-semibold tw:leading-normal tw:text-paragraph_white tw:duration-300">{String(index + 1).padStart(2, '0')}</span>
                 <div className="tw:flex-1">
                   <div className="tw:flex tw:items-center tw:justify-between tw:gap-4 tw:mb-2 tw:md:mb-3">
                     <h3 className="tw:text-xl tw:md:text-2xl tw:font-semibold tw:text-title_white tw:flex-1">{item.title}</h3>
@@ -59,11 +59,11 @@ export function SecureVestAccordion({ activeIndex, onSelect }: { activeIndex: nu
                       </svg>
                     </button>
                   </div>
-                  <p className="next-gen-description tw:text-base tw:text-[#CCCCCC]">{item.desc}</p>
+                  <p className="next-gen-description tw:text-base tw:text-paragraph_white">{item.desc}</p>
                 </div>
               </div>
             </div>
-            <div className="next-gen-progress tw:relative tw:h-px tw:mt-4 tw:overflow-hidden tw:bg-white/10">
+            <div className="next-gen-progress tw:relative tw:h-px tw:mt-4 tw:overflow-hidden tw:bg-black/10">
               <div className="next-gen-progress-line tw:absolute tw:top-0 tw:left-0 tw:h-full tw:bg-primary" style={{ width: active ? '100%' : '0%' }} />
             </div>
           </div>

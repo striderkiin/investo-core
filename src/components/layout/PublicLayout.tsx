@@ -90,10 +90,14 @@ export function PublicLayout() {
       {/* Footer — verbatim from Base/style/footer.php lines 38-121 only (lines 1-37,
           the "Ready to Scale Your Fintech Vision?" CTA banner, are skipped per the
           brief). The <footer> wrapper itself (opened at line 1, inside the skipped
-          range) is recreated here since something has to hold this content — its
-          bg-secondary/padding match the source's own footer element. Not recolored
-          or recontented yet: this is the verbatim-assembly checkpoint. */}
-      <footer className="sv-page tw:bg-secondary tw:pt-14 tw:md:pt-20 tw:lg:pt-23 tw:relative tw:z-1">
+          range) is recreated here since something has to hold this content.
+
+          Recolor pass exception (flagged in the brief): every other full-bleed
+          bg-secondary section maps to warm white, but the footer stays black —
+          it closes the page consistently with the hero and matches Investo's
+          footer treatment everywhere else. securevest-components.css pins its
+          paragraph_white text back to light-on-black to match. */}
+      <footer className="sv-page tw:bg-[#080808] tw:pt-14 tw:md:pt-20 tw:lg:pt-23 tw:relative tw:z-1">
         <div className="tw:container">
           <div className="tw:flex tw:justify-between tw:lg:gap-10 tw:border-y tw:border-white/10 tw:flex-col tw:lg:flex-row">
             <div className="tw:py-10 tw:lg:py-12.5 tw:lg:max-w-87.5 tw:w-full tw:flex tw:flex-col tw:sm:flex-row tw:lg:flex-col tw:justify-between tw:gap-6 tw:sm:items-end">
@@ -111,7 +115,7 @@ export function PublicLayout() {
                   placeholder="Enter your email"
                   required
                 />
-                <button type="submit" className="tw:w-8 tw:h-8 tw:bg-primary tw:rounded-full tw:flex tw:items-center tw:justify-center tw:text-title_black tw:absolute tw:right-2 tw:top-2">
+                <button type="submit" className="tw:w-8 tw:h-8 tw:bg-primary tw:rounded-full tw:flex tw:items-center tw:justify-center tw:text-title_white tw:absolute tw:right-2 tw:top-2">
                   <svg className="tw:w-5 tw:h-4 tw:fill-current">
                     <use href="#tabArrow" />
                   </svg>
@@ -209,22 +213,22 @@ export function PublicLayout() {
               .
             </p>
             <div className="tw:flex tw:items-center tw:gap-4">
-              <a href="#" className="tw:w-8.5 tw:h-8.5 tw:bg-white/10 tw:rounded-full tw:flex tw:items-center tw:justify-center tw:text-white tw:duration-300 hover:tw:bg-primary hover:tw:text-title_black" rel="noopener noreferrer" aria-label="Pinterest">
+              <a href="#" className="tw:w-8.5 tw:h-8.5 tw:bg-white/10 tw:rounded-full tw:flex tw:items-center tw:justify-center tw:text-white tw:duration-300 hover:tw:bg-primary hover:tw:text-title_white" rel="noopener noreferrer" aria-label="Pinterest">
                 <svg className="tw:w-4 tw:h-4 tw:fill-current">
                   <use href="#pinterest" />
                 </svg>
               </a>
-              <a href="#" className="tw:w-8.5 tw:h-8.5 tw:bg-white/10 tw:rounded-full tw:flex tw:items-center tw:justify-center tw:text-white tw:duration-300 hover:tw:bg-primary hover:tw:text-title_black" rel="noopener noreferrer" aria-label="Vimeo">
+              <a href="#" className="tw:w-8.5 tw:h-8.5 tw:bg-white/10 tw:rounded-full tw:flex tw:items-center tw:justify-center tw:text-white tw:duration-300 hover:tw:bg-primary hover:tw:text-title_white" rel="noopener noreferrer" aria-label="Vimeo">
                 <svg className="tw:w-4 tw:h-4 tw:fill-current">
                   <use href="#vimeo" />
                 </svg>
               </a>
-              <a href="#" className="tw:w-8.5 tw:h-8.5 tw:bg-white/10 tw:rounded-full tw:flex tw:items-center tw:justify-center tw:text-white tw:duration-300 hover:tw:bg-primary hover:tw:text-title_black" rel="noopener noreferrer" aria-label="Twitter">
+              <a href="#" className="tw:w-8.5 tw:h-8.5 tw:bg-white/10 tw:rounded-full tw:flex tw:items-center tw:justify-center tw:text-white tw:duration-300 hover:tw:bg-primary hover:tw:text-title_white" rel="noopener noreferrer" aria-label="Twitter">
                 <svg className="tw:w-4 tw:h-4 tw:fill-current">
                   <use href="#twitter" />
                 </svg>
               </a>
-              <a href="#" className="tw:w-8.5 tw:h-8.5 tw:bg-white/10 tw:rounded-full tw:flex tw:items-center tw:justify-center tw:text-white tw:duration-300 hover:tw:bg-primary hover:tw:text-title_black" rel="noopener noreferrer" aria-label="Facebook">
+              <a href="#" className="tw:w-8.5 tw:h-8.5 tw:bg-white/10 tw:rounded-full tw:flex tw:items-center tw:justify-center tw:text-white tw:duration-300 hover:tw:bg-primary hover:tw:text-title_white" rel="noopener noreferrer" aria-label="Facebook">
                 <svg className="tw:w-4 tw:h-4 tw:fill-current">
                   <use href="#facebook" />
                 </svg>
