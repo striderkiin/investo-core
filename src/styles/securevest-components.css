@@ -18,19 +18,10 @@
 .sv-page [class*='tw:text-title_white'] { color: var(--tw-color-title_white) !important; }
 .sv-page [class*='tw:text-paragraph_black'] { color: var(--tw-color-paragraph_black) !important; }
 .sv-page [class*='tw:text-paragraph_white'] { color: var(--tw-color-paragraph_white) !important; }
+.sv-page [class*='tw:text-white']:not([class*='tw:text-white/']) { color: #fff !important; }
 
-/* Step 2 recolor pass — font swap: Fugaz One for headings, Merriweather for
-   body copy, system sans left alone for nav/button/label chrome (buttons
-   already inherit the ambient UI font, so they're untouched here). */
-.sv-page h1,
-.sv-page h2,
-.sv-page h3,
-footer.sv-page h3 {
-  font-family: 'Fugaz One', system-ui, sans-serif;
-}
-.sv-page p {
-  font-family: 'Merriweather', Georgia, serif;
-}
+/* No font swap at this checkpoint — this is the verbatim-assembly step,
+   fonts/colors stay SecureVest's own until a separate recolor pass. */
 
 .sv-page .button-primary,
 .sv-page .button-autline-white {
@@ -203,11 +194,11 @@ footer.sv-page h3 {
   cursor: pointer;
   align-items: center;
   border-radius: 100px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  background-color: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.1);
   padding-inline: 1.25rem;
   font-size: 1rem;
-  color: var(--tw-color-title_white);
+  color: #fff;
 }
 .sv-page .select-active:focus {
   border-color: var(--tw-color-primary);

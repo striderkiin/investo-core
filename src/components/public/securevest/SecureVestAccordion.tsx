@@ -1,97 +1,74 @@
-import { useEffect, useRef, useState } from 'react';
-
-export interface AccordionFaqItem {
-  question: string;
-  answer: string;
-}
-
-const AUTO_ROTATE_MS = 5000;
+/** Verbatim content/structure from Base/Components/AllPages/security/accordion.php (5 items). */
+const ITEMS = [
+  {
+    title: 'Cloud Infrastructure',
+    desc: 'Our platform operates on a resilient, multi-regional cloud network, ensuring 99.9% uptime and lightning-fast transaction processing for users worldwide.',
+  },
+  {
+    title: 'Blockchain Integration',
+    desc: 'Send and receive money across borders instantly, without the high fees and long wait times. Experience truly global financial freedom.',
+  },
+  {
+    title: 'Real-time Monitoring Systems',
+    desc: 'Set smart contracts and automated spending rules. Control your finances with programmable money that works exactly how you want it to, when you want it to.',
+  },
+  {
+    title: 'Open Banking APIs',
+    desc: 'Experience the stability of traditional currency with the flexibility of digital assets. Our stablecoin maintains a consistent value, making it perfect for everyday transactions and long-term savings.',
+  },
+  {
+    title: 'AI Machine Learning Capabilities',
+    desc: 'Experience the stability of traditional currency with the flexibility of digital assets. Our stablecoin maintains a consistent value, making it perfect for everyday transactions and long-term savings.',
+  },
+];
 
 /**
- * Behavioral port of SecureVest's "next-gen" accordion (assets/js/main.js,
- * the next-gen-accordion-wrapper block): click a header to open it, only
- * one item open at a time, a progress bar under the active item fills over
- * AUTO_ROTATE_MS and then advances to the next item, and hovering the
- * wrapper pauses the auto-rotate. The source drives this with GSAP and an
- * image crossfade; we drop the image column per the brief (no FAQ image
- * content exists for Investo) so this reimplements the same open/close +
- * timer behavior with plain state and CSS transitions instead of pulling
- * in GSAP for one interaction.
+ * The source (assets/js/main.js) drives this with GSAP: click-to-select,
+ * a 5s auto-rotate that pauses on hover, and a crossfading thumbnail image
+ * synced to the active index. Reimplemented here with plain state — same
+ * click/active behavior, same active-index sync exposed to the parent for
+ * the image column, without pulling in GSAP for one interaction.
  */
-export function SecureVestAccordion({ items }: { items: AccordionFaqItem[] }) {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [progressKey, setProgressKey] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    if (paused) return undefined;
-    timeoutRef.current = setTimeout(() => {
-      setActiveIndex((i) => (i + 1) % items.length);
-      setProgressKey((k) => k + 1);
-    }, AUTO_ROTATE_MS);
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, [activeIndex, paused, items.length]);
-
-  function handleSelect(index: number) {
-    if (index === activeIndex) return;
-    setActiveIndex(index);
-    setProgressKey((k) => k + 1);
-  }
-
+export function SecureVestAccordion({ activeIndex, onSelect }: { activeIndex: number; onSelect: (index: number) => void }) {
   return (
-    <div
-      className="next-gen-accordion-wrapper excellence-accordion-wrapper tw:flex tw:flex-col tw:gap-4 md:tw:gap-6 lg:tw:gap-9"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-    >
-      {items.map((item, index) => {
+    <>
+      {ITEMS.map((item, index) => {
         const active = index === activeIndex;
         return (
-          <div className={`next-gen-item${active ? ' active' : ''}`} data-index={index} key={item.question}>
+          <div className={`next-gen-item${active ? ' active' : ''}`} data-index={index} key={item.title}>
             <div
               className="next-gen-header tw:cursor-pointer tw:flex tw:justify-between tw:items-center tw:gap-4"
-              onClick={() => handleSelect(index)}
+              onClick={() => onSelect(index)}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  handleSelect(index);
+                  onSelect(index);
                 }
               }}
             >
-              <div className="tw:flex tw:items-start tw:gap-4 md:tw:gap-6 lg:tw:gap-9">
-                <span className="next-gen-number tw:text-lg tw:font-semibold tw:leading-normal tw:text-paragraph_white">
-                  {String(index + 1).padStart(2, '0')}
-                </span>
+              <div className="tw:flex tw:items-start tw:gap-4 tw:md:gap-6 tw:lg:gap-9">
+                <span className="next-gen-number tw:text-lg tw:font-semibold tw:leading-normal tw:text-[#CCCCCC] tw:duration-300">{String(index + 1).padStart(2, '0')}</span>
                 <div className="tw:flex-1">
-                  <div className="tw:flex tw:items-center tw:justify-between tw:gap-4 tw:mb-2 md:tw:mb-3">
-                    <h3 className="tw:text-xl md:tw:text-2xl tw:font-semibold tw:text-title_white tw:flex-1">{item.question}</h3>
-                    <button type="button" aria-label="Toggle answer" className="excellence-accordion-toogle tw:w-[19px] tw:h-[9px]">
-                      <svg className="tw:w-[19px] tw:h-[9px] tw:fill-none tw:text-primary" viewBox="0 0 19 9" aria-hidden="true">
-                        <path d="M1 1l8.5 7L18 1" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                  <div className="tw:flex tw:items-center tw:justify-between tw:gap-4 tw:mb-2 tw:md:mb-3">
+                    <h3 className="tw:text-xl tw:md:text-2xl tw:font-semibold tw:text-title_white tw:flex-1">{item.title}</h3>
+                    <button type="button" aria-label="Toggle section" className="excellence-accordion-toogle tw:w-4.75 tw:h-2.25">
+                      <svg className="tw:w-4.75 tw:h-2.25 tw:fill-none tw:text-primary">
+                        <use href="#excellence-accortion-arrow" />
                       </svg>
                     </button>
                   </div>
-                  <p className="next-gen-description tw:text-base tw:text-paragraph_white">{item.answer}</p>
+                  <p className="next-gen-description tw:text-base tw:text-[#CCCCCC]">{item.desc}</p>
                 </div>
               </div>
             </div>
             <div className="next-gen-progress tw:relative tw:h-px tw:mt-4 tw:overflow-hidden tw:bg-white/10">
-              {active && (
-                <div
-                  key={progressKey}
-                  className="next-gen-progress-line tw:absolute tw:top-0 tw:left-0 tw:h-full tw:bg-primary"
-                  style={{ animation: paused ? 'none' : `sv-accordion-progress ${AUTO_ROTATE_MS}ms linear forwards` }}
-                />
-              )}
+              <div className="next-gen-progress-line tw:absolute tw:top-0 tw:left-0 tw:h-full tw:bg-primary" style={{ width: active ? '100%' : '0%' }} />
             </div>
           </div>
         );
       })}
-    </div>
+    </>
   );
 }
