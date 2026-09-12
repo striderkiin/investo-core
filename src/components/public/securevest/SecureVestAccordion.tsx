@@ -1,3 +1,5 @@
+import { ScrollReveal } from '../ScrollReveal';
+
 /* Structure verbatim from Base/Components/AllPages/security/accordion.php; content
    replaced with Investo's real FAQ per the step-3 content pass. */
 const ITEMS = [
@@ -42,7 +44,7 @@ export function SecureVestAccordion({ activeIndex, onSelect }: { activeIndex: nu
         const active = index === activeIndex;
         const toggle = () => onSelect(active ? null : index);
         return (
-          <div className={`next-gen-item${active ? ' active' : ''}`} data-index={index} key={item.title}>
+          <ScrollReveal className={`next-gen-item${active ? ' active' : ''}`} index={index} y={12} key={item.title}>
             <div
               className="next-gen-header tw:cursor-pointer tw:flex tw:justify-between tw:items-center tw:gap-4"
               onClick={toggle}
@@ -73,7 +75,7 @@ export function SecureVestAccordion({ activeIndex, onSelect }: { activeIndex: nu
             <div className="next-gen-progress tw:relative tw:h-px tw:mt-4 tw:overflow-hidden tw:bg-black/10">
               <div className="next-gen-progress-line tw:absolute tw:top-0 tw:left-0 tw:h-full tw:bg-primary" style={{ width: active ? '100%' : '0%' }} />
             </div>
-          </div>
+          </ScrollReveal>
         );
       })}
     </>

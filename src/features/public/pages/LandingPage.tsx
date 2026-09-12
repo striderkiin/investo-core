@@ -9,6 +9,7 @@ import { createInvestmentService } from '../../../services/api/investmentService
 import type { InvestmentPlan, SocialLink } from '../../../types/database';
 import { useAuth } from '../../../hooks/useAuth';
 import { IconBadge } from '../../../components/public/IconBadge';
+import { ScrollReveal } from '../../../components/public/ScrollReveal';
 import { SocialLinksRow } from '../../../components/public/SocialLinksRow';
 import { IconMail } from '../../../components/public/icons';
 import { SecureVestAccordion } from '../../../components/public/securevest/SecureVestAccordion';
@@ -251,7 +252,7 @@ export function LandingPage() {
       <section className="section-spacing-lg-md">
         <div className="tw:container-lg">
           <div className="tw:flex tw:xl:items-start tw:justify-between tw:gap-10 tw:gap-y-12 tw:flex-col tw:lg:flex-row">
-            <div className="tw:max-w-175 tw:lg:max-w-135 tw:w-full tw:lg:self-start">
+            <ScrollReveal className="tw:max-w-175 tw:lg:max-w-135 tw:w-full tw:lg:self-start">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
                 <p className="tw:m-0! tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide">WHY INVESTO</p>
@@ -280,19 +281,19 @@ export function LandingPage() {
                   <span className="tw:flex-1">Referral Program: earn rewards for every investor you bring onto the platform.</span>
                 </li>
               </ul>
-            </div>
+            </ScrollReveal>
             <div className="tw:lg:max-w-165 tw:w-full tw:grid tw:sm:grid-cols-2 tw:gap-x-6 tw:gap-y-10 tw:max-xl:flex-1">
               {[
                 { img: `${S}/img/home-v2/feature/feature-icon-01.svg`, title: 'Real-Time Tracking', desc: 'Watch your balances, returns, and transaction history update live from your dashboard.' },
                 { img: `${S}/img/home-v2/feature/feature-icon-02.svg`, title: 'Bank-Grade Security', desc: 'Two-factor authentication, session controls, and server-validated transactions on every account.' },
                 { img: `${S}/img/home-v2/feature/feature-icon-03.svg`, title: 'Transparent Reporting', desc: 'A full, auditable ledger of every deposit, investment, and withdrawal, never a black box.' },
                 { img: `${S}/img/home-v2/feature/feature-icon-04.svg`, title: 'Referral Rewards', desc: 'Every account gets a referral code and link, with earnings tracked automatically.' },
-              ].map((item) => (
-                <div key={item.title}>
+              ].map((item, i) => (
+                <ScrollReveal key={item.title} index={i}>
                   <img className="tw:w-10" src={item.img} alt="feature icon" />
                   <h3 className="tw:mt-5! tw:text-lg tw:md:text-xl tw:font-semibold tw:text-title_black">{item.title}</h3>
                   <p className="tw:mt-3 tw:text-base tw:text-paragraph_black">{item.desc}</p>
-                </div>
+                </ScrollReveal>
               ))}
             </div>
           </div>
@@ -302,7 +303,7 @@ export function LandingPage() {
       {/* ===== 3.3 Institutional stats — verbatim from index-two.php lines 111-134 + stats-counter.php ===== */}
       <section id="about" className="section-spacing-md-lg">
         <div className="tw:container">
-          <div className="tw:flex tw:items-start tw:justify-between tw:gap-4 tw:md:gap-10 tw:mb-12 tw:sm:mb-14 tw:md:mb-16 tw:lg:mb-20 tw:flex-col tw:md:flex-row tw:max-w-125 tw:md:max-w-full">
+          <ScrollReveal className="tw:flex tw:items-start tw:justify-between tw:gap-4 tw:md:gap-10 tw:mb-12 tw:sm:mb-14 tw:md:mb-16 tw:lg:mb-20 tw:flex-col tw:md:flex-row tw:max-w-125 tw:md:max-w-full">
             <div className="tw:md:max-w-170 tw:w-full">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon.svg`} alt="title-icon" />
@@ -313,12 +314,12 @@ export function LandingPage() {
             <p className="tw:md:max-w-115 tw:w-full tw:text-base tw:sm:text-lg tw:text-paragraph_black">
               We measure our own success by the reliability and transparency of the platform you depend on.
             </p>
-          </div>
+          </ScrollReveal>
           <div className="tw:grid tw:sm:grid-cols-2 tw:lg:grid-cols-3 tw:gap-5 tw:lg:gap-8">
-            <div className="tw:sm:col-span-2">
+            <ScrollReveal className="tw:sm:col-span-2" index={0}>
               <img src={`${S}/img/home-v2/counter-img/counter-1.webp`} alt="counter image" className="tw:rounded-lg tw:md:rounded-2xl tw:object-cover tw:aspect-835/310 tw:w-full tw:h-full" />
-            </div>
-            <div className="tw:bg-secondary tw:p-5 tw:sm:p-8 tw:rounded-2xl tw:flex tw:flex-col tw:justify-between tw:gap-5">
+            </ScrollReveal>
+            <ScrollReveal className="tw:bg-secondary tw:p-5 tw:sm:p-8 tw:rounded-2xl tw:flex tw:flex-col tw:justify-between tw:gap-5" index={1}>
               <div className="tw:flex tw:items-start tw:gap-1">
                 <h2 className="counter tw:text-primary tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">4</h2>
               </div>
@@ -326,8 +327,8 @@ export function LandingPage() {
                 <h3 className="tw:text-title_white tw:text-lg tw:md:text-xl tw:font-semibold">Investment Plans</h3>
                 <p className="tw:pt-3 tw:sm:pt-4 tw:text-paragraph_white tw:text-base tw:leading-normal">From steady starter returns to our top tier, each with a fixed rate and duration.</p>
               </div>
-            </div>
-            <div className="tw:bg-[#621348] tw:p-5 tw:sm:p-8 tw:rounded-2xl tw:flex tw:flex-col tw:justify-between tw:gap-5">
+            </ScrollReveal>
+            <ScrollReveal className="tw:bg-[#621348] tw:p-5 tw:sm:p-8 tw:rounded-2xl tw:flex tw:flex-col tw:justify-between tw:gap-5" index={2}>
               <div className="tw:flex tw:items-start tw:gap-1">
                 <h2 className="counter tw:text-primary tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">24/7</h2>
               </div>
@@ -335,13 +336,13 @@ export function LandingPage() {
                 <h3 className="tw:text-white tw:text-lg tw:md:text-xl tw:font-semibold">Platform Availability</h3>
                 <p className="tw:pt-3 tw:sm:pt-4 tw:text-white/80 tw:text-base tw:leading-[1.5]">Manage deposits, withdrawals, and investments from your dashboard any time.</p>
               </div>
-            </div>
+            </ScrollReveal>
 
-            <div>
+            <ScrollReveal index={3}>
               <img src={`${S}/img/home-v2/counter-img/counter-2.webp`} alt="counter image" className="tw:rounded-lg tw:md:rounded-2xl tw:object-cover tw:aspect-410/310 tw:w-full tw:h-full" />
-            </div>
+            </ScrollReveal>
 
-            <div className="tw:bg-[#14265C] tw:p-5 tw:sm:p-8 tw:rounded-2xl tw:flex tw:flex-col tw:justify-between tw:gap-5">
+            <ScrollReveal className="tw:bg-[#14265C] tw:p-5 tw:sm:p-8 tw:rounded-2xl tw:flex tw:flex-col tw:justify-between tw:gap-5" index={4}>
               <div className="tw:flex tw:items-start tw:gap-1">
                 <h2 className="counter tw:text-primary tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">100</h2>
                 <h2 className="tw:text-primary tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">%</h2>
@@ -350,7 +351,7 @@ export function LandingPage() {
                 <h3 className="tw:text-white tw:text-lg tw:md:text-xl tw:font-semibold">Server-Validated Transactions</h3>
                 <p className="tw:pt-3 tw:sm:pt-4 tw:text-white/80 tw:text-base tw:leading-[1.5]">Every balance-affecting action runs through audited, server-side logic, never the browser.</p>
               </div>
-            </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
@@ -358,7 +359,7 @@ export function LandingPage() {
       {/* ===== 3.4 Pricing — verbatim from services.php lines 55-106 (toggle at 68-93 excluded) + pricing-cards.php ===== */}
       <section id="pricing" className="section-spacing-md-lg">
         <div className="tw:container">
-          <div className="tw:flex tw:items-start tw:justify-between tw:gap-4 tw:md:gap-10 tw:mb-12 tw:sm:mb-14 tw:md:mb-16 tw:lg:mb-20 tw:flex-col tw:md:flex-row tw:max-w-125 tw:md:max-w-full">
+          <ScrollReveal className="tw:flex tw:items-start tw:justify-between tw:gap-4 tw:md:gap-10 tw:mb-12 tw:sm:mb-14 tw:md:mb-16 tw:lg:mb-20 tw:flex-col tw:md:flex-row tw:max-w-125 tw:md:max-w-full">
             <div className="tw:md:max-w-170 tw:w-full">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon.svg`} alt="title-icon" />
@@ -369,7 +370,7 @@ export function LandingPage() {
             <p className="tw:md:max-w-115 tw:w-full tw:text-base tw:sm:text-lg tw:text-paragraph_black">
               Every plan has a fixed rate, deposit range, and duration, no hidden fees, no surprises.
             </p>
-          </div>
+          </ScrollReveal>
           <div>
             {/* Monthly/Yearly toggle (services.php lines 68-93) excluded per the brief — no equivalent in Investo's model */}
             {plansLoading ? (
@@ -388,7 +389,7 @@ export function LandingPage() {
                     'Real-time dashboard tracking',
                   ];
                   return (
-                    <div key={plan.id}>
+                    <ScrollReveal key={plan.id} index={index}>
                       <div
                         className={
                           highlighted
@@ -438,7 +439,7 @@ export function LandingPage() {
                           Get Started Today
                         </a>
                       </div>
-                    </div>
+                    </ScrollReveal>
                   );
                 })}
               </div>
@@ -455,7 +456,7 @@ export function LandingPage() {
            card's border instead of another box. ===== */}
       <section className="section-spacing-lg-md">
         <div className="tw:container-lg">
-          <div className="tw:flex tw:items-start tw:justify-between tw:gap-4 tw:md:gap-10 tw:mb-12 tw:sm:mb-14 tw:md:mb-16 tw:lg:mb-20 tw:flex-col tw:md:flex-row tw:max-w-125 tw:md:max-w-full">
+          <ScrollReveal className="tw:flex tw:items-start tw:justify-between tw:gap-4 tw:md:gap-10 tw:mb-12 tw:sm:mb-14 tw:md:mb-16 tw:lg:mb-20 tw:flex-col tw:md:flex-row tw:max-w-125 tw:md:max-w-full">
             <div className="tw:md:max-w-170 tw:w-full">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
@@ -466,7 +467,7 @@ export function LandingPage() {
             <p className="tw:md:max-w-115 tw:w-full tw:text-base tw:sm:text-lg tw:text-paragraph_black">
               Pick a plan and an amount to see a live projection based on that plan&apos;s real fixed rate and duration.
             </p>
-          </div>
+          </ScrollReveal>
           {plansLoading ? (
             <p className="tw:text-center tw:text-paragraph_black">Loading plans…</p>
           ) : !calcPlan || !projection ? (
@@ -566,7 +567,7 @@ export function LandingPage() {
       {/* ===== 3.6 FAQ — structure verbatim from accordion.php + its JS behavior; the reference's paired thumbnail column (excellence-accordion-thumb-0N.webp) is dropped per the brief since there's no equivalent FAQ imagery, and the accordion now takes the full width ===== */}
       <section id="faq" className="section-spacing-lg tw:bg-secondary">
         <div className="tw:container">
-          <div className="tw:flex tw:items-start tw:justify-between tw:gap-4 tw:md:gap-10 tw:mb-12 tw:sm:mb-14 tw:md:mb-16 tw:lg:mb-20 tw:flex-col tw:md:flex-row tw:max-w-125 tw:md:max-w-full">
+          <ScrollReveal className="tw:flex tw:items-start tw:justify-between tw:gap-4 tw:md:gap-10 tw:mb-12 tw:sm:mb-14 tw:md:mb-16 tw:lg:mb-20 tw:flex-col tw:md:flex-row tw:max-w-125 tw:md:max-w-full">
             <div className="tw:md:max-w-170 tw:w-full">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
@@ -577,7 +578,7 @@ export function LandingPage() {
             <p className="tw:md:max-w-115 tw:w-full tw:text-base tw:sm:text-lg tw:text-paragraph_white">
               Answers to the questions we hear most about getting started, rates, deposits, withdrawals, and account security.
             </p>
-          </div>
+          </ScrollReveal>
           <div>
             <div className="tw:max-w-151.75 tw:mx-auto tw:w-full next-gen-accordion-wrapper excellence-accordion-wrapper tw:flex tw:flex-col tw:gap-4 tw:md:gap-6 tw:lg:gap-9">
               <SecureVestAccordion activeIndex={accordionActive} onSelect={setAccordionActive} />
@@ -589,12 +590,12 @@ export function LandingPage() {
       {/* Contact — kept on the landing page at the user's request even though it isn't one of the brief's listed sections; not sourced from SecureVest */}
       <section id="contact" className="tw:bg-[#080808] tw:py-5">
         <div className="container py-5">
-          <div className="text-center mb-5">
+          <ScrollReveal className="text-center mb-5">
             <span className="ic-public-eyebrow mb-2 d-inline-flex">Contact</span>
             <h2 className="h3 mb-0 text-white">Get in touch</h2>
-          </div>
+          </ScrollReveal>
           <div className="row g-5" style={{ maxWidth: 840, margin: '0 auto' }}>
-            <div className="col-12 col-lg-4">
+            <ScrollReveal className="col-12 col-lg-4">
               <div className="mb-3">
                 <IconBadge size={48}>
                   <IconMail width={22} height={22} />
@@ -605,10 +606,10 @@ export function LandingPage() {
                 Support Center for the fastest response.
               </p>
               <SocialLinksRow links={socialLinks} />
-            </div>
-            <div className="col-12 col-lg-8 ps-lg-5 ic-public-contact-info">
+            </ScrollReveal>
+            <ScrollReveal className="col-12 col-lg-8 ps-lg-5 ic-public-contact-info" index={1}>
               <ContactSection />
-            </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
