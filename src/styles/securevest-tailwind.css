@@ -27,6 +27,48 @@
 @import 'tailwindcss/theme.css' layer(theme) prefix(tw);
 @import 'tailwindcss/utilities.css' layer(utilities) prefix(tw);
 
+/* Stock Tailwind's `container` utility has no side padding at all — it
+   only caps max-width per breakpoint. SecureVest's own compiled CSS
+   defines `.container`/`.container-lg` with a real responsive gutter
+   (reference/legacy-template-landing/SecureVest/assets/css/style.css
+   lines ~6816-6849), which is what every section actually relies on for
+   its side margins. Without this, content sits flush against the
+   viewport edge instead of matching the source's gutter. */
+@utility container {
+  margin-inline: auto;
+  max-width: calc(var(--tw-spacing) * 360);
+  padding-inline: calc(var(--tw-spacing) * 4);
+  @media (width >= 640px) {
+    padding-inline: calc(var(--tw-spacing) * 6);
+  }
+  @media (width >= 769px) {
+    padding-inline: calc(var(--tw-spacing) * 8);
+  }
+  @media (width >= 1025px) {
+    padding-inline: calc(var(--tw-spacing) * 10);
+  }
+  @media (width >= 1280px) {
+    padding-inline: calc(var(--tw-spacing) * 20);
+  }
+}
+@utility container-lg {
+  margin-inline: auto;
+  max-width: calc(var(--tw-spacing) * 410);
+  padding-inline: calc(var(--tw-spacing) * 4);
+  @media (width >= 640px) {
+    padding-inline: calc(var(--tw-spacing) * 6);
+  }
+  @media (width >= 769px) {
+    padding-inline: calc(var(--tw-spacing) * 8);
+  }
+  @media (width >= 1025px) {
+    padding-inline: calc(var(--tw-spacing) * 10);
+  }
+  @media (width >= 1280px) {
+    padding-inline: calc(var(--tw-spacing) * 20);
+  }
+}
+
 @theme {
   --color-primary: #c6a15b;
   --color-secondary: #f5f3ee;
