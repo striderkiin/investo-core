@@ -54,6 +54,7 @@ export function AppRoutes() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/404" element={<NotFoundPage />} />
       </Route>
 
       <Route
@@ -250,8 +251,7 @@ export function AppRoutes() {
         />
       </Route>
 
-      <Route path="*" element={<NotFoundPage />} />
-      <Route path="/404" element={<NotFoundPage />} />
+      <Route path="*" element={<Navigate to="/404" replace />} />
       <Route path="/unauthorized" element={<Navigate to="/404" replace />} />
     </Routes>
   );

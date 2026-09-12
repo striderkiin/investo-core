@@ -1,0 +1,215 @@
+/* Custom (non-utility) component classes referenced verbatim by the
+   SecureVest-sourced landing/404 markup — copied from
+   reference/legacy-template-landing/SecureVest/assets/css/style.css and
+   scoped under .sv-page so they can't leak into the rest of the app.
+   Colors reference the same --color-* theme tokens set in
+   securevest-tailwind.css, so the recolor pass only ever touches that
+   one @theme block. */
+
+/* public-theme.css sets `.ic-public h1..h5 { color: var(--pub-text) }` and
+   `.ic-public p { color: var(--pub-text-muted) !important }` for the old
+   landing page's fixed palette. .sv-page nests inside .ic-public
+   everywhere, so those rules would otherwise win over the Tailwind
+   title_black/title_white/paragraph_black/paragraph_white utilities on
+   any h1-h5/p element (tag+class beats a bare class, and !important always
+   beats non-important). Re-assert the intended color explicitly, on every
+   element carrying one of those classes regardless of tag. */
+.sv-page [class*='tw:text-title_black'] { color: var(--tw-color-title_black) !important; }
+.sv-page [class*='tw:text-title_white'] { color: var(--tw-color-title_white) !important; }
+.sv-page [class*='tw:text-paragraph_black'] { color: var(--tw-color-paragraph_black) !important; }
+.sv-page [class*='tw:text-paragraph_white'] { color: var(--tw-color-paragraph_white) !important; }
+
+/* Step 2 recolor pass — font swap: Fugaz One for headings, Merriweather for
+   body copy, system sans left alone for nav/button/label chrome (buttons
+   already inherit the ambient UI font, so they're untouched here). */
+.sv-page h1,
+.sv-page h2,
+.sv-page h3,
+footer.sv-page h3 {
+  font-family: 'Fugaz One', system-ui, sans-serif;
+}
+.sv-page p {
+  font-family: 'Merriweather', Georgia, serif;
+}
+
+.sv-page .button-primary,
+.sv-page .button-autline-white {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  border-radius: 100px;
+  border-style: solid;
+  border-width: 1px;
+  padding-inline: 1.25rem;
+  padding-block: 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1;
+  font-weight: 500;
+  transition-duration: 500ms;
+}
+@media (width >= 769px) {
+  .sv-page .button-primary,
+  .sv-page .button-autline-white {
+    padding-inline: 1.375rem;
+    padding-block: 0.9375rem;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+}
+.sv-page .button-primary {
+  border-color: transparent;
+  background-color: var(--tw-color-primary);
+  color: var(--tw-color-title_black);
+}
+.sv-page .button-primary::before {
+  content: '';
+  z-index: -1;
+  background: var(--tw-color-secondary);
+  border-radius: 50%;
+  width: 200%;
+  height: 200%;
+  transition-duration: 0.5s;
+  position: absolute;
+  top: 110%;
+  left: 50%;
+  transform: translate(-50%);
+}
+.sv-page .button-primary:hover {
+  border-color: var(--tw-color-white, #fff);
+  color: var(--tw-color-white, #fff);
+}
+.sv-page .button-primary:hover::before {
+  top: -40%;
+}
+.sv-page .button-autline-white {
+  border-color: var(--tw-color-white, #fff);
+  background-color: transparent;
+  color: var(--tw-color-white, #fff);
+}
+.sv-page .button-autline-white::before {
+  content: '';
+  z-index: -1;
+  background: var(--tw-color-white, #fff);
+  border-radius: 50%;
+  width: 200%;
+  height: 200%;
+  transition-duration: 0.5s;
+  position: absolute;
+  top: 110%;
+  left: 50%;
+  transform: translate(-50%);
+}
+.sv-page .button-autline-white:hover {
+  border-color: transparent;
+  color: var(--tw-color-title_black);
+}
+.sv-page .button-autline-white:hover::before {
+  top: -40%;
+}
+
+.sv-page .section-spacing-lg {
+  padding-block: 3.5rem;
+}
+.sv-page .section-spacing-md {
+  padding-block: 1.75rem;
+}
+.sv-page .section-spacing-lg-md {
+  padding-top: 3.5rem;
+  padding-bottom: 1.75rem;
+}
+.sv-page .section-spacing-md-lg {
+  padding-top: 1.75rem;
+  padding-bottom: 3.5rem;
+}
+@media (width >= 769px) {
+  .sv-page .section-spacing-lg { padding-block: 5rem; }
+  .sv-page .section-spacing-md { padding-block: 2.5rem; }
+  .sv-page .section-spacing-lg-md { padding-top: 5rem; padding-bottom: 2.5rem; }
+  .sv-page .section-spacing-md-lg { padding-top: 2.5rem; padding-bottom: 5rem; }
+}
+@media (width >= 1025px) {
+  .sv-page .section-spacing-lg { padding-block: 6rem; }
+  .sv-page .section-spacing-md { padding-block: 3rem; }
+  .sv-page .section-spacing-lg-md { padding-top: 6rem; padding-bottom: 3rem; }
+  .sv-page .section-spacing-md-lg { padding-top: 3rem; padding-bottom: 6rem; }
+}
+@media (width >= 1280px) {
+  .sv-page .section-spacing-lg { padding-block: 6.25rem; }
+  .sv-page .section-spacing-md { padding-block: 3.125rem; }
+  .sv-page .section-spacing-lg-md { padding-top: 6.25rem; padding-bottom: 3.125rem; }
+  .sv-page .section-spacing-md-lg { padding-top: 3.125rem; padding-bottom: 6.25rem; }
+}
+
+.sv-page .rotate {
+  animation: sv-rotate 2s linear infinite;
+}
+@keyframes sv-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.sv-page .next-gen-item {
+  position: relative;
+}
+.sv-page .next-gen-item .next-gen-description {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition-duration: 300ms;
+}
+.sv-page .next-gen-item.active .next-gen-number {
+  color: var(--tw-color-secondary);
+}
+.sv-page .excellence-accordion-wrapper .next-gen-item.active .next-gen-number {
+  color: var(--tw-color-primary);
+}
+.sv-page .next-gen-item.active .next-gen-description {
+  max-height: 24rem;
+  opacity: 1;
+}
+.sv-page .excellence-accordion-toogle {
+  transform: rotate(0deg);
+  transition: all 0.3s ease-in-out;
+  display: inline-flex;
+}
+.sv-page .next-gen-item.active .excellence-accordion-toogle {
+  transform: rotate(-180deg);
+}
+.sv-page .next-gen-image {
+  transition: clip-path 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: clip-path;
+  position: absolute;
+  opacity: 0;
+}
+.sv-page .next-gen-image.active {
+  opacity: 1;
+}
+@keyframes sv-accordion-progress {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+.sv-page .select-box-dark {
+  position: relative;
+}
+.sv-page .select-active {
+  display: flex;
+  height: 2.75rem;
+  width: 100%;
+  cursor: pointer;
+  align-items: center;
+  border-radius: 100px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.05);
+  padding-inline: 1.25rem;
+  font-size: 1rem;
+  color: var(--tw-color-title_white);
+}
+.sv-page .select-active:focus {
+  border-color: var(--tw-color-primary);
+  outline: none;
+}

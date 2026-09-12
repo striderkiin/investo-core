@@ -96,64 +96,84 @@ export function PublicLayout() {
       <main className="flex-grow-1">
         <Outlet />
       </main>
-      <footer className="ic-public-footer py-5 mt-5">
-        <div className="container">
-          <div className="d-flex flex-wrap justify-content-between gap-4 mb-4">
-            <div style={{ maxWidth: 320 }}>
-              <Link className="navbar-brand fw-bold d-flex align-items-center mb-2" to="/">
+      {/* Footer — verbatim from Base/style/footer.php lines 38-121 (the CTA banner at
+          lines 1-37 is dropped per the brief). Recolor keeps this section black rather
+          than mechanically following the full-bleed-dark-maps-to-warm-white rule from
+          §3.6: the footer is the brief's own flagged exception, closing the page to
+          match the hero and every other footer in this build. */}
+      <footer className="sv-page tw:bg-[#080808] tw:pt-14 md:tw:pt-20 lg:tw:pt-23 tw:relative tw:mt-5">
+        <div className="tw:container tw:mx-auto tw:px-4">
+          <div className="tw:flex tw:justify-between lg:tw:gap-10 tw:border-y tw:border-white/10 tw:flex-col lg:tw:flex-row">
+            <div className="tw:py-10 lg:tw:py-12.5 lg:tw:max-w-87.5 tw:w-full">
+              <Link className="tw:inline-flex tw:items-center tw:mb-4" to="/">
                 {branding.logoUrl ? (
-                  <img src={branding.logoUrl} alt="" className="me-2" style={{ height: 24, width: 'auto' }} />
+                  <img src={branding.logoUrl} alt="" style={{ height: 24, width: 'auto' }} />
                 ) : (
-                  <i className="bi bi-graph-up-arrow me-2" style={{ color: 'var(--pub-accent)' }} aria-hidden="true" />
+                  <i className="bi bi-graph-up-arrow tw:text-primary" style={{ fontSize: 24 }} aria-hidden="true" />
                 )}
-                {branding.logoText ?? branding.siteName}
+                <span className="tw:ml-2 tw:text-title_black tw:text-xl tw:font-semibold">{branding.logoText ?? branding.siteName}</span>
               </Link>
-              <p className="small mb-0">Secure, transparent investment management, all in one place.</p>
+              <p className="tw:text-paragraph_black">Secure, transparent investment management, all in one place.</p>
             </div>
-            <div className="d-flex gap-5 flex-wrap">
+            <div className="tw:w-full lg:tw:w-px tw:h-px lg:tw:h-auto tw:bg-white/10" />
+            <div className="tw:py-10 lg:tw:py-12.5 lg:tw:max-w-161.25 tw:w-full tw:grid tw:grid-cols-2 tw:items-start tw:justify-between tw:gap-10">
               <div>
-                <p className="small fw-semibold text-white mb-2">Platform</p>
-                <ul className="list-unstyled small d-flex flex-column gap-2">
+                <h3 className="tw:mb-6 tw:text-title_black tw:text-xl tw:font-semibold tw:leading-none!">Platform</h3>
+                <ul className="tw:flex tw:flex-col tw:items-start tw:gap-3 sm:tw:gap-5">
                   <li>
-                    <Link to="/#pricing">Pricing</Link>
+                    <Link className="tw:text-paragraph_black hover:tw:text-primary" to="/#pricing">
+                      Pricing
+                    </Link>
                   </li>
                   <li>
-                    <Link to="/#about">About</Link>
+                    <Link className="tw:text-paragraph_black hover:tw:text-primary" to="/#about">
+                      About
+                    </Link>
                   </li>
                   <li>
-                    <Link to="/#faq">FAQ</Link>
+                    <Link className="tw:text-paragraph_black hover:tw:text-primary" to="/#faq">
+                      FAQ
+                    </Link>
                   </li>
                   <li>
-                    <Link to="/#contact">Contact</Link>
+                    <Link className="tw:text-paragraph_black hover:tw:text-primary" to="/#contact">
+                      Contact
+                    </Link>
                   </li>
                 </ul>
               </div>
               <div>
-                <p className="small fw-semibold text-white mb-2">Legal</p>
-                <ul className="list-unstyled small d-flex flex-column gap-2">
+                <h3 className="tw:mb-6 tw:text-title_black tw:text-xl tw:font-semibold tw:leading-none!">Legal</h3>
+                <ul className="tw:flex tw:flex-col tw:items-start tw:gap-3 sm:tw:gap-5">
                   <li>
-                    <Link to="/terms">Terms</Link>
+                    <Link className="tw:text-paragraph_black hover:tw:text-primary" to="/terms">
+                      Terms
+                    </Link>
                   </li>
                   <li>
-                    <Link to="/privacy">Privacy</Link>
+                    <Link className="tw:text-paragraph_black hover:tw:text-primary" to="/privacy">
+                      Privacy
+                    </Link>
                   </li>
                   <li>
-                    <Link to="/risk-disclosure">Risk Disclosure</Link>
+                    <Link className="tw:text-paragraph_black hover:tw:text-primary" to="/risk-disclosure">
+                      Risk Disclosure
+                    </Link>
                   </li>
                   <li>
-                    <Link to="/refund-policy">Refund Policy</Link>
+                    <Link className="tw:text-paragraph_black hover:tw:text-primary" to="/refund-policy">
+                      Refund Policy
+                    </Link>
                   </li>
                 </ul>
               </div>
             </div>
           </div>
-          {socialLinks.length > 0 && (
-            <div className="pt-4 mt-2">
-              <SocialLinksRow links={socialLinks} />
-            </div>
-          )}
-          <div className="pt-4 border-top small" style={{ borderColor: 'var(--pub-border)' }}>
-            &copy; {new Date().getFullYear()} {branding.siteName}. All rights reserved.
+          <div className="tw:py-5 md:tw:py-8 lg:tw:py-10.5 tw:flex tw:items-center tw:justify-between tw:gap-4 sm:tw:gap-6 tw:flex-col sm:tw:flex-row">
+            <p className="tw:text-paragraph_black tw:text-center sm:tw:text-left tw:mb-0">
+              &copy; {new Date().getFullYear()} {branding.siteName}. All rights reserved.
+            </p>
+            {socialLinks.length > 0 && <SocialLinksRow links={socialLinks} />}
           </div>
         </div>
       </footer>

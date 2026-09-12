@@ -27,3 +27,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Third-party reference template used as a one-time verbatim source for the
+# landing page rebuild (see investo-securevest-build-brief) — not our code,
+# not meant to be committed.
+/reference/

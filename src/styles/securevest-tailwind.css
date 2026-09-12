@@ -1,0 +1,27 @@
+/* Tailwind for the SecureVest-verbatim landing/404 sections only.
+   Utilities are prefixed (tw:) so they can never collide with Bootstrap's
+   class names used everywhere else in this app. Preflight (Tailwind's base
+   reset) is intentionally NOT imported — only the theme tokens and utility
+   layer — so the global <html>/<body>/heading resets Bootstrap already
+   owns are left alone.
+
+   STEP 2 RECOLOR PASS: role-based mapping per brief §2, done by editing
+   only this token block (no JSX/class-name changes):
+   - cream page canvas -> black                (title_black role inverts to a light-on-black text color)
+   - dark-green `secondary` accent blocks -> warm white (title_white role inverts to a dark-on-white text color)
+   - lime `primary` interactive color -> muted gold
+   - "background"/"border" (the near-canvas bordered-card tone) -> near-black/subtle-light-border,
+     preserving the source's "blends into the canvas" relationship now that the canvas is black. */
+@import 'tailwindcss/theme.css' layer(theme) prefix(tw);
+@import 'tailwindcss/utilities.css' layer(utilities) prefix(tw);
+
+@theme {
+  --color-primary: #c6a15b;
+  --color-secondary: #f5f3ee;
+  --color-title_black: #f5f3ee;
+  --color-title_white: #0a0a0a;
+  --color-background: #0a0a0a;
+  --color-border: rgba(255, 255, 255, 0.14);
+  --color-paragraph_white: #55524c;
+  --color-paragraph_black: #a8a6a1;
+}

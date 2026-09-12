@@ -6,6 +6,8 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './styles/theme.css';
 import './styles/public-theme.css';
+import './styles/securevest-tailwind.css';
+import './styles/securevest-components.css';
 import './styles/client-dashboard-critso.css';
 import './index.css';
 import { initMonitoring } from './config/monitoring';
