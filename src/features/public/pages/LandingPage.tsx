@@ -352,17 +352,11 @@ export function LandingPage() {
                           <p className={highlighted ? 'tw:text-lg tw:font-semibold tw:leading-none tw:text-paragraph_white' : 'tw:text-paragraph_black tw:text-lg tw:font-semibold tw:leading-none'}>
                             {plan.name}
                           </p>
-                          <div className="tw:mt-5 tw:mb-4 tw:flex tw:flex-wrap tw:items-end tw:gap-1.5">
+                          <div className="tw:mt-5 tw:mb-4 tw:flex tw:flex-wrap tw:items-baseline tw:gap-1.5">
                             <h2 className={highlighted ? 'price tw:text-5xl tw:xl:text-[64px] tw:leading-none tw:text-title_white' : 'price tw:text-5xl tw:xl:text-[64px] tw:leading-none tw:text-title_black'}>
                               {plan.rate}%
                             </h2>
-                            <p
-                              className={
-                                highlighted
-                                  ? 'tw:text-paragraph_white tw:text-base tw:font-normal tw:leading-none tw:pb-2.5'
-                                  : 'tw:text-paragraph_black tw:text-base tw:font-normal tw:leading-none tw:pb-2.5'
-                              }
-                            >
+                            <p className={highlighted ? 'tw:text-paragraph_white tw:text-base tw:font-normal tw:leading-none' : 'tw:text-paragraph_black tw:text-base tw:font-normal tw:leading-none'}>
                               per {periodNoun}
                             </p>
                           </div>
