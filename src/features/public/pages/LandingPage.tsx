@@ -332,6 +332,7 @@ export function LandingPage() {
               <div className="pricing-table tw:grid tw:grid-cols-1 tw:sm:grid-cols-2 tw:lg:grid-cols-4 tw:gap-6 tw:mt-11.75">
                 {plans.slice(0, 4).map((plan, index) => {
                   const highlighted = index === 1;
+                  const periodNoun = { daily: 'day', weekly: 'week', monthly: 'month' }[plan.rateType];
                   const bullets = [
                     `${plan.rate}% ${plan.rateType} return`,
                     `${money.format(plan.minAmount)} – ${money.format(plan.maxAmount)} deposit range`,
@@ -351,18 +352,18 @@ export function LandingPage() {
                           <p className={highlighted ? 'tw:text-lg tw:font-semibold tw:leading-none tw:text-paragraph_white' : 'tw:text-paragraph_black tw:text-lg tw:font-semibold tw:leading-none'}>
                             {plan.name}
                           </p>
-                          <div className="tw:mt-5 tw:mb-4 tw:flex tw:flex-wrap">
+                          <div className="tw:mt-5 tw:mb-4 tw:flex tw:flex-wrap tw:items-end tw:gap-1.5">
                             <h2 className={highlighted ? 'price tw:text-5xl tw:xl:text-[64px] tw:leading-none tw:text-title_white' : 'price tw:text-5xl tw:xl:text-[64px] tw:leading-none tw:text-title_black'}>
                               {plan.rate}%
                             </h2>
                             <p
                               className={
                                 highlighted
-                                  ? 'tw:text-paragraph_white tw:text-base tw:font-normal tw:leading-none tw:items-end tw:flex tw:gap-0.5 tw:pb-2.5'
-                                  : 'tw:text-paragraph_black tw:text-base tw:font-normal tw:leading-none tw:items-end tw:flex tw:gap-0.5 tw:pb-2.5'
+                                  ? 'tw:text-paragraph_white tw:text-base tw:font-normal tw:leading-none tw:pb-2.5'
+                                  : 'tw:text-paragraph_black tw:text-base tw:font-normal tw:leading-none tw:pb-2.5'
                               }
                             >
-                              per <span className="period">/ {plan.rateType}</span>
+                              per {periodNoun}
                             </p>
                           </div>
                           <p className={highlighted ? 'tw:text-paragraph_white tw:text-base tw:font-normal' : 'tw:text-paragraph_black tw:text-base tw:font-normal'}>{plan.description}</p>
