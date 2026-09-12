@@ -3,7 +3,7 @@
 const ITEMS = [
   {
     title: 'How do I get started?',
-    desc: 'Create an account with your name, email, and password, then confirm your email from the link we send you. From there you can fund your account and choose a plan — there is no separate identity verification step required to sign up.',
+    desc: 'Create an account with your name, email, and password, then confirm your email from the link we send you. From there you can fund your account and choose a plan; there is no separate identity verification step required to sign up.',
   },
   {
     title: 'How are investment plan rates determined?',
@@ -19,7 +19,7 @@ const ITEMS = [
   },
   {
     title: 'Is there a referral program?',
-    desc: 'Yes — every account gets its own referral code and link to share. When someone you refer joins and becomes active, a referral reward is credited to your account, and you can track your referrals and earnings from your dashboard.',
+    desc: 'Yes, every account gets its own referral code and link to share. When someone you refer joins and becomes active, a referral reward is credited to your account, and you can track your referrals and earnings from your dashboard.',
   },
   {
     title: 'How is my account secured?',

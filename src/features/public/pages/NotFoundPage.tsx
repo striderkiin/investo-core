@@ -10,7 +10,7 @@ export function NotFoundPage() {
         <div className="tw:container">
           <div>
             <div className="tw:max-w-80 tw:sm:max-w-110 tw:md:max-w-155.5 tw:max-h-76.5 tw:mx-auto tw:text-center">
-              <svg viewBox="0 0 320 200" className="tw:w-full tw:h-auto" fill="none" role="img" aria-label="404 — page not found">
+              <svg viewBox="0 0 320 200" className="tw:w-full tw:h-auto" fill="none" role="img" aria-label="404, page not found">
                 <circle cx="160" cy="88" r="72" className="tw:text-primary" stroke="currentColor" strokeWidth="1.5" />
                 <text x="160" y="106" textAnchor="middle" fontSize="56" fontWeight="700" className="tw:fill-title_black" style={{ fontFamily: "'Fugaz One', system-ui, sans-serif" }}>
                   404

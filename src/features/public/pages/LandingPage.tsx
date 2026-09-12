@@ -150,16 +150,35 @@ export function LandingPage() {
     if (!calcPlan) return null;
     const periodDays = PERIOD_DAYS[calcPlan.rateType];
     const amount = Math.min(Math.max(calcAmount || 0, calcPlan.minAmount), calcPlan.maxAmount);
-    const steps = 8;
+    const finalValue = amount * (1 + (calcPlan.rate / 100) * (calcPlan.durationDays / periodDays));
+    const totalGrowth = finalValue - amount;
+
+    // Deterministic noise (seeded by plan + amount, not Math.random) so a
+    // re-render doesn't reshuffle the shape. A straight fixed-rate line
+    // reads as fake; real balances wobble day to day even while trending
+    // up, so nudge each interior point off the line and taper the nudge
+    // to zero at both ends with sin(pi * t) so day 0 and the final day
+    // stay pinned to the real start/end amounts.
+    const seed = calcPlan.id.split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0) + Math.round(amount);
+    const noiseAt = (i: number) => {
+      const x = Math.sin(seed + i * 12.9898) * 43758.5453;
+      return x - Math.floor(x);
+    };
+
+    const steps = 12;
     const labels: string[] = [];
     const values: number[] = [];
     for (let i = 0; i <= steps; i += 1) {
-      const day = Math.round((calcPlan.durationDays * i) / steps);
-      const value = amount * (1 + (calcPlan.rate / 100) * (day / periodDays));
+      const t = i / steps;
+      const day = Math.round(calcPlan.durationDays * t);
+      const linear = amount * (1 + (calcPlan.rate / 100) * (day / periodDays));
+      const taper = Math.sin(Math.PI * t);
+      const amplitude = Math.max(Math.abs(totalGrowth) * 0.1, amount * 0.01);
+      const wobble = (noiseAt(i) - 0.5) * 2 * taper * amplitude;
       labels.push(`Day ${day}`);
-      values.push(Math.round(value));
+      values.push(Math.round(linear + wobble));
     }
-    const total = values[values.length - 1];
+    const total = Math.round(finalValue);
     return { amount, total, profit: total - amount, labels, values };
   }, [calcPlan, calcAmount]);
 
@@ -173,9 +192,9 @@ export function LandingPage() {
             <div className="tw:md:max-w-137.5 tw:w-full">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon.svg`} alt="title-icon" />
-                <p className="tw:text-base tw:sm:text-lg tw:font-semibold tw:leading-[1.1]! tw:text-secondary tw:uppercase">INVESTMENT INFRASTRUCTURE</p>
+                <p className="tw:m-0! tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-secondary tw:uppercase tw:tracking-wide">INVESTMENT INFRASTRUCTURE</p>
               </div>
-              <h1 className="tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px] tw:font-bold tw:leading-[1.1]! tw:text-title_black tw:mt-4 tw:md:mt-5">
+              <h1 className="tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px] tw:font-bold tw:leading-[1.1]! tw:text-title_black tw:mt-4! tw:md:mt-5!">
                 Your capital. In full view.
               </h1>
               <p className="tw:text-base tw:text-paragraph_black tw:mt-4">
@@ -234,9 +253,9 @@ export function LandingPage() {
               <div className="tw:max-w-175 tw:lg:max-w-135 tw:w-full tw:lg:self-start">
                 <div className="tw:flex tw:items-center tw:gap-2.5">
                   <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
-                  <p className="tw:text-base tw:sm:text-lg tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:capitalize">WHY INVESTO</p>
+                  <p className="tw:m-0! tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide">WHY INVESTO</p>
                 </div>
-                <h2 className="tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:font-bold tw:leading-tight tw:text-title_white tw:mt-4">Built for the Next Generation of Investors</h2>
+                <h2 className="tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:font-bold tw:leading-tight tw:text-title_white tw:mt-4! tw:md:mt-5!">Built for the Next Generation of Investors</h2>
                 <p className="tw:mt-4 tw:text-base tw:sm:text-lg tw:text-paragraph_white">
                   We give modern investors the tools, security, and clarity needed to manage capital with confidence.
                 </p>
@@ -265,12 +284,12 @@ export function LandingPage() {
                 {[
                   { img: `${S}/img/home-v2/feature/feature-icon-01.svg`, title: 'Real-Time Tracking', desc: 'Watch your balances, returns, and transaction history update live from your dashboard.' },
                   { img: `${S}/img/home-v2/feature/feature-icon-02.svg`, title: 'Bank-Grade Security', desc: 'Two-factor authentication, session controls, and server-validated transactions on every account.' },
-                  { img: `${S}/img/home-v2/feature/feature-icon-03.svg`, title: 'Transparent Reporting', desc: 'A full, auditable ledger of every deposit, investment, and withdrawal — never a black box.' },
+                  { img: `${S}/img/home-v2/feature/feature-icon-03.svg`, title: 'Transparent Reporting', desc: 'A full, auditable ledger of every deposit, investment, and withdrawal, never a black box.' },
                   { img: `${S}/img/home-v2/feature/feature-icon-04.svg`, title: 'Referral Rewards', desc: 'Every account gets a referral code and link, with earnings tracked automatically.' },
                 ].map((item) => (
                   <div className="tw:p-5 tw:sm:p-6 tw:lg:p-8 tw:rounded-2xl tw:bg-black/5 tw:border tw:border-black/10 tw:backdrop-blur-[34px]" key={item.title}>
                     <img className="tw:w-12" src={item.img} alt="feature icon" />
-                    <h3 className="tw:mt-6 tw:md:mt-9 tw:text-lg tw:md:text-xl tw:font-semibold tw:text-title_white">{item.title}</h3>
+                    <h3 className="tw:mt-6! tw:md:mt-9! tw:text-lg tw:md:text-xl tw:font-semibold tw:text-title_white">{item.title}</h3>
                     <p className="tw:mt-3 tw:text-base tw:text-paragraph_white">{item.desc}</p>
                   </div>
                 ))}
@@ -287,9 +306,9 @@ export function LandingPage() {
             <div className="tw:md:max-w-170 tw:w-full">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon.svg`} alt="title-icon" />
-                <span className="tw:text-base tw:lg:text-lg tw:font-semibold tw:leading-[1.1]! tw:text-secondary tw:uppercase tw:block">PLATFORM RELIABILITY</span>
+                <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-secondary tw:uppercase tw:tracking-wide tw:block">PLATFORM RELIABILITY</span>
               </div>
-              <h2 className="tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4">Built for Trust, Measured in Numbers</h2>
+              <h2 className="tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">Built for Trust, Measured in Numbers</h2>
             </div>
             <p className="tw:md:max-w-115 tw:w-full tw:text-base tw:sm:text-lg tw:text-paragraph_black">
               We measure our own success by the reliability and transparency of the platform you depend on.
@@ -329,7 +348,7 @@ export function LandingPage() {
               </div>
               <div>
                 <h3 className="tw:text-white tw:text-xl tw:md:text-2xl tw:font-semibold">Server-Validated Transactions</h3>
-                <p className="tw:pt-3 tw:sm:pt-4 tw:text-white/80 tw:text-base tw:leading-[1.5]">Every balance-affecting action runs through audited, server-side logic — never the browser.</p>
+                <p className="tw:pt-3 tw:sm:pt-4 tw:text-white/80 tw:text-base tw:leading-[1.5]">Every balance-affecting action runs through audited, server-side logic, never the browser.</p>
               </div>
             </div>
           </div>
@@ -343,12 +362,12 @@ export function LandingPage() {
             <div className="tw:md:max-w-170 tw:w-full">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon.svg`} alt="title-icon" />
-                <span className="tw:text-base tw:lg:text-lg tw:font-semibold tw:leading-[1.1]! tw:text-secondary tw:uppercase tw:block">PRICING PLAN</span>
+                <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-secondary tw:uppercase tw:tracking-wide tw:block">PRICING PLAN</span>
               </div>
-              <h2 className="tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4">Choose the Plan that Best Fits Your Goals</h2>
+              <h2 className="tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">Choose the Plan that Best Fits Your Goals</h2>
             </div>
             <p className="tw:md:max-w-115 tw:w-full tw:text-base tw:sm:text-lg tw:text-paragraph_black">
-              Every plan has a fixed rate, deposit range, and duration — no hidden fees, no surprises.
+              Every plan has a fixed rate, deposit range, and duration, no hidden fees, no surprises.
             </p>
           </div>
           <div>
@@ -437,9 +456,9 @@ export function LandingPage() {
               <div className="tw:md:max-w-170 tw:w-full">
                 <div className="tw:flex tw:items-center tw:gap-2.5">
                   <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
-                  <span className="tw:text-base tw:lg:text-lg tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase">RETURN CALCULATOR</span>
+                  <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide">RETURN CALCULATOR</span>
                 </div>
-                <h2 className="tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:font-bold tw:leading-tight tw:text-title_white tw:mt-4">See What Your Money Could Earn</h2>
+                <h2 className="tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:font-bold tw:leading-tight tw:text-title_white tw:mt-4! tw:md:mt-5!">See What Your Money Could Earn</h2>
               </div>
               <p className="tw:md:max-w-115 tw:w-full tw:text-base tw:sm:text-lg tw:text-paragraph_white">
                 Pick a plan and an amount to see a live projection based on that plan&apos;s real fixed rate and duration.
@@ -524,7 +543,7 @@ export function LandingPage() {
                   <div className="tw:p-5 tw:sm:p-6 tw:bg-black/5 tw:border tw:border-black/10 tw:rounded-2xl tw:backdrop-blur-[34px] tw:flex tw:items-start tw:lg:items-center tw:justify-between tw:gap-4 tw:lg:gap-6 tw:flex-col tw:lg:flex-row">
                     <div className="tw:flex-1">
                       <p className="tw:text-title_white tw:text-lg tw:font-semibold">Ready to Put Your Capital to Work?</p>
-                      <p className="tw:text-base tw:mt-3 tw:text-paragraph_white tw:max-w-154.25">Create a free account and fund your first plan in minutes — track everything live from your dashboard.</p>
+                      <p className="tw:text-base tw:mt-3 tw:text-paragraph_white tw:max-w-154.25">Create a free account and fund your first plan in minutes, then track everything live from your dashboard.</p>
                     </div>
                     <div className="tw:w-fit">
                       <Link to="/register" className="button-autline-white tw:w-fit">
@@ -549,9 +568,9 @@ export function LandingPage() {
             <div className="tw:md:max-w-170 tw:w-full">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
-                <span className="tw:text-base tw:lg:text-lg tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase">FREQUENTLY ASKED QUESTIONS</span>
+                <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide">FREQUENTLY ASKED QUESTIONS</span>
               </div>
-              <h2 className="tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:font-bold tw:leading-tight tw:text-title_white tw:mt-4">Everything You Need to Know</h2>
+              <h2 className="tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:font-bold tw:leading-tight tw:text-title_white tw:mt-4! tw:md:mt-5!">Everything You Need to Know</h2>
             </div>
             <p className="tw:md:max-w-115 tw:w-full tw:text-base tw:sm:text-lg tw:text-paragraph_white">
               Answers to the questions we hear most about getting started, rates, deposits, withdrawals, and account security.
