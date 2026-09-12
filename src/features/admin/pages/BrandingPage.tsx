@@ -2,12 +2,16 @@ import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { createBrandingService } from '../../../services/api/brandingService';
 import type { Branding, ThemeMode } from '../../../services/api/brandingService';
+import { createSocialLinksService } from '../../../services/api/socialLinksService';
+import type { SocialLink } from '../../../types/database';
+import { SOCIAL_PLATFORM_META } from '../../../components/public/socialPlatforms';
 import { useBranding } from '../../../hooks/useBranding';
 import { useToast } from '../../../hooks/useToast';
 import { LoadingScreen } from '../../../components/common/LoadingScreen';
 import { ErrorState } from '../../../components/common/ErrorState';
 
 const brandingService = createBrandingService();
+const socialLinksService = createSocialLinksService();
 
 const COLOR_FIELDS: { key: keyof Branding; label: string }[] = [
   { key: 'primaryColor', label: 'Primary' },
@@ -30,14 +34,16 @@ export function BrandingPage() {
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [uploadingKind, setUploadingKind] = useState<string | null>(null);
+  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   async function load() {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await brandingService.get();
+      const [data, links] = await Promise.all([brandingService.get(), socialLinksService.listAll()]);
       setForm(data);
+      setSocialLinks(links);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load branding');
     } finally {
@@ -48,6 +54,15 @@ export function BrandingPage() {
   useEffect(() => {
     void load();
   }, []);
+
+  async function updateSocialLink(id: string, updates: Partial<{ url: string; enabled: boolean }>) {
+    try {
+      const updated = await socialLinksService.update(id, updates);
+      setSocialLinks((prev) => prev.map((link) => (link.id === id ? updated : link)));
+    } catch (err) {
+      showError(err instanceof Error ? err.message : 'Failed to update social link');
+    }
+  }
 
   function updateField<K extends keyof Branding>(key: K, value: Branding[K]) {
     setForm((current) => {
@@ -209,6 +224,41 @@ export function BrandingPage() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+
+          <div className="card ic-card mt-4">
+            <div className="card-body">
+              <h3 className="h6 mb-1">Social Links</h3>
+              <p className="text-secondary small mb-3">Shown as icons in the landing page&apos;s Contact section and footer. Turn on whichever platforms you actually have and set the real link — disabled platforms never show on the public site.</p>
+              {socialLinks.map((link) => {
+                const meta = SOCIAL_PLATFORM_META[link.platform];
+                const Icon = meta.icon;
+                return (
+                  <div key={link.id} className="d-flex align-items-center gap-2 mb-2">
+                    <Icon width={18} height={18} style={{ flexShrink: 0, color: 'var(--ic-primary)' }} />
+                    <span className="small" style={{ minWidth: 90 }}>
+                      {meta.label}
+                    </span>
+                    <input
+                      type="url"
+                      className="form-control form-control-sm"
+                      defaultValue={link.url}
+                      placeholder="#"
+                      onBlur={(e) => e.target.value !== link.url && updateSocialLink(link.id, { url: e.target.value || '#' })}
+                    />
+                    <div className="form-check form-switch mb-0 flex-shrink-0" title={link.enabled ? 'Enabled' : 'Disabled'}>
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        role="switch"
+                        checked={link.enabled}
+                        onChange={(e) => updateSocialLink(link.id, { enabled: e.target.checked })}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

@@ -1,8 +1,13 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Collapse } from 'bootstrap';
 import { Link, NavLink, Outlet } from 'react-router-dom';
 import { EnvironmentBadge } from './EnvironmentBadge';
 import { useBranding } from '../../hooks/useBranding';
+import { createSocialLinksService } from '../../services/api/socialLinksService';
+import type { SocialLink } from '../../types/database';
+import { SocialLinksRow } from '../public/SocialLinksRow';
+
+const socialLinksService = createSocialLinksService();
 
 const NAV_LINKS = [
   { to: '/', label: 'Home', end: true },
@@ -15,6 +20,14 @@ const NAV_LINKS = [
 export function PublicLayout() {
   const { branding } = useBranding();
   const navRef = useRef<HTMLDivElement>(null);
+  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
+
+  useEffect(() => {
+    socialLinksService
+      .listEnabled()
+      .then(setSocialLinks)
+      .catch((err) => console.error('Failed to load social links', err));
+  }, []);
 
   // Clicking a Link inside the mobile menu is a client-side route change,
   // not a page load — Bootstrap's own data-bs-toggle collapse never sees a
@@ -134,6 +147,11 @@ export function PublicLayout() {
               </div>
             </div>
           </div>
+          {socialLinks.length > 0 && (
+            <div className="pt-4 mt-2">
+              <SocialLinksRow links={socialLinks} />
+            </div>
+          )}
           <div className="pt-4 border-top small" style={{ borderColor: 'var(--pub-border)' }}>
             &copy; {new Date().getFullYear()} {branding.siteName}. All rights reserved.
           </div>

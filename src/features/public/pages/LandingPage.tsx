@@ -4,17 +4,20 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { createContactService } from '../../../services/api/contactService';
 import { createInvestmentService } from '../../../services/api/investmentService';
-import type { InvestmentPlan } from '../../../types/database';
+import { createSocialLinksService } from '../../../services/api/socialLinksService';
+import type { InvestmentPlan, SocialLink } from '../../../types/database';
 import { useAuth } from '../../../hooks/useAuth';
 import { useBranding } from '../../../hooks/useBranding';
 import { PublicSection, staggerContainer, staggerItem } from '../../../components/public/PublicSection';
 import { IconBadge } from '../../../components/public/IconBadge';
 import { HeroVisual } from '../../../components/public/HeroVisual';
 import { HowItWorksFlow } from '../../../components/public/HowItWorksFlow';
+import { SocialLinksRow } from '../../../components/public/SocialLinksRow';
 import { IconTrendUp, IconShieldCheck, IconPeople, IconPiggyBank, IconLock, IconEye, IconLightning, IconMail } from '../../../components/public/icons';
 
 const contactService = createContactService();
 const investmentService = createInvestmentService();
+const socialLinksService = createSocialLinksService();
 const planAmountFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 
 const BENEFITS = [
@@ -237,6 +240,7 @@ export function LandingPage() {
   const location = useLocation();
   const [plans, setPlans] = useState<InvestmentPlan[]>([]);
   const [plansLoading, setPlansLoading] = useState(true);
+  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
 
   useEffect(() => {
     if (!location.hash) return;
@@ -253,6 +257,13 @@ export function LandingPage() {
       .then(setPlans)
       .catch((err) => console.error('Failed to load investment plans', err))
       .finally(() => setPlansLoading(false));
+  }, []);
+
+  useEffect(() => {
+    socialLinksService
+      .listEnabled()
+      .then(setSocialLinks)
+      .catch((err) => console.error('Failed to load social links', err));
   }, []);
 
   return (
@@ -452,11 +463,12 @@ export function LandingPage() {
                 <IconMail width={22} height={22} />
               </IconBadge>
             </div>
-            <p className="mb-0">
+            <p className="mb-3">
               Have a question about {branding.siteName}, a deposit, or a withdrawal? Send us a message and our team
               will get back to you. Already have an account? You can also open a ticket from your dashboard&apos;s
               Support Center for the fastest response.
             </p>
+            <SocialLinksRow links={socialLinks} />
           </div>
           <div className="col-12 col-lg-8 ps-lg-5 ic-public-contact-info">
             <ContactSection />

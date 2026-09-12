@@ -113,11 +113,39 @@ function renderRows(transactions: Transaction[]): void {
           </div>
           <div class="ic-tx-card-row">
             <span class="ic-tx-card-label">Reference</span>
-            <span class="ic-tx-card-value ic-tx-card-ref" title="${tx.reference}">${shortRef}</span>
+            <button type="button" class="ic-tx-card-value ic-tx-card-ref ic-tx-card-ref-copy" data-copy-value="${tx.reference}">
+              <span class="ic-tx-card-ref-text">${shortRef}</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="9" y="9" width="12" height="12" rx="2"></rect>
+                <path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"></path>
+              </svg>
+            </button>
           </div>
         </div>`;
     })
     .join('');
+}
+
+/** Full reference is truncated in the mobile card (see renderRows) — tap to copy it in full, since there's no hover state on a touch screen to reveal it another way. */
+function wireCopyReference(): void {
+  const mobileList = document.getElementById('transactionMobileList');
+  mobileList?.addEventListener('click', (event) => {
+    const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-copy-value]');
+    if (!button) return;
+    const value = button.dataset.copyValue ?? '';
+    void navigator.clipboard
+      .writeText(value)
+      .then(() => {
+        const original = button.innerHTML;
+        button.classList.add('is-copied');
+        button.innerHTML = 'Copied!';
+        setTimeout(() => {
+          button.classList.remove('is-copied');
+          button.innerHTML = original;
+        }, 1500);
+      })
+      .catch(() => undefined);
+  });
 }
 
 function applyFilters(): void {
@@ -152,6 +180,7 @@ function wireControls(): void {
 async function main() {
   const profile = await requireClientSession();
   wireControls();
+  wireCopyReference();
   allTransactions = await transactionService.list({ userId: profile.id });
   applyFilters();
 }

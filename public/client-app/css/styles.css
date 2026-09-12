@@ -5031,6 +5031,27 @@ select {
 .ic-tx-card-ref {
   font-family: monospace;
 }
+.ic-tx-card-ref-copy {
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--Black);
+  cursor: pointer;
+}
+.ic-tx-card-ref-copy svg {
+  flex-shrink: 0;
+  color: var(--GrayDark);
+}
+.ic-tx-card-ref-copy:active {
+  opacity: 0.7;
+}
+.ic-tx-card-ref-copy.is-copied {
+  color: var(--YellowGreen);
+  font-family: inherit;
+}
 .ic-plan-card-cta {
   display: flex;
   justify-content: center;

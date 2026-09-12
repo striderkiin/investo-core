@@ -29,6 +29,8 @@ import type {
   Referral,
   ReferralReward,
   SocialProofBroadcastScope,
+  SocialLink,
+  SocialLinkPlatform,
   SocialProofDemoActivity,
   SocialProofDemoEventType,
   SocialProofEvent,
@@ -672,6 +674,26 @@ export function mapSocialProofMetricRow(row: SocialProofMetricRow): SocialProofM
     shownCount: row.shown_count,
     clickedCount: row.clicked_count,
     dismissedCount: row.dismissed_count,
+  };
+}
+
+export interface SocialLinkRow {
+  id: string;
+  platform: SocialLinkPlatform;
+  url: string;
+  enabled: boolean;
+  sort_order: number;
+  updated_at: string;
+}
+
+export function mapSocialLinkRow(row: SocialLinkRow): SocialLink {
+  return {
+    id: row.id,
+    platform: row.platform,
+    url: row.url,
+    enabled: row.enabled,
+    sortOrder: row.sort_order,
+    updatedAt: row.updated_at,
   };
 }
 

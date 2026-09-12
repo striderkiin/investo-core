@@ -133,3 +133,64 @@ export function IconArrowsExchange(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+/* Social platform marks — simplified line-art versions in the same stroke
+   vocabulary as the rest of this file, so they sit inside an IconBadge
+   like any other icon here rather than looking like a dropped-in brand
+   asset. */
+
+export function IconTwitter(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M21 5.5c-.7.35-1.5.6-2.3.7a4 4 0 0 0 1.75-2.2 8 8 0 0 1-2.5 1 4 4 0 0 0-6.9 3.6A11.4 11.4 0 0 1 3 4.6a4 4 0 0 0 1.24 5.3 4 4 0 0 1-1.8-.5v.05a4 4 0 0 0 3.2 3.9 4 4 0 0 1-1.8.07 4 4 0 0 0 3.7 2.8A8 8 0 0 1 2 17.5a11.3 11.3 0 0 0 6.1 1.8c7.3 0 11.3-6.1 11.3-11.3v-.5c.8-.55 1.4-1.25 1.9-2" />
+    </svg>
+  );
+}
+
+export function IconFacebook(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M14 21v-7h2.5l.5-3H14V9c0-.9.3-1.5 1.7-1.5H17V5c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4v2.1H8v3h2.6v7h3.4z" />
+    </svg>
+  );
+}
+
+export function IconInstagram(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="3.5" y="3.5" width="17" height="17" rx="4.5" />
+      <circle cx="12" cy="12" r="3.6" />
+      <circle cx="16.8" cy="7.2" r="0.6" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function IconLinkedin(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="3.5" y="3.5" width="17" height="17" rx="2.5" />
+      <path d="M8 10.5v6" />
+      <circle cx="8" cy="7.2" r="0.9" fill="currentColor" stroke="none" />
+      <path d="M12 16.5v-3.5a2 2 0 0 1 4 0v3.5" />
+      <path d="M12 10.5v6" />
+    </svg>
+  );
+}
+
+export function IconYoutube(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="2.5" y="6" width="19" height="12" rx="3.5" />
+      <path d="M10.5 9.5l5 2.5-5 2.5z" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function IconTiktok(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M14 3v10.5a3 3 0 1 1-2.5-2.96" />
+      <path d="M14 3c.4 2.3 2 4 4.5 4.3" />
+    </svg>
+  );
+}

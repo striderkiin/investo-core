@@ -67,6 +67,13 @@ these files for a *different* project.
   since it renders on the logged-out landing page too — it's explicit
   operator-authored placeholder content, never real user activity. Run
   AFTER 006.
+- **011_schema_bootstrap_social_links.sql** — migration 0023, adds a
+  `social_links` table (Twitter/X, Facebook, Instagram, LinkedIn, YouTube,
+  TikTok) for the landing page's Contact section and footer icon rows.
+  Seeded all-disabled with a `#` placeholder URL — enable whichever
+  platforms you actually have and set the real link from Admin ->
+  Branding. Reuses the existing `branding.manage` permission. No
+  ordering dependency on the other bootstrap files.
 
 **Legal pages**: Terms, Privacy, Risk Disclosure, and Refund Policy
 (`src/features/public/pages/{Terms,Privacy,RiskDisclosure,RefundPolicy}Page.tsx`)

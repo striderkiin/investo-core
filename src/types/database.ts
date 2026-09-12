@@ -357,6 +357,17 @@ export interface SocialProofMetric {
   dismissedCount: number;
 }
 
+export type SocialLinkPlatform = 'twitter' | 'facebook' | 'instagram' | 'linkedin' | 'youtube' | 'tiktok';
+
+export interface SocialLink {
+  id: string;
+  platform: SocialLinkPlatform;
+  url: string;
+  enabled: boolean;
+  sortOrder: number;
+  updatedAt: string;
+}
+
 export type ContactMessageStatus = 'new' | 'read' | 'responded' | 'closed';
 
 export interface ContactMessage {
