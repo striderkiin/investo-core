@@ -204,6 +204,13 @@ footer.sv-page input[class*='placeholder:tw:text-paragraph_white']::placeholder 
   will-change: clip-path;
   position: absolute;
   opacity: 0;
+  /* These thumbnails are flat mockup graphics with a plain white backing,
+     which doesn't quite match the (now warm-white, not pure white)
+     secondary card behind them — leaving a visible rectangle edge.
+     multiply drops the white to transparent against whatever's behind it
+     while keeping the dark chart/text content, since white is the
+     identity value for multiply blending. */
+  mix-blend-mode: multiply;
 }
 .sv-page .next-gen-image.active {
   opacity: 1;
