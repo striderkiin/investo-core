@@ -83,6 +83,19 @@ export function createMarketService(client: SupabaseClient = getSupabaseClient()
       return (data as MarketDataRow[]).map(mapMarketDataRow).reverse();
     },
 
+    /** Same series, sliced to a calendar window (e.g. the last 7/30/365 days) rather than a fixed point count — used by the Week/Month/Year chart tabs. */
+    async getHistoryRange(days: number, maxPoints = 200): Promise<MarketDataPoint[]> {
+      const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+      const { data, error } = await client
+        .from('market_data')
+        .select('*')
+        .gte('recorded_at', since)
+        .order('recorded_at', { ascending: false })
+        .limit(maxPoints);
+      if (error) throw error;
+      return (data as MarketDataRow[]).map(mapMarketDataRow).reverse();
+    },
+
     /** Advances the automatic random walk server-side. Safe to call from any connected client; a no-op in manual mode. */
     async tickAutomatic(): Promise<MarketSettings> {
       const { data, error } = await client.rpc('advance_market_automatic');

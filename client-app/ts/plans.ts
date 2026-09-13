@@ -129,6 +129,16 @@ function wireInvestModal(): void {
     errorEl!.style.display = '';
   }
 
+  // The invest RPC rejects with this exact message when the client's
+  // available balance can't cover the amount — surface it as an actionable
+  // prompt (a real link to Deposit) instead of a dead-end error string.
+  function showInsufficientBalance(): void {
+    errorEl!.innerHTML =
+      'Insufficient available balance for this investment. ' +
+      '<a href="deposit.html" class="fw-bold" style="color:#a8442e;text-decoration:underline;">Deposit funds</a> to continue.';
+    errorEl!.style.display = '';
+  }
+
   function hideMessages(): void {
     errorEl!.style.display = 'none';
     successEl!.style.display = 'none';
@@ -175,7 +185,12 @@ function wireInvestModal(): void {
         setTimeout(() => modal.hide(), 1200);
       })
       .catch((err: unknown) => {
-        showError(err instanceof Error ? err.message : 'Unable to start this investment. Please try again.');
+        const message = err instanceof Error ? err.message : 'Unable to start this investment. Please try again.';
+        if (/insufficient/i.test(message)) {
+          showInsufficientBalance();
+        } else {
+          showError(message);
+        }
       })
       .finally(() => {
         submitButton.disabled = false;

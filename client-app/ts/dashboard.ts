@@ -2,7 +2,7 @@ import { requireClientSession } from './shell';
 import { createFinancialService } from '../../src/services/api/financialService';
 import { createMarketService } from '../../src/services/market/marketService';
 import { createInvestmentService } from '../../src/services/api/investmentService';
-import type { InvestmentPlan } from '../../src/types/database';
+import type { InvestmentPlan, MarketDataPoint } from '../../src/types/database';
 
 declare const ApexCharts: new (el: Element, options: Record<string, unknown>) => { render: () => void };
 
@@ -54,15 +54,14 @@ async function renderStatTiles(userId: string): Promise<void> {
   }
 }
 
-async function renderMarketOverview(): Promise<void> {
-  const [settings, history] = await Promise.all([marketService.getCurrent(), marketService.getHistory(60)]);
+function renderMarketChart(selector: string, history: MarketDataPoint[], change: number, dateFormat: 'time' | 'date'): void {
+  const container = document.querySelector(selector);
+  if (!container) return;
 
-  setText('marketPriceValue', formatCurrency(settings.currentMarketValue));
-  const change = settings.currentPercentageChange;
-  setText('marketChangeValue', `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`);
-
-  const container = document.querySelector('#candlestick-4');
-  if (!container || history.length === 0) return;
+  if (history.length === 0) {
+    container.innerHTML = '<p class="f14-regular text-Gray text-center pt-4">No market data for this period yet.</p>';
+    return;
+  }
 
   new ApexCharts(container, {
     chart: { height: 337, type: 'area', toolbar: { show: false }, zoom: { enabled: false } },
@@ -74,10 +73,37 @@ async function renderMarketOverview(): Promise<void> {
     yaxis: { show: false },
     xaxis: {
       labels: { show: false },
-      categories: history.map((point) => new Date(point.recordedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })),
+      categories: history.map((point) =>
+        dateFormat === 'time'
+          ? new Date(point.recordedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          : new Date(point.recordedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })
+      ),
     },
     tooltip: { y: { formatter: (val: number) => formatCurrency(val) } },
   }).render();
+}
+
+// The Week/Month/Year tabs (#candlestick-1/4/5) already exist in the Critso
+// markup and are already wired to show/hide each other on click (see
+// main.js's generic .widget-menu-tab handler) — they just never had real,
+// differently-scoped data behind them. Investo tracks a single market
+// index rather than multiple tradable assets, so "different chart" here
+// means different time windows of that one series, not different symbols.
+async function renderMarketOverview(): Promise<void> {
+  const [settings, week, month, year] = await Promise.all([
+    marketService.getCurrent(),
+    marketService.getHistoryRange(7),
+    marketService.getHistoryRange(30),
+    marketService.getHistoryRange(365),
+  ]);
+
+  setText('marketPriceValue', formatCurrency(settings.currentMarketValue));
+  const change = settings.currentPercentageChange;
+  setText('marketChangeValue', `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`);
+
+  renderMarketChart('#candlestick-1', week, change, 'time');
+  renderMarketChart('#candlestick-4', month, change, 'date');
+  renderMarketChart('#candlestick-5', year, change, 'date');
 }
 
 async function renderPortfolioComposition(userId: string): Promise<void> {

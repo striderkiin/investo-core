@@ -105,22 +105,61 @@ function wireProfileEdit(profile: Profile): void {
   });
 }
 
+interface HoldingGroup {
+  planId: string;
+  planName: string;
+  amount: number;
+  currentEarnings: number;
+  rate: number;
+  rateType: string;
+  status: string;
+  count: number;
+}
+
 async function renderHoldings(userId: string): Promise<void> {
   const [investments, plans] = await Promise.all([investmentService.listMyInvestments(userId), investmentService.listPlans()]);
   const planById = new Map<string, InvestmentPlan>(plans.map((p) => [p.id, p]));
 
-  const active = investments.filter((inv) => inv.status === 'active' || inv.status === 'completed').slice(0, 4);
+  const active = investments.filter((inv) => inv.status === 'active' || inv.status === 'completed');
+
+  // Multiple investments in the same plan (a client topping up "Growth"
+  // more than once) get collapsed into one card showing the combined
+  // amount/earnings rather than a run of near-identical boxes.
+  const grouped = new Map<string, HoldingGroup>();
+  for (const inv of active) {
+    const existing = grouped.get(inv.planId);
+    if (existing) {
+      existing.amount += inv.amount;
+      existing.currentEarnings += inv.currentEarnings;
+      existing.count += 1;
+      if (inv.status === 'active') existing.status = 'active';
+    } else {
+      grouped.set(inv.planId, {
+        planId: inv.planId,
+        planName: planById.get(inv.planId)?.name ?? 'Plan',
+        amount: inv.amount,
+        currentEarnings: inv.currentEarnings,
+        rate: inv.rate,
+        rateType: inv.rateType,
+        status: inv.status,
+        count: 1,
+      });
+    }
+  }
+  const holdings = Array.from(grouped.values())
+    .sort((a, b) => b.amount - a.amount)
+    .slice(0, 4);
+
   const container = document.getElementById('investmentHoldings');
   if (!container) return;
 
-  if (active.length === 0) {
+  if (holdings.length === 0) {
     container.innerHTML = '<p class="f14-regular text-Gray">No investments yet.</p>';
     return;
   }
 
-  container.innerHTML = active
-    .map((inv, index) => {
-      const plan = planById.get(inv.planId);
+  container.innerHTML = holdings
+    .map((holding, index) => {
       // bg-YellowGreen (rust) and bg-Black are dark enough that the default
       // dark/gray text is unreadable on them; bg-blue-1/bg-pink-1 are light
       // pastels where dark text already reads fine.
@@ -131,23 +170,23 @@ async function renderHoldings(userId: string): Promise<void> {
         <div class="w-100">
           <div class="wg-card style-1 ${CARD_BACKGROUNDS[index % CARD_BACKGROUNDS.length]} mb-16">
             <div class="flex items-center gap8">
-              <div class="f12-bold ${textClass}">${plan?.name ?? 'Plan'}</div>
+              <div class="f12-bold ${textClass}">${holding.planName}${holding.count > 1 ? ` <span class="${labelClass}">(${holding.count} investments)</span>` : ''}</div>
             </div>
             <div class="content">
               <div class="flex gap2 align-items-end flex-wrap">
-                <h6 class="mb-0 ${textClass}">${formatCurrency(inv.amount)}</h6>
-                <div class="f12-medium ${textClass}">${inv.rate}% <span class="${labelClass}">${inv.rateType}</span></div>
+                <h6 class="mb-0 ${textClass}">${formatCurrency(holding.amount)}</h6>
+                <div class="f12-medium ${textClass}">${holding.rate}% <span class="${labelClass}">${holding.rateType}</span></div>
               </div>
             </div>
             <div class="bottom">
               <div class="infor-number">
                 <div class="flex gap4 f12-medium">
                   <span class="${labelClass}">Status</span>
-                  <span class="${textClass} text-capitalize">${inv.status}</span>
+                  <span class="${textClass} text-capitalize">${holding.status}</span>
                 </div>
                 <div class="flex gap8 f12-medium">
                   <span class="${labelClass}">Earnings</span>
-                  <span class="${textClass}">${formatCurrency(inv.currentEarnings)}</span>
+                  <span class="${textClass}">${formatCurrency(holding.currentEarnings)}</span>
                 </div>
               </div>
             </div>
