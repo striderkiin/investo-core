@@ -90,25 +90,27 @@ h1, h2, h3, h4, h5, h6 {
 /* Quiet, system-notification-like — not a bright floating SaaS toast. */
 .ic-social-proof-popup {
   position: fixed;
-  bottom: 1.25rem;
+  bottom: 1rem;
   z-index: 1050;
-  max-width: 340px;
+  width: calc(100% - 2rem);
+  max-width: 280px;
   background-color: var(--ic-surface);
   color: var(--ic-text);
   border: 1px solid var(--bs-border-color, rgba(0, 0, 0, 0.08));
-  border-radius: 0.5rem;
+  border-radius: 0.625rem;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  padding: 0.9rem 1rem;
+  padding: 0.65rem 0.8rem;
   font-family: var(--ic-font-primary);
+  font-size: 0.8rem;
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
 .ic-social-proof-popup.ic-social-proof-left {
-  left: 1.25rem;
+  left: 1rem;
 }
 
 .ic-social-proof-popup.ic-social-proof-right {
-  right: 1.25rem;
+  right: 1rem;
 }
 
 .ic-social-proof-popup.ic-social-proof-enter {
@@ -139,10 +141,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @media (max-width: 575.98px) {
-  .ic-social-proof-popup {
-    left: 0.75rem;
-    right: 0.75rem;
-    max-width: none;
+  .ic-social-proof-popup.ic-social-proof-left {
+    right: auto;
+  }
+  .ic-social-proof-popup.ic-social-proof-right {
+    left: auto;
   }
 }
 

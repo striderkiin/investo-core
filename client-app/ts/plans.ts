@@ -1,5 +1,6 @@
 import { requireClientSession } from './shell';
 import { createInvestmentService } from '../../src/services/api/investmentService';
+import { createFinancialService } from '../../src/services/api/financialService';
 import type { InvestmentPlan } from '../../src/types/database';
 import { formatCurrency } from './format';
 
@@ -8,6 +9,7 @@ declare const bootstrap: {
 };
 
 const investmentService = createInvestmentService();
+const financialService = createFinancialService();
 
 let allPlans: InvestmentPlan[] = [];
 
@@ -110,7 +112,7 @@ function wireControls(): void {
   searchInput?.addEventListener('input', applyFilter);
 }
 
-function wireInvestModal(): void {
+function wireInvestModal(userId: string): void {
   const modalEl = document.getElementById('investModal');
   const form = document.getElementById('investModalForm') as HTMLFormElement | null;
   const amountInput = document.getElementById('investModalAmount') as HTMLInputElement | null;
@@ -178,9 +180,20 @@ function wireInvestModal(): void {
     submitButton.disabled = true;
     submitButton.textContent = 'Investing…';
 
-    void investmentService
-      .invest(activePlan.id, amount)
-      .then(() => {
+    // Check the balance client-side first rather than relying solely on the
+    // RPC's rejection — a proper Deposit prompt should show immediately
+    // instead of round-tripping to the server just to hit the same wall.
+    void financialService
+      .getPortfolioSummary(userId)
+      .then((summary) => {
+        if (summary.availableBalance < amount) {
+          showInsufficientBalance();
+          return undefined;
+        }
+        return investmentService.invest(activePlan!.id, amount);
+      })
+      .then((result) => {
+        if (!result) return;
         successEl!.style.display = '';
         setTimeout(() => modal.hide(), 1200);
       })
@@ -200,9 +213,9 @@ function wireInvestModal(): void {
 }
 
 async function main() {
-  await requireClientSession();
+  const profile = await requireClientSession();
   wireControls();
-  wireInvestModal();
+  wireInvestModal(profile.id);
   const plans = await investmentService.listPlans();
   allPlans = plans.filter((p) => p.status === 'active');
   applyFilter();

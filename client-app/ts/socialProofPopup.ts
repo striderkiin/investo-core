@@ -4,6 +4,8 @@ import { mapSocialProofEventRow, mapSocialProofSettingsRow } from '../../src/ser
 import type { SocialProofEventRow, SocialProofSettingsRow } from '../../src/services/supabase/mappers';
 import type { SocialProofEvent, SocialProofSettings } from '../../src/types/database';
 import { formatRelativeTime } from './format';
+import { ensurePopupElement, showPopupCard, hidePopupCard } from './socialProofUI';
+import type { PopupPosition } from './socialProofUI';
 
 const DISMISS_KEY = 'ic_social_proof_dismissed_until';
 const SESSION_COUNT_KEY = 'ic_social_proof_session_count';
@@ -109,74 +111,30 @@ function runFeed(initialSettings: SocialProofSettings): void {
   const recentTimestamps: number[] = [];
   let timer: ReturnType<typeof setTimeout> | null = null;
   let current: SocialProofEvent | null = null;
-  let el: HTMLDivElement | null = null;
-
-  function ensureElement(): HTMLDivElement {
-    if (el) return el;
-    el = document.createElement('div');
-    el.setAttribute('role', 'status');
-    el.setAttribute('aria-live', 'polite');
-    Object.assign(el.style, {
-      position: 'fixed',
-      bottom: '1.25rem',
-      [settings.popupPosition === 'bottom-right' ? 'right' : 'left']: '1.25rem',
-      zIndex: '1050',
-      maxWidth: '340px',
-      background: '#111111',
-      color: '#f5f5f5',
-      border: '1px solid rgba(255,255,255,0.08)',
-      borderRadius: '0.5rem',
-      boxShadow: '0 4px 16px rgba(0,0,0,0.35)',
-      padding: '0.9rem 1rem',
-      fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-      fontSize: '0.85rem',
-      opacity: '0',
-      transform: 'translateY(12px)',
-      transition: 'transform 0.3s ease, opacity 0.3s ease',
-    });
-    document.body.appendChild(el);
-    return el;
-  }
 
   function show(event: SocialProofEvent): void {
-    const node = ensureElement();
-    node.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem;">
-        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.3rem;">
-          <span style="width:0.5rem;height:0.5rem;border-radius:50%;background:#a8442e;display:inline-block;"></span>
-          <span style="font-weight:600;">Recent Activity</span>
-        </div>
-        ${settings.showCloseButton ? '<button type="button" data-sp-close aria-label="Close" style="background:none;border:none;color:inherit;opacity:0.6;cursor:pointer;font-size:1rem;line-height:1;padding:0;">&times;</button>' : ''}
-      </div>
-      <div data-sp-body style="cursor:pointer;">
-        <p style="margin:0 0 0.2rem;">${escapeHtml(event.message)}</p>
-        <p style="margin:0;opacity:0.6;font-size:0.75rem;">${formatRelativeTime(event.createdAt)}</p>
-      </div>
-    `;
-    node.style.opacity = '1';
-    node.style.transform = 'translateY(0)';
-
-    node.querySelector<HTMLButtonElement>('[data-sp-close]')?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (timer) clearTimeout(timer);
-      void socialProofService.recordInteraction(event.id, 'dismissed').catch(() => undefined);
-      dismissFor('session');
-      hide();
-    });
-
-    node.querySelector<HTMLDivElement>('[data-sp-body]')?.addEventListener('click', () => {
-      void socialProofService.recordInteraction(event.id, 'clicked').catch(() => undefined);
-      dismissFor('session');
-      window.location.href = CLICK_DESTINATION[event.eventType] ?? 'index.html';
+    const el = ensurePopupElement(settings.popupPosition as PopupPosition);
+    showPopupCard(el, {
+      message: event.message,
+      timeText: formatRelativeTime(event.createdAt),
+      closable: settings.showCloseButton,
+      onClose: () => {
+        if (timer) clearTimeout(timer);
+        void socialProofService.recordInteraction(event.id, 'dismissed').catch(() => undefined);
+        dismissFor('session');
+        hide();
+      },
+      onClick: () => {
+        void socialProofService.recordInteraction(event.id, 'clicked').catch(() => undefined);
+        dismissFor('session');
+        window.location.href = CLICK_DESTINATION[event.eventType] ?? 'index.html';
+      },
     });
   }
 
   function hide(): void {
     current = null;
-    if (el) {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(12px)';
-    }
+    hidePopupCard(ensurePopupElement(settings.popupPosition as PopupPosition));
   }
 
   function advance(): void {
@@ -232,8 +190,3 @@ function runFeed(initialSettings: SocialProofSettings): void {
   });
 }
 
-function escapeHtml(value: string): string {
-  const div = document.createElement('div');
-  div.textContent = value;
-  return div.innerHTML;
-}
