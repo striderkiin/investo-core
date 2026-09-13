@@ -12,17 +12,18 @@ const investmentService = createInvestmentService();
 
 // Stable per-plan colors (not array-position-based) so a given plan is
 // always the same color regardless of which/how-many plans a client holds.
-// Ramped by saturation/vibrancy rather than just lightness — the cheapest
-// tier reads as a dull, muted sandstone and the top tier as a bold, vivid
-// gold, so "which plan is bigger" is legible at a glance. Stays within the
-// brand's black/white/gold family — no blue/purple.
+// Genuinely distinct hues rather than shades of one color — a donut where
+// every slice is a different lightness of gold is unreadable at a glance.
+// Professional gets the brand rust since it's typically the flagship tier;
+// the rest are muted, cohesive colors picked to stay legible against each
+// other rather than a literal brand-only palette.
 const PLAN_COLORS: Record<string, string> = {
-  Starter: '#a89b83',
-  Growth: '#c3953f',
-  Professional: '#e0a52e',
-  Elite: '#ffb300',
+  Starter: '#5c5c5c',
+  Growth: '#2f6f6a',
+  Professional: '#a8442e',
+  Elite: '#d1a24a',
 };
-const FALLBACK_SHADES = ['#c3953f', '#e0a52e', '#ffb300', '#a89b83', '#8a6a34'];
+const FALLBACK_SHADES = ['#a8442e', '#2f6f6a', '#d1a24a', '#6b4a6b', '#5c5c5c'];
 
 function colorForPlan(name: string, fallbackIndex: number): string {
   return PLAN_COLORS[name] ?? FALLBACK_SHADES[fallbackIndex % FALLBACK_SHADES.length];
@@ -96,6 +97,9 @@ async function renderPortfolioComposition(userId: string): Promise<void> {
   // Slot 0-4 are the checkbox row ported from Critso's BTC/XRP/ETH/ZEC/LTC —
   // relabel with real plan names and hide any unused slots rather than
   // showing empty/fake entries when a client holds fewer than five plans.
+  // The checkbox itself is recolored to match its slice in the donut below,
+  // so the legend actually functions as a legend instead of five identical
+  // gray checkmarks.
   for (let i = 0; i < 5; i++) {
     const slot = document.getElementById(`compositionSlot${i}`);
     const label = document.getElementById(`compositionLabel${i}`);
@@ -103,6 +107,12 @@ async function renderPortfolioComposition(userId: string): Promise<void> {
     if (i < holdings.length) {
       label.textContent = holdings[i].name;
       slot.style.display = '';
+      const swatch = slot.querySelector<HTMLElement>('.tf-checkbox-wrapp div');
+      if (swatch) {
+        const color = colorForPlan(holdings[i].name, i);
+        swatch.style.backgroundColor = color;
+        swatch.style.borderColor = color;
+      }
     } else {
       slot.style.display = 'none';
     }

@@ -64,7 +64,7 @@ function buildElement(position: string): HTMLDivElement {
   });
   el.innerHTML = `
     <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.3rem;">
-      <span style="width:0.5rem;height:0.5rem;border-radius:50%;background:#c6a15b;display:inline-block;"></span>
+      <span style="width:0.5rem;height:0.5rem;border-radius:50%;background:#a8442e;display:inline-block;"></span>
       <span style="font-weight:600;">Recent Activity</span>
     </div>
     <p data-ticker-message style="margin:0;"></p>

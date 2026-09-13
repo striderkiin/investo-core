@@ -135,6 +135,21 @@ export function useSocialProofFeed() {
   }, []);
 
   useEffect(() => {
+    const service = serviceRef.current;
+    if (!service || !settings?.enabled) return;
+    // Newest-first from the API — reverse so the queue plays oldest to
+    // newest, same order a live feed would have delivered them in. Without
+    // this, a visitor only ever sees events that happen to insert while
+    // they're actively on the page.
+    void service
+      .listRecentEvents()
+      .then((events) => {
+        for (const event of [...events].reverse()) enqueue(event);
+      })
+      .catch(() => undefined);
+  }, [settings?.enabled, enqueue]);
+
+  useEffect(() => {
     if (!isSupabaseConfigured() || !settings?.enabled) return;
     const client = getSupabaseClient();
     // Unique per hook instance — see useMaintenanceStatus.ts for the

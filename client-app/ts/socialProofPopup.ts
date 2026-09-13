@@ -91,6 +91,17 @@ export function mountSocialProofPopup(): void {
     .catch(() => undefined);
 }
 
+function backfillRecentEvents(enqueue: (event: SocialProofEvent) => void): void {
+  void socialProofService
+    .listRecentEvents()
+    .then((events) => {
+      // Newest-first from the API — reverse so the queue plays oldest to
+      // newest, same order a live feed would have delivered them in.
+      for (const event of [...events].reverse()) enqueue(event);
+    })
+    .catch(() => undefined);
+}
+
 function runFeed(initialSettings: SocialProofSettings): void {
   let settings = initialSettings;
   const queue: SocialProofEvent[] = [];
@@ -132,7 +143,7 @@ function runFeed(initialSettings: SocialProofSettings): void {
     node.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem;">
         <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.3rem;">
-          <span style="width:0.5rem;height:0.5rem;border-radius:50%;background:#c6a15b;display:inline-block;"></span>
+          <span style="width:0.5rem;height:0.5rem;border-radius:50%;background:#a8442e;display:inline-block;"></span>
           <span style="font-weight:600;">Recent Activity</span>
         </div>
         ${settings.showCloseButton ? '<button type="button" data-sp-close aria-label="Close" style="background:none;border:none;color:inherit;opacity:0.6;cursor:pointer;font-size:1rem;line-height:1;padding:0;">&times;</button>' : ''}
@@ -202,6 +213,8 @@ function runFeed(initialSettings: SocialProofSettings): void {
     if (queue.length > settings.maxQueue) queue.splice(0, queue.length - settings.maxQueue);
     if (!current && !timer) advance();
   }
+
+  backfillRecentEvents(enqueue);
 
   const client = getSupabaseClient();
   const channel = client
