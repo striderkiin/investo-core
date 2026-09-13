@@ -11,6 +11,7 @@ import { useAuth } from '../../../hooks/useAuth';
 import { IconBadge } from '../../../components/public/IconBadge';
 import { ScrollReveal } from '../../../components/public/ScrollReveal';
 import { SocialLinksRow } from '../../../components/public/SocialLinksRow';
+import { DEFAULT_SOCIAL_LINKS } from '../../../components/public/socialPlatforms';
 import { IconMail } from '../../../components/public/icons';
 import { SecureVestAccordion } from '../../../components/public/securevest/SecureVestAccordion';
 
@@ -332,7 +333,7 @@ export function LandingPage() {
                 <p className="tw:pt-3 tw:sm:pt-4 tw:text-paragraph_white tw:text-base tw:leading-normal">From steady starter returns to our top tier, each with a fixed rate and duration.</p>
               </div>
             </ScrollReveal>
-            <ScrollReveal className="tw:bg-[#621348] tw:p-5 tw:sm:p-8 tw:rounded-2xl tw:flex tw:flex-col tw:justify-between tw:gap-5" index={2}>
+            <ScrollReveal className="tw:bg-[#5c2015] tw:p-5 tw:sm:p-8 tw:rounded-2xl tw:flex tw:flex-col tw:justify-between tw:gap-5" index={2}>
               <div className="tw:flex tw:items-start tw:gap-1">
                 <h2 className="counter tw:text-primary tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">24/7</h2>
               </div>
@@ -346,7 +347,7 @@ export function LandingPage() {
               <img src={`${S}/img/home-v2/counter-img/counter-2.webp`} alt="counter image" className="tw:rounded-lg tw:md:rounded-2xl tw:object-cover tw:aspect-410/310 tw:w-full tw:h-full" />
             </ScrollReveal>
 
-            <ScrollReveal className="tw:bg-[#14265C] tw:p-5 tw:sm:p-8 tw:rounded-2xl tw:flex tw:flex-col tw:justify-between tw:gap-5" index={4}>
+            <ScrollReveal className="tw:bg-[#1a1a1a] tw:p-5 tw:sm:p-8 tw:rounded-2xl tw:flex tw:flex-col tw:justify-between tw:gap-5" index={4}>
               <div className="tw:flex tw:items-start tw:gap-1">
                 <h2 className="counter tw:text-primary tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">100</h2>
                 <h2 className="tw:text-primary tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">%</h2>
@@ -626,7 +627,7 @@ export function LandingPage() {
                 Have a question about a deposit or a withdrawal? Send us a message and our team will get back to you. Already have an account? You can also open a ticket from your dashboard&apos;s
                 Support Center for the fastest response.
               </p>
-              <SocialLinksRow links={socialLinks} />
+              <SocialLinksRow links={socialLinks.length > 0 ? socialLinks : DEFAULT_SOCIAL_LINKS} />
             </ScrollReveal>
             <ScrollReveal className="col-12 col-lg-8 ps-lg-5 ic-public-contact-info" index={1}>
               <ContactSection />

@@ -2,7 +2,7 @@ import type { SocialLink } from '../../types/database';
 import { IconBadge } from './IconBadge';
 import { SOCIAL_PLATFORM_META } from './socialPlatforms';
 
-/** Renders nothing if the operator hasn't enabled any platform yet — no placeholder icons pointing nowhere. */
+/** Pass DEFAULT_SOCIAL_LINKS (see socialPlatforms.ts) when the real list is empty so this never renders nothing. */
 export function SocialLinksRow({ links }: { links: SocialLink[] }) {
   if (links.length === 0) return null;
 

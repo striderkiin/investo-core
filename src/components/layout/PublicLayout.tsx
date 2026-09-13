@@ -3,7 +3,7 @@ import { Link, NavLink, Outlet } from 'react-router-dom';
 import { useBranding } from '../../hooks/useBranding';
 import { SvgSymbols } from '../public/securevest/SvgSymbols';
 import { createSocialLinksService } from '../../services/api/socialLinksService';
-import { SOCIAL_PLATFORM_META } from '../public/socialPlatforms';
+import { SOCIAL_PLATFORM_META, DEFAULT_SOCIAL_LINKS } from '../public/socialPlatforms';
 import type { SocialLink } from '../../types/database';
 
 const socialLinksService = createSocialLinksService();
@@ -192,26 +192,24 @@ export function PublicLayout() {
             <p className="tw:text-paragraph_white tw:text-center tw:sm:text-left">
               © {new Date().getFullYear()} {branding.siteName}. All rights reserved.
             </p>
-            {socialLinks.length > 0 && (
-              <div className="tw:flex tw:items-center tw:gap-4">
-                {socialLinks.map((link) => {
-                  const meta = SOCIAL_PLATFORM_META[link.platform];
-                  const Icon = meta.icon;
-                  return (
-                    <a
-                      key={link.id}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={meta.label}
-                      className="tw:w-8.5 tw:h-8.5 tw:bg-white/10 tw:rounded-full tw:flex tw:items-center tw:justify-center tw:text-white tw:duration-300 hover:tw:bg-primary hover:tw:text-title_white"
-                    >
-                      <Icon width={16} height={16} />
-                    </a>
-                  );
-                })}
-              </div>
-            )}
+            <div className="tw:flex tw:items-center tw:gap-4">
+              {(socialLinks.length > 0 ? socialLinks : DEFAULT_SOCIAL_LINKS).map((link) => {
+                const meta = SOCIAL_PLATFORM_META[link.platform];
+                const Icon = meta.icon;
+                return (
+                  <a
+                    key={link.id}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={meta.label}
+                    className="tw:w-8.5 tw:h-8.5 tw:bg-white/10 tw:rounded-full tw:flex tw:items-center tw:justify-center tw:text-white tw:duration-300 hover:tw:bg-primary hover:tw:text-title_white"
+                  >
+                    <Icon width={16} height={16} />
+                  </a>
+                );
+              })}
+            </div>
           </div>
         </div>
       </footer>

@@ -4,12 +4,15 @@
    the operator's configured white-label theme separately.
 
    Direction: luxury financial platform, quiet and precise, not a generic
-   AI-SaaS look. Near-black surfaces, warm white type, a muted gold accent
+   AI-SaaS look. Near-black surfaces, warm white type, a deliberate accent
    used sparingly (jewelry, not paint), a faint star/data-point field for
-   atmosphere instead of glowing gradient blobs. The one dynamic value is
-   --pub-accent, read from --ic-primary (BrandingContext) so an operator's
-   configured brand color still comes through as the accent — everything
-   else in the palette is a fixed, deliberate design choice. */
+   atmosphere instead of glowing gradient blobs.
+
+   --pub-accent is a fixed #A8442E matching the landing page's own palette
+   (securevest-tailwind.css), not the operator-configurable --ic-primary —
+   the public marketing pages (nav/footer included) are a hand-built brand
+   surface independent of the admin white-label theme, which only governs
+   the authenticated client/admin dashboards. */
 
 .ic-public {
   --pub-bg: #080808;
@@ -20,7 +23,7 @@
   --pub-text: #f5f3ee;
   --pub-text-muted: #a8a6a1;
   --pub-text-subtle: #66645f;
-  --pub-accent: var(--ic-primary, #c6a15b);
+  --pub-accent: #a8442e;
   --pub-accent-light: color-mix(in srgb, var(--pub-accent) 70%, white);
   --pub-accent-dark: color-mix(in srgb, var(--pub-accent) 60%, black);
   --pub-font-display: 'Fugaz One', system-ui, sans-serif;
