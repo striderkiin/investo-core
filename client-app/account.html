@@ -376,10 +376,16 @@
                                                 </div>
                                                 <form id="profileEditForm" class="w-100 mb-16" style="display:none;">
                                                     <div class="mb-8">
+                                                        <label for="profileNameInput" class="f12-medium text-Gray mb-4 d-block">Full Name</label>
                                                         <input type="text" id="profileNameInput" class="form-control" placeholder="Full name">
                                                     </div>
+                                                    <div class="mb-8">
+                                                        <label for="profileAvatarInput" class="f12-medium text-Gray mb-4 d-block">Profile Photo</label>
+                                                        <input type="file" id="profileAvatarInput" class="form-control" accept="image/*">
+                                                    </div>
+                                                    <div id="profileEditError" class="f12-medium mb-8" style="display:none;color:#dc3545;"></div>
                                                     <div class="flex gap8">
-                                                        <button type="submit" class="tf-button f12-bold flex-grow-1">Save</button>
+                                                        <button type="submit" class="tf-button f12-bold flex-grow-1" id="profileEditSubmit">Save</button>
                                                         <button type="button" id="profileEditCancel" class="tf-button f12-bold bg-Gainsboro">Cancel</button>
                                                     </div>
                                                 </form>

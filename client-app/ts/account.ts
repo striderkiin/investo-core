@@ -32,10 +32,26 @@ function wireProfileEdit(profile: Profile): void {
   const form = document.getElementById('profileEditForm') as HTMLFormElement | null;
   const cancel = document.getElementById('profileEditCancel');
   const nameInput = document.getElementById('profileNameInput') as HTMLInputElement | null;
-  if (!toggle || !form || !cancel || !nameInput) return;
+  const avatarInput = document.getElementById('profileAvatarInput') as HTMLInputElement | null;
+  const submitButton = document.getElementById('profileEditSubmit') as HTMLButtonElement | null;
+  const errorEl = document.getElementById('profileEditError');
+  if (!toggle || !form || !cancel || !nameInput || !avatarInput || !submitButton || !errorEl) return;
+
+  function showError(message: string): void {
+    if (errorEl) {
+      errorEl.textContent = message;
+      errorEl.style.display = '';
+    }
+  }
+
+  function hideError(): void {
+    if (errorEl) errorEl.style.display = 'none';
+  }
 
   toggle.addEventListener('click', () => {
     nameInput.value = profile.fullName;
+    avatarInput.value = '';
+    hideError();
     form.style.display = 'block';
     toggle.style.display = 'none';
   });
@@ -47,12 +63,45 @@ function wireProfileEdit(profile: Profile): void {
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-    void userService.updateProfile(profile.id, { fullName: nameInput.value.trim() }).then(() => {
-      const nameEl = document.getElementById('profileName');
-      if (nameEl) nameEl.textContent = nameInput.value.trim();
-      form.style.display = 'none';
-      toggle.style.display = '';
-    });
+    hideError();
+
+    const fullName = nameInput.value.trim();
+    if (!fullName) {
+      showError('Enter your name.');
+      return;
+    }
+
+    const avatarFile = avatarInput.files?.[0];
+    submitButton.disabled = true;
+    submitButton.textContent = 'Saving…';
+
+    const uploadStep = avatarFile ? userService.uploadAvatar(profile.id, avatarFile) : Promise.resolve(undefined);
+
+    void uploadStep
+      .then((avatarUrl) => userService.updateProfile(profile.id, { fullName, ...(avatarUrl ? { avatarUrl } : {}) }))
+      .then((updated) => {
+        profile.fullName = updated.fullName;
+        profile.avatarUrl = updated.avatarUrl;
+
+        const nameEl = document.getElementById('profileName');
+        if (nameEl) nameEl.textContent = updated.fullName;
+
+        const avatarEl = document.getElementById('profileAvatar') as HTMLImageElement | null;
+        if (avatarEl && updated.avatarUrl) avatarEl.src = updated.avatarUrl;
+
+        const headerAvatarEl = document.getElementById('userAvatar') as HTMLImageElement | null;
+        if (headerAvatarEl && updated.avatarUrl) headerAvatarEl.src = updated.avatarUrl;
+
+        form.style.display = 'none';
+        toggle.style.display = '';
+      })
+      .catch((err: unknown) => {
+        showError(err instanceof Error ? err.message : 'Unable to save your profile. Please try again.');
+      })
+      .finally(() => {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Save';
+      });
   });
 }
 

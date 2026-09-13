@@ -47,6 +47,15 @@ export function createUserService(client: SupabaseClient = getSupabaseClient()) 
       return mapProfileRow(data as ProfileRow);
     },
 
+    /** Uploads a profile photo to the public `avatars` storage bucket, under the uploading user's own folder, and returns its public URL. */
+    async uploadAvatar(userId: string, file: File): Promise<string> {
+      const path = `${userId}/${Date.now()}.${file.name.split('.').pop() ?? 'png'}`;
+      const { error } = await client.storage.from('avatars').upload(path, file, { upsert: true });
+      if (error) throw error;
+      const { data } = client.storage.from('avatars').getPublicUrl(path);
+      return data.publicUrl;
+    },
+
     async setAccountStatus(userId: string, status: AccountStatus): Promise<Profile> {
       const { data, error } = await client
         .from('profiles')
