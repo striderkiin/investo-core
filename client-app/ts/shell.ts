@@ -16,8 +16,7 @@ const OPEN_TICKET_STATUSES: SupportTicketStatus[] = ['open', 'in_progress', 'wai
 
 /**
  * Runs on every client-app page before anything else: confirms there's a
- * real logged-in client (redirecting to the React app's /login otherwise —
- * this static multi-page app has no auth UI of its own, see
+ * real logged-in client (redirecting to sign-in.html otherwise, see
  * client-app/README.md), then populates the shared header (name, role,
  * avatar) and wires the logout link. Every page's own script calls this
  * and gets the resolved profile back to render its own real data with.
@@ -31,13 +30,13 @@ export async function requireClientSession(): Promise<Profile> {
 
   const session = await authService.getSession();
   if (!session) {
-    window.location.replace('/login');
+    window.location.replace('/client-app/sign-in.html');
     throw new Error('Not authenticated');
   }
 
   const profile = await authService.getCurrentProfile();
   if (!profile) {
-    window.location.replace('/login');
+    window.location.replace('/client-app/sign-in.html');
     throw new Error('No profile');
   }
 
@@ -140,7 +139,7 @@ function wireLogout(): void {
   logoutLink.addEventListener('click', (event) => {
     event.preventDefault();
     void authService.logout().then(() => {
-      window.location.replace('/login');
+      window.location.replace('/client-app/sign-in.html');
     });
   });
 }

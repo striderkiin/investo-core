@@ -21,7 +21,8 @@ export function ProtectedRoute({ children, requireAdmin, requirePermission }: Pr
   }
 
   if (!session || !profile) {
-    return <Navigate to="/login" replace />;
+    window.location.replace(`/client-app/sign-in.html${window.location.search}`);
+    return null;
   }
 
   // The client dashboard lives outside this React app as a separate static

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { Link } from 'react-router-dom';
 import { createAuthService } from '../../../services/auth/authService';
 import { isSupabaseConfigured } from '../../../services/supabase/client';
 import { AuthCard } from '../../../components/public/AuthCard';
@@ -65,7 +64,7 @@ export function ForgotPasswordPage() {
         )}
 
       <p className="text-center text-secondary mt-4 mb-0">
-        <Link to="/login">Back to log in</Link>
+        <a href="/client-app/sign-in.html">Back to log in</a>
       </p>
     </AuthCard>
   );

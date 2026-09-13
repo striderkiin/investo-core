@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { createAuthService } from '../../../services/auth/authService';
 import { isSupabaseConfigured } from '../../../services/supabase/client';
 import { AuthCard } from '../../../components/public/AuthCard';
 
 export function ResetPasswordPage() {
-  const navigate = useNavigate();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,7 +30,7 @@ export function ResetPasswordPage() {
       const authService = createAuthService();
       await authService.updatePassword(password);
       setSuccess(true);
-      setTimeout(() => navigate('/login'), 2000);
+      setTimeout(() => window.location.replace('/client-app/sign-in.html'), 2000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to reset password.');
     } finally {

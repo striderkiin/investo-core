@@ -171,7 +171,7 @@ function wireProfileSave(profile: Profile): void {
 
 async function renderReferral(profile: Profile): Promise<void> {
   const linkInput = document.getElementById('referralLinkInput') as HTMLInputElement | null;
-  if (linkInput) linkInput.value = `${window.location.origin}/register?ref=${profile.referralCode}`;
+  if (linkInput) linkInput.value = `${window.location.origin}/client-app/sign-up.html?ref=${profile.referralCode}`;
 
   const copyButton = document.getElementById('referralCopyButton');
   copyButton?.addEventListener('click', () => {

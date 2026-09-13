@@ -91,12 +91,12 @@ export function PublicLayout() {
               )}
             </ul>
             <div className="d-flex align-items-center gap-2">
-              <Link to="/login" className="btn ic-public-btn-outline btn-sm">
+              <a href="/client-app/sign-in.html" className="btn ic-public-btn-outline btn-sm">
                 Log In
-              </Link>
-              <Link to="/register" className="btn ic-public-btn-primary btn-sm">
+              </a>
+              <a href="/client-app/sign-up.html" className="btn ic-public-btn-primary btn-sm">
                 Get Started
-              </Link>
+              </a>
             </div>
           </div>
         </div>

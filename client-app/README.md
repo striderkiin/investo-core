@@ -13,7 +13,9 @@ markup into React/Bootstrap components lost too much of the original
 structure across two attempts. Lifting the actual template and wiring real
 data into it directly gets a pixel-accurate result. The public marketing
 site and the admin panel are unaffected — they're still the React app in
-`src/`, and this only replaces what a **client** sees after `/login`.
+`src/`. Since `sign-in.html`/`sign-up.html` are now part of this app too
+(see below), this replaces what a **client** sees from the moment they land
+on the platform, not just after logging in.
 
 ## How it fits together
 
@@ -26,11 +28,17 @@ site and the admin panel are unaffected — they're still the React app in
   assets it can trace through module imports or `public/` — a plain
   `<script src="js/jquery.min.js">` tag doesn't get bundled or copied
   automatically the way an `import` would.
-- `ts/shell.ts` runs on every page: confirms there's a real logged-in
-  **client** session (via the same `authService`/Supabase client the React
-  app uses — `src/services/...`, imported directly by relative path),
-  redirects to `/login` if not, populates the shared header (name, role,
-  avatar), and wires the logout link.
+- `ts/shell.ts` runs on every dashboard page: confirms there's a real
+  logged-in **client** session (via the same `authService`/Supabase client
+  the React app uses — `src/services/...`, imported directly by relative
+  path), redirects to `sign-in.html` if not, populates the shared header
+  (name, role, avatar), and wires the logout link.
+- `sign-in.html`/`sign-up.html` are the actual Critso template auth pages
+  (`reference/legacy-template/sign-in.html` and `sign-up.html`), wired to
+  real auth through `ts/signin.ts`/`ts/signup.ts`. The React app's own
+  `/login` and `/register` routes now just redirect here (a real page
+  navigation, preserving query params like `?ref=`) so every existing link
+  to them keeps working without touching every caller.
 - `ts/dashboard.ts`, `ts/wallet.ts`, `ts/account.ts`, `ts/settings.ts`,
   `ts/transaction.ts`, `ts/plans.ts`, `ts/notifications.ts`, and
   `ts/message.ts` each drive one page's real data, using the exact same
@@ -43,10 +51,9 @@ site and the admin panel are unaffected — they're still the React app in
   the same markup on every page, so `ts/shell.ts` itself populates them
   (real recent notifications, real open ticket count) right after the
   auth check — no per-page module needs to duplicate that.
-- After login, `LoginPage.tsx` in the React app sends **clients** to
-  `/client-app/index.html` with a real page navigation (not react-router)
-  since this is a different app; **admins** still go to `/admin` inside
-  the SPA as before.
+- After a successful sign-in, `ts/signin.ts` sends **clients** to
+  `index.html` and **admins** to `/admin` inside the SPA, both with a real
+  page navigation since they're different apps.
 - Deposit, Withdraw, and Invest actions link out to the React SPA's own
   routes (`/dashboard/deposit`, `/dashboard/withdraw`, `/dashboard/investments`)
   rather than duplicating those forms here — same Supabase session, same
@@ -103,6 +110,8 @@ than faked, consistent with the rest of this app.
 
 ## Status
 
-All 8 pages are fully wired to real data, each through its own
+All 8 dashboard pages are fully wired to real data, each through its own
 `ts/*.ts` module, with a real auth guard and a real header (name,
 avatar, logout, notification/ticket previews) via `ts/shell.ts`.
+`sign-in.html` and `sign-up.html` are wired to real auth through
+`ts/signin.ts`/`ts/signup.ts`, matching the original Critso template pages.

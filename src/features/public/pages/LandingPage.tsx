@@ -207,9 +207,9 @@ export function LandingPage() {
                 A complete platform to manage deposits, withdrawals, investments, and referrals, all in one secure dashboard with real-time visibility into every action.
               </p>
               <div className="tw:mt-6 tw:sm:mt-8 tw:lg:mt-12 tw:flex tw:items-center tw:gap-3">
-                <Link to="/register" className="button-primary">
+                <a href="/client-app/sign-up.html" className="button-primary">
                   Create free account
-                </Link>
+                </a>
                 <Link
                   to="/#pricing"
                   className="video-popup tw:w-10 tw:md:w-12 tw:h-10 tw:md:h-12 tw:rounded-full tw:bg-title_black tw:flex tw:items-center tw:justify-center tw:text-title_white"
@@ -421,7 +421,7 @@ export function LandingPage() {
                           </ul>
                         </div>
                         <a
-                          href="/register"
+                          href="/client-app/sign-up.html"
                           className={
                             highlighted
                               ? 'tw:w-full tw:px-6 tw:py-4 tw:text-base tw:leading-none tw:font-semibold tw:text-title_white tw:bg-primary tw:rounded-full tw:cursor-pointer tw:text-center tw:justify-center!'
@@ -572,12 +572,12 @@ export function LandingPage() {
                     <p className="tw:text-base tw:mt-3 tw:text-paragraph_black tw:max-w-154.25">Create a free account and fund your first plan in minutes, then track everything live from your dashboard.</p>
                   </div>
                   <div className="tw:w-fit">
-                    <Link to="/register" className="button-primary tw:w-fit">
+                    <a href="/client-app/sign-up.html" className="button-primary tw:w-fit">
                       Create free account
                       <svg className="tw:w-2.75 tw:h-2.75 tw:fill-current">
                         <use href="#buttonArrow" />
                       </svg>
-                    </Link>
+                    </a>
                   </div>
                 </div>
               </div>

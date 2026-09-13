@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import type { ReactNode } from 'react';
 
-/** Shared dark card shell for the auth pages (login/register/forgot/reset). */
+/** Shared dark card shell for the auth pages that stay in this React app (forgot/reset password). Sign in and sign up live at client-app/sign-in.html and client-app/sign-up.html instead. */
 export function AuthCard({ title, subtitle, children }: { title?: string; subtitle?: string; children: ReactNode }) {
   return (
     <div className="container py-5 position-relative" style={{ maxWidth: 440 }}>

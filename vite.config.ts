@@ -8,7 +8,18 @@ import { defineConfig } from 'vitest/config';
 // HTML files needs to be a real Rollup entry point, or `vite build` only
 // ever emits the SPA's own index.html and everything under /app/ 404s in
 // production even though it works fine against the dev server.
-const CLIENT_APP_PAGES = ['index', 'my-wallet', 'account', 'transaction', 'crypto', 'settings', 'notifications', 'message'];
+const CLIENT_APP_PAGES = [
+  'index',
+  'my-wallet',
+  'account',
+  'transaction',
+  'crypto',
+  'settings',
+  'notifications',
+  'message',
+  'sign-in',
+  'sign-up',
+];
 
 // https://vite.dev/config/
 export default defineConfig({

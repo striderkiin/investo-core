@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { EnvironmentBadge } from './EnvironmentBadge';
 
@@ -11,11 +10,10 @@ interface TopbarProps {
 
 export function Topbar({ title, onToggleSidebar, extra }: TopbarProps) {
   const { profile, logout } = useAuth();
-  const navigate = useNavigate();
 
   async function handleLogout() {
     await logout();
-    navigate('/login');
+    window.location.replace('/client-app/sign-in.html');
   }
 
   return (
