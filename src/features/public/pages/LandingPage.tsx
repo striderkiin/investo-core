@@ -167,6 +167,8 @@ export function LandingPage() {
     };
 
     const steps = 12;
+    const today = new Date();
+    const dateFormatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
     const labels: string[] = [];
     const values: number[] = [];
     for (let i = 0; i <= steps; i += 1) {
@@ -176,7 +178,9 @@ export function LandingPage() {
       const taper = Math.sin(Math.PI * t);
       const amplitude = Math.max(Math.abs(totalGrowth) * 0.1, amount * 0.01);
       const wobble = (noiseAt(i) - 0.5) * 2 * taper * amplitude;
-      labels.push(`Day ${day}`);
+      const pointDate = new Date(today);
+      pointDate.setDate(pointDate.getDate() + day);
+      labels.push(dateFormatter.format(pointDate));
       values.push(Math.round(linear + wobble));
     }
     const total = Math.round(finalValue);
@@ -186,7 +190,7 @@ export function LandingPage() {
   return (
     <div className="sv-page">
       {/* ===== 3.1 Hero — verbatim from index-two.php lines 14-60 ===== */}
-      <section className="tw:py-14 tw:md:py-20 tw:lg:py-24 tw:xl:py-27 tw:bg-[#080808] tw:relative tw:z-1">
+      <section className="tw:py-14 tw:md:py-20 tw:lg:py-24 tw:xl:py-27 tw:bg-black tw:relative tw:z-1">
         <img className="tw:hidden tw:lg:block tw:absolute tw:top-[4%] tw:left-0 tw:-z-1" src={`${S}/img/home-v2/banner/background-shape.webp`} alt="background-shape" />
         <div className="tw:container">
           <div className="tw:flex tw:items-center tw:justify-between tw:gap-10 tw:flex-col tw:md:flex-row">
@@ -393,36 +397,23 @@ export function LandingPage() {
                       <div
                         className={
                           highlighted
-                            ? 'tw:bg-secondary tw:border tw:border-secondary tw:rounded-2xl tw:p-6 tw:xl:p-8 tw:flex tw:flex-col tw:justify-between tw:gap-10 tw:md:gap-12'
+                            ? 'tw:bg-background tw:border tw:border-primary tw:shadow-[0_0_50px_-12px_rgba(168,68,46,0.65)] tw:rounded-2xl tw:p-6 tw:xl:p-8 tw:flex tw:flex-col tw:justify-between tw:gap-10 tw:md:gap-12'
                             : 'tw:bg-background tw:border tw:border-border tw:rounded-2xl tw:p-6 tw:xl:p-8 tw:transition tw:duration-300 tw:flex tw:flex-col tw:justify-between tw:gap-10 tw:md:gap-12 tw:h-full'
                         }
                       >
                         <div>
-                          <p className={highlighted ? 'tw:text-lg tw:font-semibold tw:leading-none tw:text-paragraph_white' : 'tw:text-paragraph_black tw:text-lg tw:font-semibold tw:leading-none'}>
-                            {plan.name}
-                          </p>
+                          <p className="tw:text-paragraph_black tw:text-lg tw:font-semibold tw:leading-none">{plan.name}</p>
                           <div className="tw:mt-5 tw:mb-4 tw:flex tw:flex-wrap tw:items-baseline tw:gap-1.5">
-                            <h2 className={highlighted ? 'price tw:text-5xl tw:xl:text-[64px] tw:leading-none tw:text-title_white' : 'price tw:text-5xl tw:xl:text-[64px] tw:leading-none tw:text-title_black'}>
-                              {plan.rate}%
-                            </h2>
-                            <p className={highlighted ? 'tw:text-paragraph_white tw:text-base tw:font-normal tw:leading-none' : 'tw:text-paragraph_black tw:text-base tw:font-normal tw:leading-none'}>
-                              per {periodNoun}
-                            </p>
+                            <h2 className="price tw:text-5xl tw:xl:text-[64px] tw:leading-none tw:text-title_black">{plan.rate}%</h2>
+                            <p className="tw:text-paragraph_black tw:text-base tw:font-normal tw:leading-none">per {periodNoun}</p>
                           </div>
-                          <p className={highlighted ? 'tw:text-paragraph_white tw:text-base tw:font-normal' : 'tw:text-paragraph_black tw:text-base tw:font-normal'}>{plan.description}</p>
+                          <p className="tw:text-paragraph_black tw:text-base tw:font-normal">{plan.description}</p>
                         </div>
                         <div>
                           <ul className="tw:space-y-3">
                             {bullets.map((f) => (
-                              <li
-                                key={f}
-                                className={
-                                  highlighted
-                                    ? 'tw:flex tw:gap-2 tw:items-start tw:leading-normal tw:text-base tw:font-normal tw:text-paragraph_white'
-                                    : 'tw:flex tw:gap-2 tw:items-start tw:leading-normal tw:text-base tw:font-normal tw:text-paragraph_black'
-                                }
-                              >
-                                <i className="bi bi-check2-circle" style={{ color: highlighted ? 'var(--tw-color-primary)' : undefined }} aria-hidden="true" />
+                              <li key={f} className="tw:flex tw:gap-2 tw:items-start tw:leading-normal tw:text-base tw:font-normal tw:text-paragraph_black">
+                                <i className="bi bi-check2-circle" style={{ color: 'var(--tw-color-primary)' }} aria-hidden="true" />
                                 {f}
                               </li>
                             ))}
@@ -528,18 +519,48 @@ export function LandingPage() {
                         {
                           label: 'Projected value',
                           data: projection.values,
-                          borderColor: '#c6a15b',
-                          backgroundColor: 'rgba(198, 161, 91, 0.15)',
+                          borderColor: '#a8442e',
+                          backgroundColor: (context) => {
+                            const { chart } = context;
+                            const { ctx, chartArea } = chart;
+                            if (!chartArea) return 'rgba(168, 68, 46, 0.15)';
+                            const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                            gradient.addColorStop(0, 'rgba(168, 68, 46, 0.35)');
+                            gradient.addColorStop(1, 'rgba(168, 68, 46, 0)');
+                            return gradient;
+                          },
                           fill: true,
                           tension: 0.35,
+                          borderWidth: 2,
                           pointRadius: 0,
+                          pointHoverRadius: 5,
+                          pointHitRadius: 20,
+                          pointHoverBackgroundColor: '#a8442e',
+                          pointHoverBorderColor: '#ffffff',
+                          pointHoverBorderWidth: 2,
                         },
                       ],
                     }}
                     options={{
                       responsive: true,
                       maintainAspectRatio: false,
-                      plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => money.format(ctx.parsed.y ?? 0) } } },
+                      interaction: { mode: 'index', intersect: false },
+                      plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                          displayColors: false,
+                          backgroundColor: '#000000',
+                          titleColor: 'rgba(255, 255, 255, 0.6)',
+                          titleFont: { size: 12, weight: 'normal' },
+                          bodyColor: '#ffffff',
+                          bodyFont: { size: 14, weight: 'bold' },
+                          padding: 10,
+                          cornerRadius: 8,
+                          borderColor: 'rgba(255, 255, 255, 0.14)',
+                          borderWidth: 1,
+                          callbacks: { label: (ctx) => money.format(ctx.parsed.y ?? 0) },
+                        },
+                      },
                       scales: { x: { display: false }, y: { display: false } },
                     }}
                   />
@@ -588,7 +609,7 @@ export function LandingPage() {
       </section>
 
       {/* Contact — kept on the landing page at the user's request even though it isn't one of the brief's listed sections; not sourced from SecureVest */}
-      <section id="contact" className="tw:bg-[#080808] tw:py-5">
+      <section id="contact" className="tw:bg-black tw:py-5">
         <div className="container py-5">
           <ScrollReveal className="text-center mb-5">
             <span className="ic-public-eyebrow mb-2 d-inline-flex">Contact</span>

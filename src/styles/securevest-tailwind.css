@@ -7,13 +7,14 @@
 
    STEP 2 RECOLOR PASS — role-based mapping per the brief §2, done by
    editing only this token block (no JSX/class-name changes):
-   - cream page canvas -> black. title_black/paragraph_black are "text
-     that sits on the page canvas" in the source, so they invert to light
-     values to stay legible now that the canvas is dark.
-   - dark-green `secondary` accent blocks -> warm white. title_white/
+   - cream page canvas -> pure black. title_black/paragraph_black are
+     "text that sits on the page canvas" in the source, so they invert to
+     light values to stay legible now that the canvas is dark.
+   - dark-green `secondary` accent blocks -> pure white. title_white/
      paragraph_white are "text that sits on a secondary block," so they
      invert to dark values for the same reason.
-   - lime `primary` interactive color -> muted gold.
+   - lime `primary` interactive color -> #A8442E (site accent, later
+     revision — was a muted gold in the step 2 pass).
    - `background`/`border` (the near-canvas bordered-card tone used by the
      pricing cards) -> near-black/subtle-light-border, preserving the
      source's "blends into the canvas" relationship now that the canvas
@@ -74,12 +75,12 @@
 }
 
 @theme {
-  --color-primary: #c6a15b;
-  --color-secondary: #f5f3ee;
-  --color-title_black: #f5f3ee;
-  --color-title_white: #0a0a0a;
-  --color-background: #0a0a0a;
+  --color-primary: #a8442e;
+  --color-secondary: #ffffff;
+  --color-title_black: #ffffff;
+  --color-title_white: #000000;
+  --color-background: #000000;
   --color-border: rgba(255, 255, 255, 0.14);
-  --color-paragraph_white: #55524c;
-  --color-paragraph_black: #a8a6a1;
+  --color-paragraph_white: #4d4d4d;
+  --color-paragraph_black: #a3a3a3;
 }

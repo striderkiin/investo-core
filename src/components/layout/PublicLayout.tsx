@@ -118,7 +118,7 @@ export function PublicLayout() {
           it closes the page consistently with the hero and matches Investo's
           footer treatment everywhere else. securevest-components.css pins its
           paragraph_white text back to light-on-black to match. */}
-      <footer className="sv-page tw:bg-[#080808] tw:pt-14 tw:md:pt-20 tw:lg:pt-23 tw:relative tw:z-1">
+      <footer className="sv-page tw:bg-black tw:pt-14 tw:md:pt-20 tw:lg:pt-23 tw:relative tw:z-1">
         <div className="tw:container">
           <div className="tw:flex tw:justify-between tw:lg:gap-10 tw:border-y tw:border-white/10 tw:flex-col tw:lg:flex-row">
             <div className="tw:py-10 tw:lg:py-12.5 tw:lg:max-w-100 tw:w-full">
