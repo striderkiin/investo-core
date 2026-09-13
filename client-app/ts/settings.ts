@@ -4,7 +4,9 @@ import { createAuthService } from '../../src/services/auth/authService';
 import { createUserService } from '../../src/services/api/userService';
 import { createReferralService } from '../../src/services/api/referralService';
 import { createSupportService } from '../../src/services/api/supportService';
+import { createKycService } from '../../src/services/api/kycService';
 import type { Profile, SocialProofDisplayMode } from '../../src/types/database';
+import type { ReferredUserSummary } from '../../src/services/api/referralService';
 import { formatCurrency } from './format';
 
 const securityService = createSecurityService();
@@ -12,6 +14,7 @@ const authService = createAuthService();
 const userService = createUserService();
 const referralService = createReferralService();
 const supportService = createSupportService();
+const kycService = createKycService();
 
 let enrolledFactorId: string | null = null;
 
@@ -38,7 +41,7 @@ async function loadTwoFaStatus(): Promise<void> {
   }
 }
 
-function wireTwoFa(): void {
+function wireTwoFa(profile: Profile): void {
   const checkbox = document.getElementById('twoFaCheckbox') as HTMLInputElement | null;
   const enrollPanel = document.getElementById('twoFaEnrollPanel');
   const qrCode = document.getElementById('twoFaQrCode') as HTMLImageElement | null;
@@ -61,7 +64,13 @@ function wireTwoFa(): void {
         checkbox.checked = true;
         return;
       }
-      void securityService.unenrollMfa(enrolledFactorId).then(() => loadTwoFaStatus());
+      void securityService
+        .unenrollMfa(enrolledFactorId)
+        .then(() => securityService.logSecurityEvent(profile.id, '2fa_disabled'))
+        .then(() => {
+          void loadTwoFaStatus();
+          void renderActivityLog(profile.id);
+        });
     }
   });
 
@@ -75,11 +84,15 @@ function wireTwoFa(): void {
     const factorId = checkbox.dataset.pendingFactorId;
     const code = verifyCodeInput.value.trim();
     if (!factorId || code.length !== 6) return;
-    void securityService.verifyMfaEnrollment(factorId, code).then(() => {
-      enrollPanel.style.display = 'none';
-      verifyCodeInput.value = '';
-      void loadTwoFaStatus();
-    });
+    void securityService
+      .verifyMfaEnrollment(factorId, code)
+      .then(() => securityService.logSecurityEvent(profile.id, '2fa_enabled'))
+      .then(() => {
+        enrollPanel.style.display = 'none';
+        verifyCodeInput.value = '';
+        void loadTwoFaStatus();
+        void renderActivityLog(profile.id);
+      });
   });
 }
 
@@ -101,7 +114,7 @@ function wireSessionManagement(): void {
   });
 }
 
-function wirePasswordReset(): void {
+function wirePasswordReset(profile: Profile): void {
   const form = document.getElementById('passwordResetForm') as HTMLFormElement | null;
   const newPasswordInput = document.getElementById('newPasswordInput') as HTMLInputElement | null;
   const confirmPasswordInput = document.getElementById('confirmPasswordInput') as HTMLInputElement | null;
@@ -117,11 +130,15 @@ function wirePasswordReset(): void {
       window.alert('Password must be at least 8 characters.');
       return;
     }
-    void authService.updatePassword(newPasswordInput.value).then(() => {
-      newPasswordInput.value = '';
-      confirmPasswordInput.value = '';
-      window.alert('Password updated.');
-    });
+    void authService
+      .updatePassword(newPasswordInput.value)
+      .then(() => securityService.logSecurityEvent(profile.id, 'password_changed'))
+      .then(() => {
+        newPasswordInput.value = '';
+        confirmPasswordInput.value = '';
+        window.alert('Password updated.');
+        void renderActivityLog(profile.id);
+      });
   });
 }
 
@@ -203,6 +220,45 @@ function wireSocialProofPrivacy(profile: Profile): void {
   });
 }
 
+function initials(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return '?';
+  return (parts[0]![0] + (parts[1]?.[0] ?? '')).toUpperCase();
+}
+
+function renderReferredUsersList(users: ReferredUserSummary[]): void {
+  const container = document.getElementById('referralListContainer');
+  if (!container) return;
+
+  if (users.length === 0) {
+    container.innerHTML = '<p class="f12-regular text-Gray mb-0">No referrals yet. Share your link above to start earning.</p>';
+    return;
+  }
+
+  const items = users
+    .map(
+      (user) => `
+        <li>
+          <div class="wallet-activity-item pb-0">
+            <div class="icon">
+              <div style="width:2.25rem;height:2.25rem;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(168,68,46,0.12);color:var(--YellowGreen);font-size:12px;font-weight:700;">${initials(user.fullName)}</div>
+            </div>
+            <div class="content">
+              <div class="mb-2">
+                <span class="f14-bold">${user.fullName}</span>
+              </div>
+              <div class="f12-medium text-Gray">${user.email}</div>
+            </div>
+            <div class="price f14-bold">${formatCurrency(user.totalBalance)}</div>
+            <div class="status f12-medium text-GrayDark">${new Date(user.joinedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</div>
+          </div>
+        </li>`
+    )
+    .join('');
+
+  container.innerHTML = `<ul class="list-wallet-activity mb-0">${items}</ul>`;
+}
+
 async function renderReferral(profile: Profile): Promise<void> {
   const linkInput = document.getElementById('referralLinkInput') as HTMLInputElement | null;
   if (linkInput) linkInput.value = `${window.location.origin}/client-app/sign-up.html?ref=${profile.referralCode}`;
@@ -212,9 +268,156 @@ async function renderReferral(profile: Profile): Promise<void> {
     if (linkInput) void navigator.clipboard.writeText(linkInput.value);
   });
 
-  const [referrals, earnings] = await Promise.all([referralService.listMyReferrals(profile.id), referralService.getTotalEarnings(profile.id)]);
-  setText('referralCount', String(referrals.length));
+  const [referredUsers, earnings] = await Promise.all([referralService.getReferredUsers(profile.id), referralService.getTotalEarnings(profile.id)]);
+  setText('referralCount', String(referredUsers.length));
   setText('referralEarnings', formatCurrency(earnings));
+  renderReferredUsersList(referredUsers);
+}
+
+const EVENT_LABEL: Record<string, string> = {
+  password_changed: 'Password changed',
+  '2fa_enabled': 'Two-factor authentication enabled',
+  '2fa_disabled': 'Two-factor authentication disabled',
+  session_terminated: 'Session signed out',
+  failed_login: 'Failed sign-in attempt',
+  suspicious_activity: 'Suspicious activity detected',
+  account_blocked: 'Account blocked',
+};
+
+async function renderActivityLog(userId: string): Promise<void> {
+  const container = document.getElementById('activityLogContainer');
+  if (!container) return;
+
+  const events = await securityService.listMySecurityEvents(userId, 20);
+  if (events.length === 0) {
+    container.innerHTML = '<p class="f12-regular text-Gray mb-0">No account activity recorded yet.</p>';
+    return;
+  }
+
+  const items = events
+    .map(
+      (event) => `
+        <li>
+          <div class="wallet-activity-item pb-0">
+            <div class="icon">
+              <div style="width:2.25rem;height:2.25rem;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(168,68,46,0.12);color:var(--YellowGreen);">
+                <i class="icon-setting-5" style="font-size:14px;"></i>
+              </div>
+            </div>
+            <div class="content">
+              <div class="mb-2">
+                <span class="f14-bold">${EVENT_LABEL[event.eventType] ?? event.eventType}</span>
+              </div>
+              <div class="f12-medium text-Gray">${new Date(event.createdAt).toLocaleString()}</div>
+            </div>
+          </div>
+        </li>`
+    )
+    .join('');
+
+  container.innerHTML = `<ul class="list-wallet-activity mb-0">${items}</ul>`;
+}
+
+function setKycBadge(label: string, className: string): void {
+  const badge = document.getElementById('kycStatusBadge');
+  if (badge) badge.innerHTML = `<div class="box-status ${className}"><span class="font-poppins">${label}</span></div>`;
+}
+
+async function renderKyc(profile: Profile): Promise<void> {
+  const form = document.getElementById('kycForm') as HTMLFormElement | null;
+  const statusMessage = document.getElementById('kycStatusMessage');
+  const rejectionNotice = document.getElementById('kycRejectionNotice');
+  const legalNameInput = document.getElementById('kycLegalNameInput') as HTMLInputElement | null;
+  const dobInput = document.getElementById('kycDobInput') as HTMLInputElement | null;
+  const countryInput = document.getElementById('kycCountryInput') as HTMLInputElement | null;
+  if (!form || !statusMessage || !rejectionNotice || !legalNameInput || !dobInput || !countryInput) return;
+
+  const submission = await kycService.getMySubmission(profile.id);
+
+  if (!submission) {
+    setKycBadge('NOT SUBMITTED', 'bg-LightGray');
+    statusMessage.textContent = 'Verify your identity to unlock full account features.';
+    rejectionNotice.style.display = 'none';
+    form.style.display = 'block';
+    return;
+  }
+
+  if (submission.status === 'pending') {
+    setKycBadge('PENDING', 'bg-LightGray');
+    statusMessage.textContent = 'Your submission is under review. This usually takes 1-2 business days.';
+    rejectionNotice.style.display = 'none';
+    form.style.display = 'none';
+    return;
+  }
+
+  if (submission.status === 'approved') {
+    setKycBadge('VERIFIED', 'bg-YellowGreen text-White');
+    statusMessage.textContent = 'Your identity has been verified.';
+    rejectionNotice.style.display = 'none';
+    form.style.display = 'none';
+    return;
+  }
+
+  // rejected — pre-fill the form so the user can correct and resubmit
+  setKycBadge('REJECTED', 'bg-LightGray type-red');
+  statusMessage.textContent = 'Your submission was rejected. Please review the notes below and resubmit.';
+  rejectionNotice.textContent = submission.reviewNotes || 'Please double-check your documents and resubmit.';
+  rejectionNotice.style.display = 'block';
+  legalNameInput.value = submission.legalFullName;
+  dobInput.value = submission.dateOfBirth;
+  countryInput.value = submission.country;
+  form.style.display = 'block';
+}
+
+function wireKyc(profile: Profile): void {
+  const form = document.getElementById('kycForm') as HTMLFormElement | null;
+  const legalNameInput = document.getElementById('kycLegalNameInput') as HTMLInputElement | null;
+  const dobInput = document.getElementById('kycDobInput') as HTMLInputElement | null;
+  const countryInput = document.getElementById('kycCountryInput') as HTMLInputElement | null;
+  const idDocumentInput = document.getElementById('kycIdDocumentInput') as HTMLInputElement | null;
+  const proofOfAddressInput = document.getElementById('kycProofOfAddressInput') as HTMLInputElement | null;
+  const submitButton = document.getElementById('kycSubmitButton') as HTMLButtonElement | null;
+  const errorEl = document.getElementById('kycFormError');
+  if (!form || !legalNameInput || !dobInput || !countryInput || !idDocumentInput || !proofOfAddressInput || !submitButton || !errorEl) return;
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    errorEl.style.display = 'none';
+
+    const idFile = idDocumentInput.files?.[0];
+    const proofFile = proofOfAddressInput.files?.[0];
+    if (!idFile || !proofFile) {
+      errorEl.textContent = 'Please attach both documents.';
+      errorEl.style.display = '';
+      return;
+    }
+
+    submitButton.disabled = true;
+    submitButton.textContent = 'Submitting…';
+
+    void Promise.all([kycService.uploadDocument(profile.id, idFile, 'id'), kycService.uploadDocument(profile.id, proofFile, 'address')])
+      .then(([idDocumentPath, proofOfAddressPath]) =>
+        kycService.submit({
+          legalFullName: legalNameInput.value.trim(),
+          dateOfBirth: dobInput.value,
+          country: countryInput.value.trim(),
+          idDocumentPath,
+          proofOfAddressPath,
+        })
+      )
+      .then(() => {
+        window.alert('Your documents have been submitted for review.');
+        return renderKyc(profile);
+      })
+      .catch((err: unknown) => {
+        errorEl.textContent = err instanceof Error ? err.message : 'Unable to submit your documents. Please try again.';
+        errorEl.style.display = '';
+      })
+      .finally(() => {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Submit for Verification';
+      });
+  });
 }
 
 async function main() {
@@ -223,11 +426,12 @@ async function main() {
   wireProfileSave(profile);
   renderSocialProofPrivacy(profile);
   wireSocialProofPrivacy(profile);
-  wireTwoFa();
+  wireTwoFa(profile);
   wireSessionManagement();
-  wirePasswordReset();
+  wirePasswordReset(profile);
   wireDeleteAccount(profile);
-  await Promise.all([loadTwoFaStatus(), loadSessions(profile.id), renderReferral(profile)]);
+  wireKyc(profile);
+  await Promise.all([loadTwoFaStatus(), loadSessions(profile.id), renderReferral(profile), renderActivityLog(profile.id), renderKyc(profile)]);
 }
 
 void main();

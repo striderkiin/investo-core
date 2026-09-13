@@ -103,6 +103,7 @@ export const ADMIN_NAV_PERMISSIONS: Record<string, Permission | null> = {
   transactions: 'transactions.read',
   treasury: 'treasury.read',
   referrals: 'referrals.read',
+  kyc: 'compliance.manage',
   support: 'support.read',
   admins: 'admins.manage',
   audit: 'audit.read',

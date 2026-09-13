@@ -28,6 +28,7 @@ import { AdminWithdrawalsPage } from '../features/admin/pages/AdminWithdrawalsPa
 import { AdminTransactionsPage } from '../features/admin/pages/AdminTransactionsPage';
 import { TreasuryPage } from '../features/admin/pages/TreasuryPage';
 import { AdminReferralsPage } from '../features/admin/pages/AdminReferralsPage';
+import { AdminKycPage } from '../features/admin/pages/AdminKycPage';
 import { AdminSupportPage } from '../features/admin/pages/AdminSupportPage';
 import { AuditLogsPage } from '../features/admin/pages/AuditLogsPage';
 import { ContactMessagesPage } from '../features/admin/pages/ContactMessagesPage';
@@ -141,6 +142,14 @@ export function AppRoutes() {
           element={
             <ProtectedRoute requireAdmin requirePermission="referrals.read">
               <AdminReferralsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/kyc"
+          element={
+            <ProtectedRoute requireAdmin requirePermission="compliance.manage">
+              <AdminKycPage />
             </ProtectedRoute>
           }
         />

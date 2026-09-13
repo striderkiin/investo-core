@@ -423,10 +423,10 @@
                                         <h5>Referral Program</h5>
                                         <p class="f12-regular text-GrayDark mb-16">Share your referral link. When someone you refer signs up and invests, you earn a bonus.</p>
                                         <div class="flex gap8 flex-wrap items-center mb-16">
-                                            <input type="text" id="referralLinkInput" class="form-control" style="max-width:420px;" readonly>
+                                            <input type="text" id="referralLinkInput" class="ic-field-input" style="max-width:420px;" readonly>
                                             <button type="button" id="referralCopyButton" class="tf-button f12-bold">Copy Link</button>
                                         </div>
-                                        <div class="flex flex-wrap row-gap-16 gap36 items-center">
+                                        <div class="flex flex-wrap row-gap-16 gap36 items-center mb-16">
                                             <div class="flex gap6 items-center">
                                                 <div class="f14-regular">Referrals: <span id="referralCount">0</span></div>
                                             </div>
@@ -434,6 +434,44 @@
                                                 <div class="f14-regular">Referral earnings: <span id="referralEarnings">$0.00</span></div>
                                             </div>
                                         </div>
+                                        <h6 class="f14-bold mb-16">Your Referrals</h6>
+                                        <div id="referralListContainer"></div>
+                                    </div>
+                                    <div class="wg-box style-1 p-32 gap16 bg-Gainsboro shadow-none mb-23">
+                                        <div class="flex items-center justify-between flex-wrap gap8 mb-16">
+                                            <h5 class="mb-0">Identity Verification</h5>
+                                            <div id="kycStatusBadge"></div>
+                                        </div>
+                                        <p class="f12-regular text-GrayDark mb-16" id="kycStatusMessage">Verify your identity to unlock full account features.</p>
+                                        <div id="kycRejectionNotice" class="f12-regular text-Salmon mb-16" style="display:none;"></div>
+                                        <form id="kycForm" style="display:none;">
+                                            <div class="ic-field">
+                                                <label class="ic-field-label" for="kycLegalNameInput">Legal full name</label>
+                                                <input type="text" id="kycLegalNameInput" class="ic-field-input" required>
+                                            </div>
+                                            <div class="flex gap16 flex-wrap">
+                                                <div class="ic-field flex-grow-1" style="min-width:180px;">
+                                                    <label class="ic-field-label" for="kycDobInput">Date of birth</label>
+                                                    <input type="date" id="kycDobInput" class="ic-field-input" required>
+                                                </div>
+                                                <div class="ic-field flex-grow-1" style="min-width:180px;">
+                                                    <label class="ic-field-label" for="kycCountryInput">Country</label>
+                                                    <input type="text" id="kycCountryInput" class="ic-field-input" placeholder="Country of residence" required>
+                                                </div>
+                                            </div>
+                                            <div class="ic-field">
+                                                <label class="ic-field-label" for="kycIdDocumentInput">Government-issued ID</label>
+                                                <input type="file" id="kycIdDocumentInput" class="ic-field-input" accept="image/*,.pdf" required>
+                                                <div class="ic-field-hint">Passport, driver's license, or national ID.</div>
+                                            </div>
+                                            <div class="ic-field">
+                                                <label class="ic-field-label" for="kycProofOfAddressInput">Proof of address</label>
+                                                <input type="file" id="kycProofOfAddressInput" class="ic-field-input" accept="image/*,.pdf" required>
+                                                <div class="ic-field-hint">Utility bill or bank statement from the last 3 months.</div>
+                                            </div>
+                                            <div id="kycFormError" class="f12-regular text-Salmon mb-16" style="display:none;"></div>
+                                            <button type="submit" class="tf-button f12-bold" id="kycSubmitButton">Submit for Verification</button>
+                                        </form>
                                     </div>
                                     <div class="wg-box style-1 p-32 gap16 bg-Gainsboro shadow-none mb-23">
                                         <h5>Account Security</h5>
@@ -473,7 +511,7 @@
                                                     <img id="twoFaQrCode" alt="Two-factor authentication QR code" style="max-width:180px;" class="mb-8">
                                                     <p class="f12-regular text-GrayDark">Can't scan? Enter this key manually: <code id="twoFaSecret"></code></p>
                                                     <form id="twoFaVerifyForm" class="flex gap8 items-center flex-wrap">
-                                                        <input type="text" id="twoFaVerifyCode" class="form-control" style="max-width:160px;" placeholder="6-digit code" inputmode="numeric" maxlength="6">
+                                                        <input type="text" id="twoFaVerifyCode" class="ic-field-input" style="max-width:160px;" placeholder="6-digit code" inputmode="numeric" maxlength="6">
                                                         <button type="submit" class="tf-button f12-bold">Verify & Enable</button>
                                                         <button type="button" id="twoFaEnrollCancel" class="tf-button f12-bold bg-Gainsboro">Cancel</button>
                                                     </form>
@@ -510,16 +548,21 @@
                                         </div>
                                     </div>
                                     <div class="wg-box style-1 p-32 gap16 bg-Gainsboro shadow-none mb-23">
+                                        <h5>Activity Log</h5>
+                                        <p class="f12-regular text-GrayDark mb-16">A record of security-relevant events on your account, such as password changes and two-factor authentication updates.</p>
+                                        <div id="activityLogContainer"></div>
+                                    </div>
+                                    <div class="wg-box style-1 p-32 gap16 bg-Gainsboro shadow-none mb-23">
                                         <h5>Change Password</h5>
                                         <p class="f12-regular text-GrayDark mb-16">Update the password you use to sign in.</p>
                                         <form id="passwordResetForm" style="max-width:360px;">
-                                            <div class="mb-8">
-                                                <label class="f12-bold mb-6 d-block">New password</label>
-                                                <input type="password" id="newPasswordInput" class="form-control" placeholder="New password" minlength="8">
+                                            <div class="ic-field">
+                                                <label class="ic-field-label" for="newPasswordInput">New password</label>
+                                                <input type="password" id="newPasswordInput" class="ic-field-input" placeholder="New password" minlength="8">
                                             </div>
-                                            <div class="mb-16">
-                                                <label class="f12-bold mb-6 d-block">Confirm new password</label>
-                                                <input type="password" id="confirmPasswordInput" class="form-control" placeholder="Confirm new password">
+                                            <div class="ic-field">
+                                                <label class="ic-field-label" for="confirmPasswordInput">Confirm new password</label>
+                                                <input type="password" id="confirmPasswordInput" class="ic-field-input" placeholder="Confirm new password">
                                             </div>
                                             <button type="submit" class="tf-button f12-bold">Update Password</button>
                                         </form>
@@ -530,9 +573,9 @@
                                             Closing your account is permanent. Because it can involve active investments and balances, a team member reviews and confirms every request rather than deleting it instantly. Submitting this opens a support ticket, and we'll follow up there.
                                         </p>
                                         <div id="deleteAccountForm">
-                                            <div class="mb-16" style="max-width:480px;">
-                                                <label class="f12-bold mb-6 d-block">Reason (optional)</label>
-                                                <textarea id="deleteAccountReason" class="form-control" rows="2" placeholder="Let us know why you're leaving (optional)"></textarea>
+                                            <div class="ic-field" style="max-width:480px;">
+                                                <label class="ic-field-label" for="deleteAccountReason">Reason (optional)</label>
+                                                <textarea id="deleteAccountReason" class="ic-field-input" rows="2" placeholder="Let us know why you're leaving (optional)"></textarea>
                                             </div>
                                             <button type="button" id="deleteAccountButton" class="tf-button f12-bold bg-YellowGreen text-White" style="border-color:var(--YellowGreen);">Request Account Deletion</button>
                                         </div>

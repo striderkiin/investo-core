@@ -1,6 +1,6 @@
 import { requireClientSession } from './shell';
 import { createTransactionService } from '../../src/services/api/transactionService';
-import type { Transaction, TransactionStatus, TransactionType } from '../../src/types/database';
+import type { Profile, Transaction, TransactionStatus, TransactionType } from '../../src/types/database';
 import { formatCurrency, formatSignedCurrency } from './format';
 
 const transactionService = createTransactionService();
@@ -34,6 +34,7 @@ const STATUS_CLASS: Record<TransactionStatus, string> = {
 };
 
 let allTransactions: Transaction[] = [];
+let currentFiltered: Transaction[] = [];
 
 function renderRows(transactions: Transaction[]): void {
   const tbody = document.getElementById('transactionRows');
@@ -163,7 +164,54 @@ function applyFilters(): void {
   filtered = [...filtered].sort((a, b) =>
     sortAsc ? new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime() : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
+  currentFiltered = filtered;
   renderRows(filtered);
+}
+
+function csvEscape(value: string): string {
+  return `"${value.replace(/"/g, '""')}"`;
+}
+
+function exportTransactionsCsv(transactions: Transaction[]): void {
+  const header = ['Date', 'Type', 'Amount', 'Balance After', 'Status', 'Reference'];
+  const rows = transactions.map((tx) => [
+    new Date(tx.createdAt).toISOString(),
+    TYPE_LABEL[tx.type],
+    tx.amount.toFixed(2),
+    tx.balanceAfter.toFixed(2),
+    STATUS_LABEL[tx.status],
+    tx.reference,
+  ]);
+  const csv = [header, ...rows].map((row) => row.map((cell) => csvEscape(String(cell))).join(',')).join('\r\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `transactions-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+function wireExportControls(profile: Profile): void {
+  const exportButton = document.getElementById('transactionExportCsvButton');
+  const printButton = document.getElementById('transactionPrintButton');
+
+  exportButton?.addEventListener('click', () => {
+    exportTransactionsCsv(currentFiltered);
+  });
+
+  printButton?.addEventListener('click', () => {
+    const nameEl = document.getElementById('statementAccountName');
+    const emailEl = document.getElementById('statementAccountEmail');
+    const generatedEl = document.getElementById('statementGeneratedAt');
+    if (nameEl) nameEl.textContent = `Account Statement — ${profile.fullName || profile.email}`;
+    if (emailEl) emailEl.textContent = profile.email;
+    if (generatedEl) generatedEl.textContent = `Generated ${new Date().toLocaleString()}`;
+    window.print();
+  });
 }
 
 function wireControls(): void {
@@ -183,6 +231,7 @@ async function main() {
   const profile = await requireClientSession();
   wireControls();
   wireCopyReference();
+  wireExportControls(profile);
   allTransactions = await transactionService.list({ userId: profile.id });
   applyFilters();
 }

@@ -34,6 +34,17 @@
     <link rel="shortcut icon" href="images/favicon.png">
     <link rel="apple-touch-icon-precomposed" href="images/favicon.png">
 
+    <style>
+        #transactionStatementHeader { display: none; }
+        @media print {
+            .section-menu-left, .header-dashboard, .topbar-search, .button-show-hide { display: none !important; }
+            .section-content-right { margin-left: 0 !important; }
+            #transactionStatementHeader { display: block !important; margin-bottom: 24px; }
+            #transactionStatementHeader h4 { margin-bottom: 4px; }
+            #transactionStatementHeader .f12-regular { color: #6D6D6D; }
+        }
+    </style>
+
 </head>
 
 <body>
@@ -355,6 +366,11 @@
                             <!-- main-content-wrap -->
                             <div class="main-content-wrap">
                                 <div class="tf-container">
+                                    <div id="transactionStatementHeader">
+                                        <h4 id="statementAccountName">Account Statement</h4>
+                                        <p class="f12-regular" id="statementAccountEmail"></p>
+                                        <p class="f12-regular" id="statementGeneratedAt"></p>
+                                    </div>
                                     <div class="topbar-search">
                                         <form class="form-search flex-grow" id="transactionSearchForm">
                                             <fieldset class="name">
@@ -364,11 +380,19 @@
                                                 <button class="" type="submit"><i class="icon-search-normal1"></i></button>
                                             </div>
                                         </form>
-                                        <div class="right">
+                                        <div class="right flex gap8 items-center flex-wrap">
                                             <select class="image-select center d-md-flex d-none" id="transactionSortSelect">
                                                 <option value="desc" selected>Newest first</option>
                                                 <option value="asc">Oldest first</option>
                                             </select>
+                                            <button type="button" class="tf-button f12-bold bg-Gainsboro" id="transactionExportCsvButton">
+                                                <i class="icon-document"></i>
+                                                Export CSV
+                                            </button>
+                                            <button type="button" class="tf-button f12-bold bg-Gainsboro" id="transactionPrintButton">
+                                                <i class="icon-paper"></i>
+                                                Print Statement
+                                            </button>
                                         </div>
                                     </div>
                                     <div class="table-list-transaction d-none d-lg-block">

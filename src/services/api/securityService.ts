@@ -78,6 +78,23 @@ export function createSecurityService(client: SupabaseClient = getSupabaseClient
       return mapSession(data as UserSessionRow);
     },
 
+    /** Self-insert is only permitted (by RLS) for password_changed/2fa_enabled/2fa_disabled. */
+    async logSecurityEvent(userId: string, eventType: 'password_changed' | '2fa_enabled' | '2fa_disabled'): Promise<void> {
+      const { error } = await client.from('security_events').insert({ user_id: userId, event_type: eventType, user_agent: navigator.userAgent });
+      if (error) throw error;
+    },
+
+    async listMySecurityEvents(userId: string, limit = 50): Promise<SecurityEvent[]> {
+      const { data, error } = await client
+        .from('security_events')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(limit);
+      if (error) throw error;
+      return (data as SecurityEventRow[]).map(mapEvent);
+    },
+
     async listMySessions(userId: string): Promise<UserSession[]> {
       const { data, error } = await client
         .from('user_sessions')
