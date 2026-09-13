@@ -197,7 +197,7 @@ export function LandingPage() {
           <div className="tw:flex tw:items-center tw:justify-between tw:gap-10 tw:flex-col tw:md:flex-row">
             <div className="tw:md:max-w-137.5 tw:w-full">
               <div className="tw:flex tw:items-center tw:gap-2.5">
-                <img className="rotate" src={`${S}/img/title-icon.svg`} alt="title-icon" />
+                <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
                 <p className="tw:m-0! tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-secondary tw:uppercase tw:tracking-wide">INVESTMENT INFRASTRUCTURE</p>
               </div>
               <h1 className="tw:text-[28px] tw:sm:text-3xl tw:md:text-4xl tw:lg:text-5xl tw:xl:text-[56px] tw:font-bold tw:leading-[1.15]! tw:text-title_black tw:mt-4! tw:md:mt-5!">
@@ -311,7 +311,7 @@ export function LandingPage() {
           <ScrollReveal className="tw:flex tw:items-start tw:justify-between tw:gap-4 tw:md:gap-10 tw:mb-12 tw:sm:mb-14 tw:md:mb-16 tw:lg:mb-20 tw:flex-col tw:md:flex-row tw:max-w-125 tw:md:max-w-full">
             <div className="tw:md:max-w-170 tw:w-full">
               <div className="tw:flex tw:items-center tw:gap-2.5">
-                <img className="rotate" src={`${S}/img/title-icon.svg`} alt="title-icon" />
+                <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
                 <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-secondary tw:uppercase tw:tracking-wide tw:block">PLATFORM RELIABILITY</span>
               </div>
               <h2 className="tw:text-2xl tw:sm:text-[28px] tw:md:text-3xl tw:lg:text-4xl tw:xl:text-[40px] tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">Built for Trust, Measured in Numbers</h2>
@@ -367,7 +367,7 @@ export function LandingPage() {
           <ScrollReveal className="tw:flex tw:items-start tw:justify-between tw:gap-4 tw:md:gap-10 tw:mb-12 tw:sm:mb-14 tw:md:mb-16 tw:lg:mb-20 tw:flex-col tw:md:flex-row tw:max-w-125 tw:md:max-w-full">
             <div className="tw:md:max-w-170 tw:w-full">
               <div className="tw:flex tw:items-center tw:gap-2.5">
-                <img className="rotate" src={`${S}/img/title-icon.svg`} alt="title-icon" />
+                <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
                 <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-secondary tw:uppercase tw:tracking-wide tw:block">PRICING PLAN</span>
               </div>
               <h2 className="tw:text-2xl tw:sm:text-[28px] tw:md:text-3xl tw:lg:text-4xl tw:xl:text-[40px] tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">Choose the Plan that Best Fits Your Goals</h2>
