@@ -209,7 +209,15 @@ async function main() {
   const profile = await requireClientSession();
   renderProfile(profile);
   wireProfileEdit(profile);
-  mountMarketWidget({ chartSelector: '#account-market-chart', selectId: 'accountMarketAssetSelect', chartType: 'line', height: 300 });
+  mountMarketWidget({
+    chartSelector: '#account-market-chart',
+    selectId: 'accountMarketAssetSelect',
+    priceElId: 'accountMarketPrice',
+    changeElId: 'accountMarketChange',
+    changeClassBase: 'f12-bold',
+    chartType: 'line',
+    height: 300,
+  });
   await Promise.all([renderHoldings(profile.id), renderActivity(profile.id)]);
 }
 
