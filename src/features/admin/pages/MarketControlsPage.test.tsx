@@ -50,6 +50,9 @@ const adminProfile: Profile = {
   referredBy: null,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
+  socialProofOptIn: true,
+  socialProofNickname: null,
+  socialProofDisplayMode: null,
 };
 
 function renderWithAuth() {

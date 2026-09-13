@@ -393,6 +393,32 @@
                                         </div>
                                     </div>
                                     <div class="wg-box style-1 p-32 gap16 bg-Gainsboro shadow-none mb-23">
+                                        <h5>Activity Privacy</h5>
+                                        <p class="f12-regular text-GrayDark mb-16">Control whether your real activity (deposits, investments, and more) can appear in the "Recent Activity" pop-ups other visitors see, and how your name is shown when it does.</p>
+                                        <div class="tf-cart-checkbox mb-16">
+                                            <div class="tf-checkbox-wrapp">
+                                                <input class="checkbox-item" type="checkbox" id="socialProofOptInCheckbox">
+                                                <div>
+                                                    <i class="icon-check"></i>
+                                                </div>
+                                            </div>
+                                            <div class="f14-regular">Show my activity in Recent Activity pop-ups</div>
+                                        </div>
+                                        <div class="ic-field" style="max-width:320px;">
+                                            <label class="ic-field-label" for="socialProofDisplayMode">Display as</label>
+                                            <select id="socialProofDisplayMode" class="ic-field-input">
+                                                <option value="first_name">First name only</option>
+                                                <option value="first_initial">First name + last initial</option>
+                                                <option value="nickname">Nickname</option>
+                                            </select>
+                                        </div>
+                                        <div class="ic-field" style="max-width:320px;display:none;" id="socialProofNicknameField">
+                                            <label class="ic-field-label" for="socialProofNicknameInput">Nickname</label>
+                                            <input type="text" id="socialProofNicknameInput" class="ic-field-input" placeholder="e.g. Investor23" maxlength="40">
+                                        </div>
+                                        <button type="button" id="socialProofSaveButton" class="tf-button f12-bold">Save Privacy Settings</button>
+                                    </div>
+                                    <div class="wg-box style-1 p-32 gap16 bg-Gainsboro shadow-none mb-23">
                                         <h5>Referral Program</h5>
                                         <p class="f12-regular text-GrayDark mb-16">Share your referral link. When someone you refer signs up and invests, you earn a bonus.</p>
                                         <div class="flex gap8 flex-wrap items-center mb-16">

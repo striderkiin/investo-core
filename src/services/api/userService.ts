@@ -37,10 +37,16 @@ export function createUserService(client: SupabaseClient = getSupabaseClient()) 
       return data ? mapProfileRow(data as ProfileRow) : null;
     },
 
-    async updateProfile(userId: string, updates: Partial<Pick<Profile, 'fullName' | 'avatarUrl'>>): Promise<Profile> {
+    async updateProfile(
+      userId: string,
+      updates: Partial<Pick<Profile, 'fullName' | 'avatarUrl' | 'socialProofOptIn' | 'socialProofNickname' | 'socialProofDisplayMode'>>
+    ): Promise<Profile> {
       const payload: Record<string, unknown> = {};
       if (updates.fullName !== undefined) payload.full_name = updates.fullName;
       if (updates.avatarUrl !== undefined) payload.avatar_url = updates.avatarUrl;
+      if (updates.socialProofOptIn !== undefined) payload.social_proof_opt_in = updates.socialProofOptIn;
+      if (updates.socialProofNickname !== undefined) payload.social_proof_nickname = updates.socialProofNickname;
+      if (updates.socialProofDisplayMode !== undefined) payload.social_proof_display_mode = updates.socialProofDisplayMode;
 
       const { data, error } = await client.from('profiles').update(payload).eq('id', userId).select('*').single();
       if (error) throw error;

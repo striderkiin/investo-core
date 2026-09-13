@@ -4060,6 +4060,65 @@ select {
   line-height: 21px;
 }
 
+/* Flat, underline-only form fields — the real Critso template never uses
+   boxed Bootstrap .form-control/.form-select anywhere (its only native
+   patterns are this flat style, seen on sign-in/sign-up, and .tf-select
+   for dropdowns elsewhere); this is the same visual language as the
+   public site's Contact form, adapted to the dashboard's light theme, for
+   dashboard forms (Deposit/Withdraw, Settings) that need real boxed-card
+   fields rather than a full-width auth form. */
+.ic-field {
+  margin-bottom: 20px;
+}
+.ic-field-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--GrayDark);
+  margin-bottom: 6px;
+}
+.ic-field-input {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--LightGray);
+  color: var(--Black);
+  font-size: 14px;
+  font-family: inherit;
+  padding: 0 0 10px;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 0;
+  transition: border-color 0.2s ease;
+}
+.ic-field-input:focus {
+  border-bottom-color: var(--YellowGreen);
+}
+.ic-field-input::placeholder {
+  color: var(--Gray);
+}
+.ic-field-input:disabled {
+  opacity: 0.6;
+}
+textarea.ic-field-input {
+  resize: none;
+}
+select.ic-field-input {
+  cursor: pointer;
+  padding-right: 20px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238A8A8E' stroke-width='1.5' fill='none' fill-rule='evenodd' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right center;
+}
+.ic-field-hint {
+  font-size: 11px;
+  color: var(--Gray);
+  margin-top: 6px;
+}
+
 .section-menu-left {
   position: fixed;
   width: 256px;

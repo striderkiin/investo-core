@@ -2,17 +2,14 @@ import { requireClientSession } from './shell';
 import { createUserService } from '../../src/services/api/userService';
 import { createInvestmentService } from '../../src/services/api/investmentService';
 import { createTransactionService } from '../../src/services/api/transactionService';
-import { createMarketService } from '../../src/services/market/marketService';
 import type { Profile, InvestmentPlan } from '../../src/types/database';
 import { formatCurrency } from './format';
 import { bucketByRecency, renderActivityList } from './walletActivity';
-
-declare const ApexCharts: new (el: Element, options: Record<string, unknown>) => { render: () => void };
+import { mountMarketWidget } from './marketWidget';
 
 const userService = createUserService();
 const investmentService = createInvestmentService();
 const transactionService = createTransactionService();
-const marketService = createMarketService();
 
 const CARD_BACKGROUNDS = ['bg-YellowGreen bg-5', 'bg-blue-1 bg-6', 'bg-pink-1 bg-7', 'bg-Black bg-8'];
 
@@ -208,30 +205,12 @@ async function renderActivity(userId: string): Promise<void> {
   if (year) renderActivityList(year, buckets.year);
 }
 
-async function renderMarketTrend(): Promise<void> {
-  const history = await marketService.getHistory(60);
-  const container = document.querySelector('#account-market-chart');
-  if (!container || history.length === 0) return;
-
-  new ApexCharts(container, {
-    chart: { height: 300, type: 'line', toolbar: { show: false }, zoom: { enabled: false } },
-    dataLabels: { enabled: false },
-    colors: ['#a8442e'],
-    series: [{ name: '$', data: history.map((point) => Number(point.value.toFixed(2))) }],
-    stroke: { curve: 'smooth', width: 2 },
-    xaxis: {
-      labels: { show: false },
-      categories: history.map((point) => new Date(point.recordedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })),
-    },
-    tooltip: { y: { formatter: (val: number) => formatCurrency(val) } },
-  }).render();
-}
-
 async function main() {
   const profile = await requireClientSession();
   renderProfile(profile);
   wireProfileEdit(profile);
-  await Promise.all([renderHoldings(profile.id), renderActivity(profile.id), renderMarketTrend()]);
+  mountMarketWidget({ chartSelector: '#account-market-chart', selectId: 'accountMarketAssetSelect', chartType: 'line', height: 300 });
+  await Promise.all([renderHoldings(profile.id), renderActivity(profile.id)]);
 }
 
 void main();

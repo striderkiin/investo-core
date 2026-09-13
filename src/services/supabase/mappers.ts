@@ -68,6 +68,9 @@ export interface ProfileRow {
   referred_by: string | null;
   created_at: string;
   updated_at: string;
+  social_proof_opt_in: boolean;
+  social_proof_nickname: string | null;
+  social_proof_display_mode: Profile['socialProofDisplayMode'];
 }
 
 export function mapProfileRow(row: ProfileRow): Profile {
@@ -86,6 +89,9 @@ export function mapProfileRow(row: ProfileRow): Profile {
     referredBy: row.referred_by,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    socialProofOptIn: row.social_proof_opt_in,
+    socialProofNickname: row.social_proof_nickname,
+    socialProofDisplayMode: row.social_proof_display_mode,
   };
 }
 

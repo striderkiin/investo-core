@@ -2,6 +2,8 @@ import type { RoleName } from './roles';
 
 export type AccountStatus = 'active' | 'restricted' | 'withdrawal_freeze' | 'suspended' | 'frozen';
 
+export type SocialProofDisplayMode = 'first_name' | 'first_initial' | 'nickname';
+
 export interface Profile {
   id: string;
   email: string;
@@ -17,6 +19,12 @@ export interface Profile {
   referredBy: string | null;
   createdAt: string;
   updatedAt: string;
+  /** Per-user opt-out of appearing in the client-facing "Recent Activity" popups — defaults to true (matches the platform's existing behavior for every user before this preference existed). */
+  socialProofOptIn: boolean;
+  /** Free-text display name used only when socialProofDisplayMode is 'nickname'. */
+  socialProofNickname: string | null;
+  /** Personal override for how this user is displayed in those popups; null means "use the admin's site-wide default" (social_proof_settings.privacyMode). */
+  socialProofDisplayMode: SocialProofDisplayMode | null;
 }
 
 export type InvestmentPlanRateType = 'daily' | 'weekly' | 'monthly';
