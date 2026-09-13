@@ -50,59 +50,83 @@ function ContactSection() {
     }
   }
 
+  const pillInputClass =
+    'tw:h-11 tw:w-full tw:bg-white/10 tw:border tw:border-white/10 tw:backdrop-blur-[34px] tw:rounded-[100px] tw:text-base tw:text-white tw:px-5 tw:appearance-none tw:outline-none tw:duration-300 focus:tw:border-primary placeholder:tw:text-[#CCCCCC]';
+
   return (
-    <>
+    <div className="tw:bg-white/10 tw:border tw:border-white/10 tw:rounded-2xl tw:md:rounded-3xl tw:p-6 tw:md:p-8 tw:backdrop-blur-xl">
       {status === 'sent' ? (
-        <div className="alert alert-success d-flex align-items-center gap-2" role="status">
-          <i className="bi bi-check-circle-fill" aria-hidden="true" />
+        <div className="tw:flex tw:items-center tw:gap-2 tw:text-white">
+          <i className="bi bi-check-circle-fill tw:text-primary" aria-hidden="true" />
           <span>Thanks, your message has been sent. We&apos;ll reply to {email} as soon as we can.</span>
         </div>
       ) : (
         <form onSubmit={handleSubmit} noValidate>
-          {status === 'error' && (
-            <div className="alert alert-danger" role="alert">
-              {error}
-            </div>
-          )}
-          <div className="row g-3 mb-3">
-            <div className="col-12 col-md-6">
-              <label htmlFor="contactName" className="form-label small">
+          {status === 'error' && <p className="tw:text-sm tw:text-red-400 tw:mb-4">{error}</p>}
+          <div className="tw:grid tw:grid-cols-1 tw:sm:grid-cols-2 tw:gap-5 tw:mb-5">
+            <div>
+              <label htmlFor="contactName" className="tw:font-medium tw:text-title_white tw:inline-block tw:mb-2">
                 Name
               </label>
-              <input id="contactName" type="text" className="form-control" value={name} onChange={(e) => setName(e.target.value)} required disabled={status === 'submitting'} />
+              <input
+                id="contactName"
+                type="text"
+                className={pillInputClass}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                disabled={status === 'submitting'}
+              />
             </div>
-            <div className="col-12 col-md-6">
-              <label htmlFor="contactEmail" className="form-label small">
+            <div>
+              <label htmlFor="contactEmail" className="tw:font-medium tw:text-title_white tw:inline-block tw:mb-2">
                 Email
               </label>
-              <input id="contactEmail" type="email" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} required disabled={status === 'submitting'} />
+              <input
+                id="contactEmail"
+                type="email"
+                className={pillInputClass}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={status === 'submitting'}
+              />
             </div>
           </div>
-          <div className="mb-3">
-            <label htmlFor="contactSubject" className="form-label small">
+          <div className="tw:mb-5">
+            <label htmlFor="contactSubject" className="tw:font-medium tw:text-title_white tw:inline-block tw:mb-2">
               Subject
             </label>
-            <input id="contactSubject" type="text" className="form-control" value={subject} onChange={(e) => setSubject(e.target.value)} required disabled={status === 'submitting'} />
+            <input
+              id="contactSubject"
+              type="text"
+              className={pillInputClass}
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              required
+              disabled={status === 'submitting'}
+            />
           </div>
-          <div className="mb-4">
-            <label htmlFor="contactMessage" className="form-label small">
+          <div className="tw:mb-6">
+            <label htmlFor="contactMessage" className="tw:font-medium tw:text-title_white tw:inline-block tw:mb-2">
               Message
             </label>
-            <textarea id="contactMessage" className="form-control" rows={5} value={message} onChange={(e) => setMessage(e.target.value)} required disabled={status === 'submitting'} />
+            <textarea
+              id="contactMessage"
+              rows={4}
+              className="tw:w-full tw:bg-white/10 tw:border tw:border-white/10 tw:rounded-2xl tw:p-3.75 tw:text-white tw:outline-none tw:duration-300 focus:tw:border-primary tw:resize-none placeholder:tw:text-[#CCCCCC]"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              required
+              disabled={status === 'submitting'}
+            />
           </div>
-          <button type="submit" className="btn btn-primary" disabled={status === 'submitting'}>
-            {status === 'submitting' ? (
-              <>
-                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />
-                Sending...
-              </>
-            ) : (
-              'Send Message'
-            )}
+          <button type="submit" className="button-primary tw:w-full" disabled={status === 'submitting'}>
+            {status === 'submitting' ? 'Sending…' : 'Send Message'}
           </button>
         </form>
       )}
-    </>
+    </div>
   );
 }
 
@@ -629,7 +653,7 @@ export function LandingPage() {
               </p>
               <SocialLinksRow links={socialLinks.length > 0 ? socialLinks : DEFAULT_SOCIAL_LINKS} />
             </ScrollReveal>
-            <ScrollReveal className="col-12 col-lg-8 ps-lg-5 ic-public-contact-info" index={1}>
+            <ScrollReveal className="col-12 col-lg-8" index={1}>
               <ContactSection />
             </ScrollReveal>
           </div>
