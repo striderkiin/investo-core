@@ -119,7 +119,12 @@ function ContactSection() {
               disabled={status === 'submitting'}
             />
           </div>
-          <button type="submit" className="button-primary" disabled={status === 'submitting'}>
+          <button
+            type="submit"
+            className="btn ic-public-btn-primary"
+            style={{ paddingInline: '1.75rem', paddingBlock: '0.75rem' }}
+            disabled={status === 'submitting'}
+          >
             {status === 'submitting' ? 'Sending…' : 'Send Message'}
           </button>
         </form>
