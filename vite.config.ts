@@ -19,6 +19,8 @@ const CLIENT_APP_PAGES = [
   'message',
   'sign-in',
   'sign-up',
+  'forgot-password',
+  'reset-password',
 ];
 
 // https://vite.dev/config/

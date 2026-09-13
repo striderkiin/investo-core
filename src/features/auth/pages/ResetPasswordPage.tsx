@@ -1,93 +1,16 @@
-import { useState } from 'react';
-import type { FormEvent } from 'react';
-import { createAuthService } from '../../../services/auth/authService';
-import { isSupabaseConfigured } from '../../../services/supabase/client';
-import { AuthCard } from '../../../components/public/AuthCard';
+import { useEffect } from 'react';
 
+/**
+ * The real reset-password page lives at client-app/reset-password.html
+ * (styled to match the rest of the client dashboard) rather than here —
+ * this route exists only so a password-reset email sent before this page
+ * moved still lands somewhere real. The recovery token Supabase appends
+ * lives in the URL hash, so it has to be forwarded along with the redirect.
+ */
 export function ResetPasswordPage() {
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-  const isConfigured = isSupabaseConfigured();
+  useEffect(() => {
+    window.location.replace(`/client-app/reset-password.html${window.location.search}${window.location.hash}`);
+  }, []);
 
-  async function handleSubmit(event: FormEvent) {
-    event.preventDefault();
-    setError(null);
-
-    if (password !== confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters.');
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const authService = createAuthService();
-      await authService.updatePassword(password);
-      setSuccess(true);
-      setTimeout(() => window.location.replace('/client-app/sign-in.html'), 2000);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unable to reset password.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  }
-
-  return (
-    <AuthCard title="Choose a new password" subtitle="Enter a new password for your account.">
-      {!isConfigured && (
-          <div className="alert alert-warning" role="alert">
-            Supabase is not configured yet.
-          </div>
-        )}
-        {error && (
-          <div className="alert alert-danger" role="alert">
-            {error}
-          </div>
-        )}
-        {success ? (
-          <div className="alert alert-success" role="status">
-            Password updated. Redirecting to log in…
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} noValidate>
-            <div className="mb-3">
-              <label htmlFor="password" className="form-label">
-                New password
-              </label>
-              <input
-                id="password"
-                type="password"
-                className="form-control"
-                required
-                minLength={8}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="confirmPassword" className="form-label">
-                Confirm new password
-              </label>
-              <input
-                id="confirmPassword"
-                type="password"
-                className="form-control"
-                required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-            </div>
-            <button type="submit" className="btn btn-primary w-100" disabled={isSubmitting || !isConfigured}>
-              {isSubmitting ? 'Updating…' : 'Update Password'}
-            </button>
-          </form>
-        )}
-    </AuthCard>
-  );
+  return null;
 }

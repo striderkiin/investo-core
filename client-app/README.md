@@ -39,6 +39,14 @@ on the platform, not just after logging in.
   `/login` and `/register` routes now just redirect here (a real page
   navigation, preserving query params like `?ref=`) so every existing link
   to them keeps working without touching every caller.
+- `forgot-password.html`/`reset-password.html` have no Critso original to
+  lift (the template doesn't ship these), so they're built from the same
+  `.sign-in-box` markup/classes as `sign-in.html` for a consistent look,
+  wired through `ts/forgotPassword.ts`/`ts/resetPassword.ts`. The React
+  `/forgot-password` and `/reset-password` routes redirect here the same
+  way `/login`/`/register` do — `/reset-password` also forwards the URL
+  hash, since that's where Supabase puts the recovery token a reset email
+  links to.
 - `ts/dashboard.ts`, `ts/wallet.ts`, `ts/account.ts`, `ts/settings.ts`,
   `ts/transaction.ts`, `ts/plans.ts`, `ts/notifications.ts`, and
   `ts/message.ts` each drive one page's real data, using the exact same
