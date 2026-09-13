@@ -1,13 +1,15 @@
 import { requireClientSession } from './shell';
 import { createFinancialService } from '../../src/services/api/financialService';
 import { createMarketService } from '../../src/services/market/marketService';
+import { createExternalMarketService, EXTERNAL_MARKETS } from '../../src/services/market/externalMarketService';
 import { createInvestmentService } from '../../src/services/api/investmentService';
-import type { InvestmentPlan, MarketDataPoint } from '../../src/types/database';
+import type { InvestmentPlan } from '../../src/types/database';
 
 declare const ApexCharts: new (el: Element, options: Record<string, unknown>) => { render: () => void };
 
 const financialService = createFinancialService();
 const marketService = createMarketService();
+const externalMarketService = createExternalMarketService();
 const investmentService = createInvestmentService();
 
 // Stable per-plan colors (not array-position-based) so a given plan is
@@ -54,12 +56,17 @@ async function renderStatTiles(userId: string): Promise<void> {
   }
 }
 
-function renderMarketChart(selector: string, history: MarketDataPoint[], change: number, dateFormat: 'time' | 'date'): void {
+interface ChartPoint {
+  value: number;
+  recordedAt: string;
+}
+
+function renderMarketChart(selector: string, history: ChartPoint[], change: number, dateFormat: 'time' | 'date', emptyMessage: string): void {
   const container = document.querySelector(selector);
   if (!container) return;
 
   if (history.length === 0) {
-    container.innerHTML = '<p class="f14-regular text-Gray text-center pt-4">No market data for this period yet.</p>';
+    container.innerHTML = `<p class="f14-regular text-Gray text-center pt-4">${emptyMessage}</p>`;
     return;
   }
 
@@ -83,13 +90,7 @@ function renderMarketChart(selector: string, history: MarketDataPoint[], change:
   }).render();
 }
 
-// The Week/Month/Year tabs (#candlestick-1/4/5) already exist in the Critso
-// markup and are already wired to show/hide each other on click (see
-// main.js's generic .widget-menu-tab handler) — they just never had real,
-// differently-scoped data behind them. Investo tracks a single market
-// index rather than multiple tradable assets, so "different chart" here
-// means different time windows of that one series, not different symbols.
-async function renderMarketOverview(): Promise<void> {
+async function loadPlatformIndex(): Promise<void> {
   const [settings, week, month, year] = await Promise.all([
     marketService.getCurrent(),
     marketService.getHistoryRange(7),
@@ -101,9 +102,72 @@ async function renderMarketOverview(): Promise<void> {
   const change = settings.currentPercentageChange;
   setText('marketChangeValue', `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`);
 
-  renderMarketChart('#candlestick-1', week, change, 'time');
-  renderMarketChart('#candlestick-4', month, change, 'date');
-  renderMarketChart('#candlestick-5', year, change, 'date');
+  const empty = 'No market data for this period yet.';
+  renderMarketChart('#candlestick-1', week, change, 'time', empty);
+  renderMarketChart('#candlestick-4', month, change, 'date', empty);
+  renderMarketChart('#candlestick-5', year, change, 'date', empty);
+}
+
+// CoinGecko's public API needs no key for this volume — real crypto majors
+// directly, and gold via Pax Gold (a gold-backed token) rather than a
+// separate paid commodities API.
+async function loadExternalMarket(assetId: string): Promise<void> {
+  try {
+    const [quotes, week, month, year] = await Promise.all([
+      externalMarketService.getQuotes([assetId]),
+      externalMarketService.getHistory(assetId, 7),
+      externalMarketService.getHistory(assetId, 30),
+      externalMarketService.getHistory(assetId, 365),
+    ]);
+
+    const quote = quotes[assetId];
+    const change = quote?.change24h ?? 0;
+    setText('marketPriceValue', quote ? formatCurrency(quote.priceUsd) : '--');
+    setText('marketChangeValue', quote ? `${change >= 0 ? '+' : ''}${change.toFixed(2)}%` : '--');
+
+    const toChartPoints = (points: { timestamp: number; price: number }[]): ChartPoint[] =>
+      points.map((p) => ({ value: p.price, recordedAt: new Date(p.timestamp).toISOString() }));
+
+    const empty = 'No data for this period yet.';
+    renderMarketChart('#candlestick-1', toChartPoints(week), change, 'time', empty);
+    renderMarketChart('#candlestick-4', toChartPoints(month), change, 'date', empty);
+    renderMarketChart('#candlestick-5', toChartPoints(year), change, 'date', empty);
+  } catch {
+    setText('marketPriceValue', '--');
+    setText('marketChangeValue', '--');
+    const unavailable = 'Live market data is temporarily unavailable. Please try again shortly.';
+    for (const selector of ['#candlestick-1', '#candlestick-4', '#candlestick-5']) {
+      renderMarketChart(selector, [], 0, 'date', unavailable);
+    }
+  }
+}
+
+function loadMarketPanels(assetId: string): void {
+  void (assetId === 'platform' ? loadPlatformIndex() : loadExternalMarket(assetId));
+}
+
+// The Week/Month/Year tabs (#candlestick-1/4/5) already exist in the Critso
+// markup and are already wired to show/hide each other on click (see
+// main.js's generic .widget-menu-tab handler) — they just never had real,
+// differently-scoped data behind them, and the chart only ever showed
+// Investo's own synthetic "Platform Index". The asset dropdown adds real
+// external markets (crypto majors + gold via a gold-backed token) alongside
+// it, defaulting to Platform Index so nothing changes unless picked.
+function wireMarketAssetSelect(): void {
+  const select = document.getElementById('marketAssetSelect') as HTMLSelectElement | null;
+  if (!select) return;
+  for (const market of EXTERNAL_MARKETS) {
+    const option = document.createElement('option');
+    option.value = market.id;
+    option.textContent = market.label;
+    select.appendChild(option);
+  }
+  select.addEventListener('change', () => loadMarketPanels(select.value));
+}
+
+async function renderMarketOverview(): Promise<void> {
+  wireMarketAssetSelect();
+  await loadPlatformIndex();
 }
 
 async function renderPortfolioComposition(userId: string): Promise<void> {
