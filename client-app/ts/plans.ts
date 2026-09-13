@@ -41,7 +41,7 @@ function renderRows(plans: InvestmentPlan[]): void {
             <div class="f12-medium" data-title="Duration : ">${plan.durationDays} days</div>
           </td>
           <td>
-            <div class="box-status bg-YellowGreen">
+            <div class="box-status bg-YellowGreen text-White">
               <i class="icon icon-check"></i>
               <span class="font-poppins">ACTIVE</span>
             </div>
@@ -79,7 +79,7 @@ function renderRows(plans: InvestmentPlan[]): void {
           </div>
           <div class="ic-plan-card-row">
             <span class="ic-plan-card-label">Status</span>
-            <span class="box-status bg-YellowGreen">
+            <span class="box-status bg-YellowGreen text-White">
               <i class="icon icon-check"></i>
               <span class="font-poppins">ACTIVE</span>
             </span>

@@ -57,7 +57,7 @@ function renderBanner(title: string, message: string): void {
 function renderBlockScreen(title: string, message: string): void {
   document.body.innerHTML = `
     <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:2rem;font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
-      <div style="font-size:3rem;color:#c6a15b;" aria-hidden="true">&#9888;</div>
+      <div style="font-size:3rem;color:#a8442e;" aria-hidden="true">&#9888;</div>
       <h1 style="margin-top:1rem;font-size:1.5rem;">${escapeHtml(title)}</h1>
       <p style="max-width:480px;color:#666;">${escapeHtml(message)}</p>
     </div>

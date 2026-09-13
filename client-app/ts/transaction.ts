@@ -26,7 +26,9 @@ const STATUS_LABEL: Record<TransactionStatus, string> = {
 const STATUS_CLASS: Record<TransactionStatus, string> = {
   pending: 'bg-LightGray',
   processing: 'bg-LightGray',
-  completed: 'bg-YellowGreen',
+  // bg-YellowGreen is the rust brand color — dark enough that it needs
+  // white text, unlike the light-gray badges above.
+  completed: 'bg-YellowGreen text-White',
   failed: 'bg-LightGray type-red',
   rejected: 'bg-LightGray type-red',
 };

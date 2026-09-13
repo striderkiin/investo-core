@@ -121,28 +121,33 @@ async function renderHoldings(userId: string): Promise<void> {
   container.innerHTML = active
     .map((inv, index) => {
       const plan = planById.get(inv.planId);
-      const isDark = index === 3;
+      // bg-YellowGreen (rust) and bg-Black are dark enough that the default
+      // dark/gray text is unreadable on them; bg-blue-1/bg-pink-1 are light
+      // pastels where dark text already reads fine.
+      const isDark = index === 0 || index === 3;
+      const textClass = isDark ? 'text-White' : '';
+      const labelClass = isDark ? 'text-White' : 'text-GrayDark';
       return `
         <div class="w-100">
           <div class="wg-card style-1 ${CARD_BACKGROUNDS[index % CARD_BACKGROUNDS.length]} mb-16">
             <div class="flex items-center gap8">
-              <div class="f12-bold ${isDark ? 'text-White' : ''}">${plan?.name ?? 'Plan'}</div>
+              <div class="f12-bold ${textClass}">${plan?.name ?? 'Plan'}</div>
             </div>
             <div class="content">
               <div class="flex gap2 align-items-end flex-wrap">
-                <h6 class="mb-0 ${isDark ? 'text-White' : ''}">${formatCurrency(inv.amount)}</h6>
-                <div class="f12-medium ${isDark ? 'text-White' : ''}">${inv.rate}% <span class="text-GrayDark">${inv.rateType}</span></div>
+                <h6 class="mb-0 ${textClass}">${formatCurrency(inv.amount)}</h6>
+                <div class="f12-medium ${textClass}">${inv.rate}% <span class="${labelClass}">${inv.rateType}</span></div>
               </div>
             </div>
             <div class="bottom">
               <div class="infor-number">
                 <div class="flex gap4 f12-medium">
-                  <span class="text-GrayDark">Status</span>
-                  <span class="${isDark ? 'text-White' : ''} text-capitalize">${inv.status}</span>
+                  <span class="${labelClass}">Status</span>
+                  <span class="${textClass} text-capitalize">${inv.status}</span>
                 </div>
                 <div class="flex gap8 f12-medium">
-                  <span class="text-GrayDark">Earnings</span>
-                  <span class="${isDark ? 'text-White' : ''}">${formatCurrency(inv.currentEarnings)}</span>
+                  <span class="${labelClass}">Earnings</span>
+                  <span class="${textClass}">${formatCurrency(inv.currentEarnings)}</span>
                 </div>
               </div>
             </div>
@@ -172,7 +177,7 @@ async function renderMarketTrend(): Promise<void> {
   new ApexCharts(container, {
     chart: { height: 300, type: 'line', toolbar: { show: false }, zoom: { enabled: false } },
     dataLabels: { enabled: false },
-    colors: ['#c6a15b'],
+    colors: ['#a8442e'],
     series: [{ name: '$', data: history.map((point) => Number(point.value.toFixed(2))) }],
     stroke: { curve: 'smooth', width: 2 },
     xaxis: {
