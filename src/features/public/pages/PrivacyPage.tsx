@@ -15,7 +15,7 @@ export function PrivacyPage() {
       <p>
         <strong>Account information:</strong> name, email address, and password (stored securely by our
         authentication provider, never in plain text). <strong>Financial information:</strong> deposit, investment,
-        withdrawal, and transaction records associated with your account. <strong>Support communications:</strong>
+        withdrawal, and transaction records associated with your account. <strong>Support communications:</strong>{' '}
         messages you send through our Support Center or Contact page. <strong>Security information:</strong> login
         timestamps, active sessions, and security events used to protect your account.
       </p>
