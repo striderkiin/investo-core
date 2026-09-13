@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { PublicLayout } from '../components/layout/PublicLayout';
 import { AdminLayout } from '../components/layout/AdminLayout';
+import { ClientActionLayout } from '../components/layout/ClientActionLayout';
 import { ProtectedRoute } from '../features/auth/ProtectedRoute';
 
 import { LandingPage } from '../features/public/pages/LandingPage';
@@ -13,6 +14,10 @@ import { LoginPage } from '../features/auth/pages/LoginPage';
 import { RegisterPage } from '../features/auth/pages/RegisterPage';
 import { ForgotPasswordPage } from '../features/auth/pages/ForgotPasswordPage';
 import { ResetPasswordPage } from '../features/auth/pages/ResetPasswordPage';
+
+import { DepositPage } from '../features/financial/pages/DepositPage';
+import { WithdrawPage } from '../features/financial/pages/WithdrawPage';
+import { InvestmentsPage } from '../features/investments/pages/InvestmentsPage';
 
 import { AdminOverviewPage } from '../features/admin/pages/AdminOverviewPage';
 import { FinancialCenterPage } from '../features/admin/pages/FinancialCenterPage';
@@ -55,6 +60,18 @@ export function AppRoutes() {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/404" element={<NotFoundPage />} />
+      </Route>
+
+      <Route
+        element={
+          <ProtectedRoute>
+            <ClientActionLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="/dashboard/deposit" element={<DepositPage />} />
+        <Route path="/dashboard/withdraw" element={<WithdrawPage />} />
+        <Route path="/dashboard/investments" element={<InvestmentsPage />} />
       </Route>
 
       <Route

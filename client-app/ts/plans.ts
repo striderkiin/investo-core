@@ -43,7 +43,7 @@ function renderRows(plans: InvestmentPlan[]): void {
             </div>
           </td>
           <td>
-            <a href="/#pricing" class="tf-btn-default f12-bold style-1">
+            <a href="/dashboard/investments?plan=${plan.id}" class="tf-btn-default f12-bold style-1">
               Invest
               <i class="icon-send1"></i>
             </a>
@@ -80,7 +80,7 @@ function renderRows(plans: InvestmentPlan[]): void {
               <span class="font-poppins">ACTIVE</span>
             </span>
           </div>
-          <a href="/#pricing" class="tf-btn-default f12-bold style-1 ic-plan-card-cta">
+          <a href="/dashboard/investments?plan=${plan.id}" class="tf-btn-default f12-bold style-1 ic-plan-card-cta">
             Invest
             <i class="icon-send1"></i>
           </a>
