@@ -50,11 +50,11 @@ function ContactSection() {
     }
   }
 
-  const pillInputClass =
-    'tw:h-11 tw:w-full tw:bg-white/10 tw:border tw:border-white/10 tw:backdrop-blur-[34px] tw:rounded-[100px] tw:text-base tw:text-white tw:px-5 tw:appearance-none tw:outline-none tw:duration-300 focus:tw:border-primary placeholder:tw:text-[#CCCCCC]';
+  const flatInputClass =
+    'tw:w-full tw:bg-transparent tw:border-0 tw:border-b tw:border-white/20 tw:text-white tw:text-base tw:pb-3 tw:appearance-none tw:outline-none tw:duration-300 focus:tw:border-primary';
 
   return (
-    <div className="tw:bg-white/10 tw:border tw:border-white/10 tw:rounded-2xl tw:md:rounded-3xl tw:p-6 tw:md:p-8 tw:backdrop-blur-xl">
+    <div>
       {status === 'sent' ? (
         <div className="tw:flex tw:items-center tw:gap-2 tw:text-white">
           <i className="bi bi-check-circle-fill tw:text-primary" aria-hidden="true" />
@@ -62,66 +62,64 @@ function ContactSection() {
         </div>
       ) : (
         <form onSubmit={handleSubmit} noValidate>
-          {status === 'error' && <p className="tw:text-sm tw:text-red-400 tw:mb-4">{error}</p>}
-          <div className="tw:grid tw:grid-cols-1 tw:sm:grid-cols-2 tw:gap-5 tw:mb-5">
-            <div>
-              <label htmlFor="contactName" className="tw:font-medium tw:text-title_white tw:inline-block tw:mb-2">
-                Name
-              </label>
-              <input
-                id="contactName"
-                type="text"
-                className={pillInputClass}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                disabled={status === 'submitting'}
-              />
-            </div>
-            <div>
-              <label htmlFor="contactEmail" className="tw:font-medium tw:text-title_white tw:inline-block tw:mb-2">
-                Email
-              </label>
-              <input
-                id="contactEmail"
-                type="email"
-                className={pillInputClass}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                disabled={status === 'submitting'}
-              />
-            </div>
+          {status === 'error' && <p className="tw:text-sm tw:text-red-400 tw:mb-6">{error}</p>}
+          <div className="tw:mb-8">
+            <label htmlFor="contactName" className="tw:block tw:font-medium tw:text-title_black tw:mb-2">
+              Name
+            </label>
+            <input
+              id="contactName"
+              type="text"
+              className={flatInputClass}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              disabled={status === 'submitting'}
+            />
           </div>
-          <div className="tw:mb-5">
-            <label htmlFor="contactSubject" className="tw:font-medium tw:text-title_white tw:inline-block tw:mb-2">
+          <div className="tw:mb-8">
+            <label htmlFor="contactEmail" className="tw:block tw:font-medium tw:text-title_black tw:mb-2">
+              Email
+            </label>
+            <input
+              id="contactEmail"
+              type="email"
+              className={flatInputClass}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={status === 'submitting'}
+            />
+          </div>
+          <div className="tw:mb-8">
+            <label htmlFor="contactSubject" className="tw:block tw:font-medium tw:text-title_black tw:mb-2">
               Subject
             </label>
             <input
               id="contactSubject"
               type="text"
-              className={pillInputClass}
+              className={flatInputClass}
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               required
               disabled={status === 'submitting'}
             />
           </div>
-          <div className="tw:mb-6">
-            <label htmlFor="contactMessage" className="tw:font-medium tw:text-title_white tw:inline-block tw:mb-2">
+          <div className="tw:mb-8">
+            <label htmlFor="contactMessage" className="tw:block tw:font-medium tw:text-title_black tw:mb-2">
               Message
             </label>
             <textarea
               id="contactMessage"
-              rows={4}
-              className="tw:w-full tw:bg-white/10 tw:border tw:border-white/10 tw:rounded-2xl tw:p-3.75 tw:text-white tw:outline-none tw:duration-300 focus:tw:border-primary tw:resize-none placeholder:tw:text-[#CCCCCC]"
+              rows={3}
+              className={`${flatInputClass} tw:resize-none`}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               required
               disabled={status === 'submitting'}
             />
           </div>
-          <button type="submit" className="button-primary tw:w-full" disabled={status === 'submitting'}>
+          <button type="submit" className="button-primary" disabled={status === 'submitting'}>
             {status === 'submitting' ? 'Sending…' : 'Send Message'}
           </button>
         </form>
