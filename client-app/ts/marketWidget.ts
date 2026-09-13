@@ -34,7 +34,10 @@ function renderChart(selector: string, history: ChartPoint[], change: number, ty
     dataLabels: { enabled: false },
     colors: [change >= 0 ? '#2BC155' : '#FD7972'],
     series: [{ name: '$', data: history.map((point) => Number(point.value.toFixed(2))) }],
-    fill: type === 'area' ? { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.3, opacityTo: 0.05, stops: [0, 90, 100] } } : undefined,
+    // Omit the key entirely for line charts rather than setting it to
+    // undefined — ApexCharts' option merge treats a present-but-undefined
+    // key differently from an absent one and silently fails to render.
+    ...(type === 'area' ? { fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.3, opacityTo: 0.05, stops: [0, 90, 100] } } } : {}),
     stroke: { curve: 'smooth', width: 2 },
     yaxis: { show: false },
     xaxis: {

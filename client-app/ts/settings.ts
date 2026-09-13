@@ -172,27 +172,20 @@ function wireProfileSave(profile: Profile): void {
 function renderSocialProofPrivacy(profile: Profile): void {
   const optInCheckbox = document.getElementById('socialProofOptInCheckbox') as HTMLInputElement | null;
   const modeSelect = document.getElementById('socialProofDisplayMode') as HTMLSelectElement | null;
-  const nicknameField = document.getElementById('socialProofNicknameField');
   const nicknameInput = document.getElementById('socialProofNicknameInput') as HTMLInputElement | null;
-  if (!optInCheckbox || !modeSelect || !nicknameField || !nicknameInput) return;
+  if (!optInCheckbox || !modeSelect || !nicknameInput) return;
 
   optInCheckbox.checked = profile.socialProofOptIn;
   modeSelect.value = profile.socialProofDisplayMode ?? 'first_initial';
   nicknameInput.value = profile.socialProofNickname ?? '';
-  nicknameField.style.display = modeSelect.value === 'nickname' ? '' : 'none';
 }
 
 function wireSocialProofPrivacy(profile: Profile): void {
   const optInCheckbox = document.getElementById('socialProofOptInCheckbox') as HTMLInputElement | null;
   const modeSelect = document.getElementById('socialProofDisplayMode') as HTMLSelectElement | null;
-  const nicknameField = document.getElementById('socialProofNicknameField');
   const nicknameInput = document.getElementById('socialProofNicknameInput') as HTMLInputElement | null;
   const saveButton = document.getElementById('socialProofSaveButton');
-  if (!optInCheckbox || !modeSelect || !nicknameField || !nicknameInput || !saveButton) return;
-
-  modeSelect.addEventListener('change', () => {
-    nicknameField.style.display = modeSelect.value === 'nickname' ? '' : 'none';
-  });
+  if (!optInCheckbox || !modeSelect || !nicknameInput || !saveButton) return;
 
   saveButton.addEventListener('click', () => {
     void userService

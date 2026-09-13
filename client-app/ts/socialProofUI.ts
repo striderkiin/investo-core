@@ -57,15 +57,15 @@ function escapeHtml(value: string): string {
 
 export function showPopupCard(el: HTMLDivElement, options: PopupCardOptions): void {
   el.innerHTML = `
-    <div style="display:flex;align-items:flex-start;gap:0.55rem;">
-      <span style="width:1.6rem;height:1.6rem;border-radius:50%;background:#a8442e;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:0.05rem;">
+    <div style="display:flex;align-items:center;gap:0.55rem;">
+      <span style="width:1.6rem;height:1.6rem;border-radius:50%;background:#a8442e;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
         <i class="icon-check" style="color:#fff;font-size:0.7rem;"></i>
       </span>
       <div style="min-width:0;flex:1;">
         <p style="margin:0;font-size:0.78rem;font-weight:600;line-height:1.35;color:#161326;">${escapeHtml(options.message)}</p>
         ${options.timeText ? `<p style="margin:0.15rem 0 0;font-size:0.68rem;color:#8A8A8E;">${escapeHtml(options.timeText)}</p>` : ''}
       </div>
-      ${options.closable ? '<button type="button" data-popup-close aria-label="Close" style="background:none;border:none;color:#8A8A8E;opacity:0.7;cursor:pointer;font-size:0.9rem;line-height:1;padding:0;flex-shrink:0;">&times;</button>' : ''}
+      ${options.closable ? '<button type="button" data-popup-close aria-label="Close" style="background:none;border:none;color:#8A8A8E;opacity:0.7;cursor:pointer;font-size:0.9rem;line-height:1;padding:0;flex-shrink:0;align-self:flex-start;">&times;</button>' : ''}
     </div>
   `;
   el.style.pointerEvents = 'auto';
