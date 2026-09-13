@@ -1,7 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { PublicLayout } from '../components/layout/PublicLayout';
 import { AdminLayout } from '../components/layout/AdminLayout';
-import { ClientActionLayout } from '../components/layout/ClientActionLayout';
 import { ProtectedRoute } from '../features/auth/ProtectedRoute';
 
 import { LandingPage } from '../features/public/pages/LandingPage';
@@ -59,19 +58,10 @@ export function AppRoutes() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/404" element={<NotFoundPage />} />
-      </Route>
-
-      <Route
-        element={
-          <ProtectedRoute>
-            <ClientActionLayout />
-          </ProtectedRoute>
-        }
-      >
         <Route path="/dashboard/deposit" element={<DepositPage />} />
         <Route path="/dashboard/withdraw" element={<WithdrawPage />} />
         <Route path="/dashboard/investments" element={<InvestmentsPage />} />
+        <Route path="/404" element={<NotFoundPage />} />
       </Route>
 
       <Route

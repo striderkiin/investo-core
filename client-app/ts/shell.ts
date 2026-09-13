@@ -134,12 +134,13 @@ function fillSlots<T>(
 }
 
 function wireLogout(): void {
-  const logoutLink = document.getElementById('logoutLink');
-  if (!logoutLink) return;
-  logoutLink.addEventListener('click', (event) => {
-    event.preventDefault();
-    void authService.logout().then(() => {
-      window.location.replace('/client-app/sign-in.html');
+  const links = [document.getElementById('logoutLink'), document.getElementById('sidebarLogoutLink')];
+  for (const link of links) {
+    link?.addEventListener('click', (event) => {
+      event.preventDefault();
+      void authService.logout().then(() => {
+        window.location.replace('/client-app/sign-in.html');
+      });
     });
-  });
+  }
 }

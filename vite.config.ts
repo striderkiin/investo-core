@@ -21,6 +21,8 @@ const CLIENT_APP_PAGES = [
   'sign-up',
   'forgot-password',
   'reset-password',
+  'deposit',
+  'withdraw',
 ];
 
 // https://vite.dev/config/

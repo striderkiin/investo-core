@@ -54,7 +54,7 @@
                 <!-- section-menu-left -->
                 <div class="section-menu-left">
                     <div class="box-logo">
-                        <a href="index.html" id="site-logo-inner" style="display:flex;align-items:center;">
+                        <a href="/" id="site-logo-inner" style="display:flex;align-items:center;">
                             <img class="" id="logo_header" alt="" src="images/logo/logo-mark.svg" data-light="images/logo/logo-mark.svg" data-dark="images/logo/logo-mark.svg" style="width:36px;height:36px;">
                             <span style="font-size:20px;font-weight:700;color:var(--White);margin-left:10px;">Investo</span>
                         </a>
@@ -124,6 +124,18 @@
                                                 <i class="icon-setting1"></i>
                                             </div>
                                             <div class="text">Settings</div>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="javascript:void(0);" class="menu-item-button" id="sidebarLogoutLink">
+                                            <div class="icon">
+                                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M7.5 17.5H5.83333C4.44333 17.5 3.33333 16.4167 3.33333 15V5C3.33333 3.58333 4.44333 2.5 5.83333 2.5H7.5" stroke="#A4A4A9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    <path d="M13.3333 14.1667L17.5 10L13.3333 5.83334" stroke="#A4A4A9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    <path d="M17.5 10H7.5" stroke="#A4A4A9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                            </div>
+                                            <div class="text">Log Out</div>
                                         </a>
                                     </li>
                                 </ul>
@@ -392,7 +404,7 @@
                             <!-- /main-content-wrap -->
                         </div>
                         <!-- /main-content-wrap -->
-                        
+
                     </div>
                     <!-- /main-content -->
                 </div>
@@ -403,6 +415,28 @@
         <!-- /#page -->
     </div>
     <!-- /#wrapper -->
+
+    <!-- Invest modal -->
+    <div class="modal fade" id="investModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content wg-box style-1 bg-Gainsboro shadow-none">
+                <div class="flex justify-between items-center mb-16">
+                    <h5 class="mb-0" id="investModalPlanName">-</h5>
+                    <button type="button" class="tf-button f12-bold bg-Gainsboro" data-bs-dismiss="modal" aria-label="Close">Close</button>
+                </div>
+                <div class="f14-regular text-Gray mb-16" id="investModalPlanDetail"></div>
+                <div id="investModalSuccess" class="f14-regular mb-16" style="display:none;color:#2BC155;">Investment started.</div>
+                <div id="investModalError" class="f14-regular mb-8" style="display:none;color:#dc3545;"></div>
+                <form id="investModalForm">
+                    <div class="mb-16">
+                        <label class="f12-medium text-Gray mb-4 d-block" for="investModalAmount">Amount (USD)</label>
+                        <input type="number" id="investModalAmount" class="form-control" min="0" step="0.01">
+                    </div>
+                    <button type="submit" class="tf-button f12-bold w-100" id="investModalSubmit">Confirm Investment</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Javascript -->
     <script src="js/jquery.min.js"></script>

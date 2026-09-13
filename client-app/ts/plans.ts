@@ -3,6 +3,10 @@ import { createInvestmentService } from '../../src/services/api/investmentServic
 import type { InvestmentPlan } from '../../src/types/database';
 import { formatCurrency } from './format';
 
+declare const bootstrap: {
+  Modal: new (el: Element) => { show: () => void; hide: () => void };
+};
+
 const investmentService = createInvestmentService();
 
 let allPlans: InvestmentPlan[] = [];
@@ -43,10 +47,10 @@ function renderRows(plans: InvestmentPlan[]): void {
             </div>
           </td>
           <td>
-            <a href="/dashboard/investments?plan=${plan.id}" class="tf-btn-default f12-bold style-1">
+            <button type="button" class="tf-btn-default f12-bold style-1 js-invest-btn" data-plan-id="${plan.id}">
               Invest
               <i class="icon-send1"></i>
-            </a>
+            </button>
           </td>
         </tr>`
     )
@@ -80,10 +84,10 @@ function renderRows(plans: InvestmentPlan[]): void {
               <span class="font-poppins">ACTIVE</span>
             </span>
           </div>
-          <a href="/dashboard/investments?plan=${plan.id}" class="tf-btn-default f12-bold style-1 ic-plan-card-cta">
+          <button type="button" class="tf-btn-default f12-bold style-1 ic-plan-card-cta js-invest-btn" data-plan-id="${plan.id}">
             Invest
             <i class="icon-send1"></i>
-          </a>
+          </button>
         </div>`
     )
     .join('');
@@ -106,9 +110,84 @@ function wireControls(): void {
   searchInput?.addEventListener('input', applyFilter);
 }
 
+function wireInvestModal(): void {
+  const modalEl = document.getElementById('investModal');
+  const form = document.getElementById('investModalForm') as HTMLFormElement | null;
+  const amountInput = document.getElementById('investModalAmount') as HTMLInputElement | null;
+  const submitButton = document.getElementById('investModalSubmit') as HTMLButtonElement | null;
+  const planNameEl = document.getElementById('investModalPlanName');
+  const planDetailEl = document.getElementById('investModalPlanDetail');
+  const errorEl = document.getElementById('investModalError');
+  const successEl = document.getElementById('investModalSuccess');
+  if (!modalEl || !form || !amountInput || !submitButton || !planNameEl || !planDetailEl || !errorEl || !successEl) return;
+
+  const modal = new bootstrap.Modal(modalEl);
+  let activePlan: InvestmentPlan | null = null;
+
+  function showError(message: string): void {
+    errorEl!.textContent = message;
+    errorEl!.style.display = '';
+  }
+
+  function hideMessages(): void {
+    errorEl!.style.display = 'none';
+    successEl!.style.display = 'none';
+  }
+
+  document.addEventListener('click', (event) => {
+    const target = (event.target as HTMLElement).closest('.js-invest-btn') as HTMLElement | null;
+    if (!target) return;
+
+    const planId = target.dataset.planId;
+    activePlan = allPlans.find((p) => p.id === planId) ?? null;
+    if (!activePlan) return;
+
+    hideMessages();
+    form.reset();
+    amountInput.value = String(activePlan.minAmount);
+    planNameEl.textContent = activePlan.name;
+    planDetailEl.textContent = `${activePlan.rate}% ${activePlan.rateType} · ${activePlan.durationDays} days · ${formatCurrency(activePlan.minAmount)} to ${formatCurrency(activePlan.maxAmount)}`;
+    modal.show();
+  });
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    hideMessages();
+    if (!activePlan) return;
+
+    const amount = Number(amountInput.value);
+    if (!amount || amount <= 0) {
+      showError('Enter a valid amount.');
+      return;
+    }
+    if (amount < activePlan.minAmount || amount > activePlan.maxAmount) {
+      showError(`Amount must be between ${formatCurrency(activePlan.minAmount)} and ${formatCurrency(activePlan.maxAmount)}.`);
+      return;
+    }
+
+    submitButton.disabled = true;
+    submitButton.textContent = 'Investing…';
+
+    void investmentService
+      .invest(activePlan.id, amount)
+      .then(() => {
+        successEl!.style.display = '';
+        setTimeout(() => modal.hide(), 1200);
+      })
+      .catch((err: unknown) => {
+        showError(err instanceof Error ? err.message : 'Unable to start this investment. Please try again.');
+      })
+      .finally(() => {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Confirm Investment';
+      });
+  });
+}
+
 async function main() {
   await requireClientSession();
   wireControls();
+  wireInvestModal();
   const plans = await investmentService.listPlans();
   allPlans = plans.filter((p) => p.status === 'active');
   applyFilter();

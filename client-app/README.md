@@ -48,10 +48,10 @@ on the platform, not just after logging in.
   hash, since that's where Supabase puts the recovery token a reset email
   links to.
 - `ts/dashboard.ts`, `ts/wallet.ts`, `ts/account.ts`, `ts/settings.ts`,
-  `ts/transaction.ts`, `ts/plans.ts`, `ts/notifications.ts`, and
-  `ts/message.ts` each drive one page's real data, using the exact same
-  service layer the React admin/client pages already use, just called
-  from vanilla TS instead of React hooks. `ts/format.ts` and
+  `ts/transaction.ts`, `ts/plans.ts`, `ts/notifications.ts`, `ts/message.ts`,
+  `ts/deposit.ts`, and `ts/withdraw.ts` each drive one page's real data,
+  using the exact same service layer the React admin/client pages already
+  use, just called from vanilla TS instead of React hooks. `ts/format.ts` and
   `ts/walletActivity.ts` hold logic shared by more than one page
   (currency/date formatting, and the Wallet Activity list used on both
   `my-wallet.html` and `account.html`).
@@ -62,11 +62,18 @@ on the platform, not just after logging in.
 - After a successful sign-in, `ts/signin.ts` sends **clients** to
   `index.html` and **admins** to `/admin` inside the SPA, both with a real
   page navigation since they're different apps.
-- Deposit, Withdraw, and Invest actions link out to the React SPA's own
-  routes (`/dashboard/deposit`, `/dashboard/withdraw`, `/dashboard/investments`)
-  rather than duplicating those forms here — same Supabase session, same
-  origin, so navigating between the two apps is seamless. Critso's fixed
-  page set has no page of its own for any of the three.
+- `deposit.html`/`withdraw.html` are real client-app pages (full sidebar +
+  header shell, `.wg-box`/`.form-control`/`.tf-button` styling) wired
+  through `ts/deposit.ts`/`ts/withdraw.ts` — every client-facing page must
+  look like Critso, and these two used to be React SPA pages at
+  `/dashboard/deposit`/`/dashboard/withdraw` that broke that consistency.
+  `my-wallet.html`'s Deposit/Withdraw buttons link to them directly.
+  Invest doesn't get its own page: `crypto.html` (the Plans browser)
+  gained a Bootstrap modal, populated and submitted by `ts/plans.ts`, so
+  investing happens inline without leaving the plan list. The old React
+  routes now just redirect to these pages (the same pattern `/login`
+  etc. use) so any existing link to `/dashboard/deposit`,
+  `/dashboard/withdraw`, or `/dashboard/investments` still resolves.
 - `tsconfig.json` in this directory is a standalone TypeScript project for
   everything under `ts/`, checked via `npm run typecheck:client-app`
   (also run as part of `npm run build`). The root `tsconfig.app.json` only
@@ -118,8 +125,12 @@ than faked, consistent with the rest of this app.
 
 ## Status
 
-All 8 dashboard pages are fully wired to real data, each through its own
+All 10 dashboard-shell pages (the original 8, plus `deposit.html` and
+`withdraw.html`) are fully wired to real data, each through its own
 `ts/*.ts` module, with a real auth guard and a real header (name,
-avatar, logout, notification/ticket previews) via `ts/shell.ts`.
-`sign-in.html` and `sign-up.html` are wired to real auth through
-`ts/signin.ts`/`ts/signup.ts`, matching the original Critso template pages.
+avatar, logout via the header dropdown and the sidebar nav,
+notification/ticket previews) via `ts/shell.ts`. `sign-in.html`,
+`sign-up.html`, `forgot-password.html`, and `reset-password.html` are
+wired to real auth through their own `ts/*.ts` modules, matching (or, for
+the two Critso has no template for, closely following) the original
+Critso template pages.
