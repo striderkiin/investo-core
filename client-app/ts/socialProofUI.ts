@@ -79,7 +79,7 @@ export function showPopupCard(el: HTMLDivElement, options: PopupCardOptions): vo
   const messageWeight = options.nameLocation ? '400' : '700';
   el.innerHTML = `
     <div style="display:flex;align-items:center;gap:0.7rem;">
-      <span data-popup-avatar style="width:2.75rem;height:2.75rem;flex-shrink:0;"></span>
+      <span data-popup-avatar style="display:inline-block;width:2.75rem;height:2.75rem;flex-shrink:0;overflow:hidden;border-radius:50%;"></span>
       <div style="min-width:0;flex:1;">
         ${options.nameLocation ? `<p style="margin:0;font-size:0.8rem;font-weight:700;line-height:1.3;color:#1a1710;">${escapeHtml(options.nameLocation)}</p>` : ''}
         <p style="margin:${options.nameLocation ? '0.2rem' : '0'} 0 0;font-size:0.8rem;font-weight:${messageWeight};line-height:1.3;color:#1a1710;">${escapeHtml(options.message)}</p>
@@ -89,8 +89,14 @@ export function showPopupCard(el: HTMLDivElement, options: PopupCardOptions): vo
     </div>
   `;
 
+  // Appended inside the slot rather than replaceWith() — the slot is the
+  // element carrying the fixed 2.75rem size, and buildAvatarNode's own
+  // width:100%/height:100% needs that fixed-size ancestor to resolve
+  // against. Swapping the slot out for the built node entirely (as
+  // replaceWith would) leaves those percentages with nothing to resolve
+  // against, so the image falls back to its huge intrinsic size.
   const avatarSlot = el.querySelector<HTMLSpanElement>('[data-popup-avatar]');
-  if (avatarSlot) avatarSlot.replaceWith(buildAvatarNode(resolveAvatar(options.avatar ?? {})));
+  if (avatarSlot) avatarSlot.appendChild(buildAvatarNode(resolveAvatar(options.avatar ?? {})));
 
   el.style.pointerEvents = 'auto';
   el.style.opacity = '1';
