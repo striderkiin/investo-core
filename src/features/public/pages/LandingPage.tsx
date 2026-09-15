@@ -624,21 +624,21 @@ export function LandingPage() {
       {/* ===== 3.6 FAQ — structure verbatim from accordion.php + its JS behavior; the reference's paired thumbnail column (excellence-accordion-thumb-0N.webp) is dropped per the brief since there's no equivalent FAQ imagery, and the accordion now takes the full width ===== */}
       <section id="faq" className="section-spacing-lg tw:bg-secondary">
         <div className="tw:container">
-          <ScrollReveal className="tw:flex tw:items-start tw:gap-4 tw:mb-12 tw:sm:mb-14 tw:md:mb-16 tw:lg:mb-20 tw:flex-col tw:max-w-125 tw:md:max-w-170">
-            <div className="tw:md:max-w-170 tw:w-full">
+          <div className="tw:flex tw:flex-col tw:lg:flex-row tw:items-center tw:gap-10 tw:lg:gap-16">
+            <ScrollReveal className="tw:w-full tw:lg:max-w-100 tw:lg:flex-shrink-0">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
                 <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide">FREQUENTLY ASKED QUESTIONS</span>
               </div>
               <h2 className="tw:text-2xl tw:sm:text-[28px] tw:md:text-3xl tw:lg:text-4xl tw:xl:text-[40px] tw:font-bold tw:leading-tight tw:text-title_white tw:mt-4! tw:md:mt-5!">Everything You Need to Know</h2>
-            </div>
-            <p className="tw:md:max-w-115 tw:w-full tw:text-base tw:sm:text-lg tw:text-paragraph_white">
-              Answers to the questions we hear most about getting started, rates, deposits, withdrawals, and account security.
-            </p>
-          </ScrollReveal>
-          <div>
-            <div className="tw:max-w-151.75 tw:mx-auto tw:w-full next-gen-accordion-wrapper excellence-accordion-wrapper tw:flex tw:flex-col tw:gap-4 tw:md:gap-6 tw:lg:gap-9">
-              <SecureVestAccordion activeIndex={accordionActive} onSelect={setAccordionActive} />
+              <p className="tw:mt-4 tw:text-base tw:sm:text-lg tw:text-paragraph_white">
+                Answers to the questions we hear most about getting started, rates, deposits, withdrawals, and account security.
+              </p>
+            </ScrollReveal>
+            <div className="tw:w-full tw:lg:flex-1 tw:lg:max-w-160">
+              <div className="next-gen-accordion-wrapper excellence-accordion-wrapper tw:flex tw:flex-col tw:gap-4 tw:md:gap-6 tw:lg:gap-9">
+                <SecureVestAccordion activeIndex={accordionActive} onSelect={setAccordionActive} />
+              </div>
             </div>
           </div>
         </div>
