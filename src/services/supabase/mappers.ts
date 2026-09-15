@@ -613,6 +613,7 @@ export interface SocialProofDemoActivityRow {
   message: string;
   simulated_name: string | null;
   simulated_location: string | null;
+  avatar_key: string | null;
   sort_order: number;
   is_active: boolean;
   created_at: string;
@@ -626,6 +627,7 @@ export function mapSocialProofDemoActivityRow(row: SocialProofDemoActivityRow): 
     message: row.message,
     simulatedName: row.simulated_name,
     simulatedLocation: row.simulated_location,
+    avatarKey: row.avatar_key,
     sortOrder: row.sort_order,
     isActive: row.is_active,
     createdAt: row.created_at,

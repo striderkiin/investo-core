@@ -4,6 +4,7 @@ import type { SocialProofDemoActivity, SocialProofDemoEventType, SocialProofEven
 import { LoadingScreen } from '../../../components/common/LoadingScreen';
 import { ErrorState } from '../../../components/common/ErrorState';
 import { Avatar } from '../../../components/common/Avatar';
+import { AVATAR_LIBRARY } from '../../../shared/avatar';
 import { useToast } from '../../../hooks/useToast';
 import { usePermission } from '../../../hooks/usePermission';
 
@@ -44,6 +45,7 @@ export function SocialProofPage() {
   const [newDemoMessage, setNewDemoMessage] = useState('');
   const [newDemoName, setNewDemoName] = useState('');
   const [newDemoLocation, setNewDemoLocation] = useState('');
+  const [newDemoAvatarKey, setNewDemoAvatarKey] = useState('');
   const [newDemoType, setNewDemoType] = useState<SocialProofDemoEventType>('deposit');
   const [previewEvent, setPreviewEvent] = useState<SocialProofEvent | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -123,6 +125,16 @@ export function SocialProofPage() {
     }
   }
 
+  async function saveDemoAvatar(id: string, avatarKey: string) {
+    try {
+      const updated = await socialProofService.updateDemoActivity(id, { avatarKey: avatarKey || null });
+      setDemoActivities((prev) => prev.map((a) => (a.id === id ? updated : a)));
+      showSuccess('Activity updated.');
+    } catch (err) {
+      showError(err instanceof Error ? err.message : 'Failed to save activity');
+    }
+  }
+
   async function toggleDemoActive(id: string, isActive: boolean) {
     try {
       const updated = await socialProofService.updateDemoActivity(id, { isActive });
@@ -146,11 +158,18 @@ export function SocialProofPage() {
     const message = newDemoMessage.trim();
     if (!message) return;
     try {
-      const created = await socialProofService.createDemoActivity(newDemoType, message, newDemoName.trim() || null, newDemoLocation.trim() || null);
+      const created = await socialProofService.createDemoActivity(
+        newDemoType,
+        message,
+        newDemoName.trim() || null,
+        newDemoLocation.trim() || null,
+        newDemoAvatarKey || null
+      );
       setDemoActivities((prev) => [...prev, created]);
       setNewDemoMessage('');
       setNewDemoName('');
       setNewDemoLocation('');
+      setNewDemoAvatarKey('');
       showSuccess('Activity added.');
     } catch (err) {
       showError(err instanceof Error ? err.message : 'Failed to add activity');
@@ -239,6 +258,22 @@ export function SocialProofPage() {
                 <span className="badge text-bg-secondary text-capitalize" style={{ minWidth: 90 }}>
                   {DEMO_EVENT_TYPE_LABELS[activity.eventType]}
                 </span>
+                <Avatar avatarKey={activity.avatarKey} displayName={activity.simulatedName} size={28} />
+                <select
+                  className="form-select form-select-sm"
+                  style={{ maxWidth: 110 }}
+                  title="Avatar"
+                  defaultValue={activity.avatarKey ?? ''}
+                  disabled={!canManage}
+                  onChange={(e) => saveDemoAvatar(activity.id, e.target.value)}
+                >
+                  <option value="">No avatar</option>
+                  {AVATAR_LIBRARY.map((entry) => (
+                    <option key={entry.key} value={entry.key}>
+                      {entry.label}
+                    </option>
+                  ))}
+                </select>
                 <input
                   type="text"
                   className="form-control form-control-sm"
@@ -286,6 +321,21 @@ export function SocialProofPage() {
               {DEMO_EVENT_TYPES.map((type) => (
                 <option key={type} value={type}>
                   {DEMO_EVENT_TYPE_LABELS[type]}
+                </option>
+              ))}
+            </select>
+            <select
+              className="form-select form-select-sm"
+              style={{ maxWidth: 110 }}
+              title="Avatar"
+              value={newDemoAvatarKey}
+              disabled={!canManage}
+              onChange={(e) => setNewDemoAvatarKey(e.target.value)}
+            >
+              <option value="">No avatar</option>
+              {AVATAR_LIBRARY.map((entry) => (
+                <option key={entry.key} value={entry.key}>
+                  {entry.label}
                 </option>
               ))}
             </select>

@@ -47,7 +47,7 @@ function runTicker(position: PopupPosition, activities: SocialProofDemoActivity[
     showPopupCard(el, {
       message: current.message,
       nameLocation: current.simulatedName ? `${current.simulatedName}${current.simulatedLocation ? ` from ${current.simulatedLocation}` : ''}` : undefined,
-      avatar: { displayName: current.simulatedName },
+      avatar: { avatarKey: current.avatarKey, displayName: current.simulatedName },
     });
 
     createPausableTimer(el, DISPLAY_MS, () => {

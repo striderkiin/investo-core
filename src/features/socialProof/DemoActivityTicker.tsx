@@ -69,7 +69,7 @@ export function DemoActivityTicker() {
       aria-live="polite"
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
-        <Avatar displayName={current.simulatedName} size={44} />
+        <Avatar avatarKey={current.avatarKey} displayName={current.simulatedName} size={44} />
         <div style={{ minWidth: 0, flex: 1 }}>
           {current.simulatedName && (
             <p className="mb-0 small fw-bold" style={{ lineHeight: 1.3 }}>

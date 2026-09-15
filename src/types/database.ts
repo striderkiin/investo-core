@@ -339,6 +339,8 @@ export interface SocialProofDemoActivity {
   /** Null for 'market' rows — a price tick has no person behind it, so the ticker renders just the message, no name/location line. */
   simulatedName: string | null;
   simulatedLocation: string | null;
+  /** Key into AVATAR_LIBRARY (src/shared/avatar.ts) — null shows an initials card instead, same fallback chain as a real user's own avatar. */
+  avatarKey: string | null;
   sortOrder: number;
   isActive: boolean;
   createdAt: string;
