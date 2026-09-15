@@ -197,6 +197,7 @@ export interface DepositRow {
   provider_reference: string | null;
   status: DepositStatus;
   transaction_id: string | null;
+  destination_address: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -212,6 +213,7 @@ export function mapDepositRow(row: DepositRow): Deposit {
     providerReference: row.provider_reference,
     status: row.status,
     transactionId: row.transaction_id,
+    destinationAddress: row.destination_address,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };

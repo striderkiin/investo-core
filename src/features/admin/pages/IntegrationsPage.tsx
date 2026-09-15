@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import { createIntegrationService, PROVIDER_CATALOG } from '../../../services/api/integrationService';
 import type { CredentialMetadata, IntegrationConfig, IntegrationStatus } from '../../../services/api/integrationService';
+import { createDepositAddressService } from '../../../services/api/depositAddressService';
+import type { DepositAddress } from '../../../services/api/depositAddressService';
 import { LoadingScreen } from '../../../components/common/LoadingScreen';
 import { ErrorState } from '../../../components/common/ErrorState';
 import { EmptyState } from '../../../components/common/EmptyState';
@@ -10,6 +12,19 @@ import { useToast } from '../../../hooks/useToast';
 import { APP_ENVIRONMENT } from '../../../config/env';
 
 const integrationService = createIntegrationService();
+const depositAddressService = createDepositAddressService();
+
+const DEPOSIT_PROVIDERS = [
+  { value: 'demo', label: 'Demo' },
+  { value: 'sandbox', label: 'Sandbox' },
+];
+
+const DEPOSIT_PAIRS: { currency: string; network: string }[] = [
+  { currency: 'BTC', network: 'Bitcoin' },
+  { currency: 'ETH', network: 'ERC20' },
+  { currency: 'USDT', network: 'ERC20' },
+  { currency: 'USDT', network: 'TRC20' },
+];
 
 const STATUS_VARIANT: Record<IntegrationStatus, string> = {
   connected: 'success',
@@ -31,6 +46,10 @@ export function IntegrationsPage() {
   const [webhookSecret, setWebhookSecret] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [depositProvider, setDepositProvider] = useState('demo');
+  const [depositAddresses, setDepositAddresses] = useState<DepositAddress[]>([]);
+  const [isLoadingAddresses, setIsLoadingAddresses] = useState(true);
+
   async function load() {
     setIsLoading(true);
     setError(null);
@@ -43,9 +62,39 @@ export function IntegrationsPage() {
     }
   }
 
+  async function loadDepositAddresses(provider: string) {
+    setIsLoadingAddresses(true);
+    try {
+      setDepositAddresses(await depositAddressService.list(provider));
+    } catch (err) {
+      showError(err instanceof Error ? err.message : 'Failed to load deposit addresses');
+    } finally {
+      setIsLoadingAddresses(false);
+    }
+  }
+
   useEffect(() => {
     void load();
   }, []);
+
+  useEffect(() => {
+    void loadDepositAddresses(depositProvider);
+  }, [depositProvider]);
+
+  function addressFor(currency: string, network: string): DepositAddress | undefined {
+    return depositAddresses.find((a) => a.currency === currency && a.network === network);
+  }
+
+  async function saveDepositAddress(currency: string, network: string, address: string) {
+    if (!address.trim()) return;
+    try {
+      const saved = await depositAddressService.set(currency, network, depositProvider, address.trim());
+      setDepositAddresses((prev) => [...prev.filter((a) => !(a.currency === currency && a.network === network)), saved]);
+      showSuccess('Deposit address saved.');
+    } catch (err) {
+      showError(err instanceof Error ? err.message : 'Failed to save deposit address');
+    }
+  }
 
   async function openConfigure(providerType: string) {
     setConfiguringType(providerType);
@@ -172,6 +221,46 @@ export function IntegrationsPage() {
             </div>
           ))}
         </div>
+      </div>
+
+      <div>
+        <div className="d-flex justify-content-between align-items-start mb-1">
+          <h3 className="h6 mb-0">Crypto Deposit Addresses</h3>
+          <select className="form-select form-select-sm" style={{ maxWidth: 140 }} value={depositProvider} onChange={(e) => setDepositProvider(e.target.value)}>
+            {DEPOSIT_PROVIDERS.map((p) => (
+              <option key={p.value} value={p.value}>
+                {p.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <p className="text-secondary small mb-2">
+          The address clients are shown when depositing with the {depositProvider} provider. Leave a pair unconfigured and its deposit flow falls back to a
+          placeholder address.
+        </p>
+        {isLoadingAddresses ? (
+          <LoadingScreen label="Loading deposit addresses..." />
+        ) : (
+          <div className="d-flex flex-column gap-2">
+            {DEPOSIT_PAIRS.map(({ currency, network }) => {
+              const existing = addressFor(currency, network);
+              return (
+                <div className="d-flex gap-2 align-items-center" key={`${depositProvider}-${currency}-${network}`}>
+                  <span className="badge text-bg-secondary" style={{ minWidth: 100 }}>
+                    {currency} · {network}
+                  </span>
+                  <input
+                    type="text"
+                    className="form-control form-control-sm"
+                    placeholder="Receiving address"
+                    defaultValue={existing?.address ?? ''}
+                    onBlur={(e) => e.target.value.trim() !== (existing?.address ?? '') && saveDepositAddress(currency, network, e.target.value)}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       <Modal

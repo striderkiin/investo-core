@@ -91,6 +91,8 @@ export interface Deposit {
   providerReference: string | null;
   status: DepositStatus;
   transactionId: string | null;
+  /** The admin-configured receiving address stamped on at creation, or null if that currency/network pair isn't configured yet. */
+  destinationAddress: string | null;
   createdAt: string;
   updatedAt: string;
 }

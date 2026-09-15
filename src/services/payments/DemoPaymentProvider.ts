@@ -43,9 +43,15 @@ export function createDemoPaymentProvider(client: SupabaseClient = getSupabaseCl
         void client.rpc('demo_complete_deposit', { p_deposit_id: deposit.id });
       }, DEMO_CONFIRMATION_DELAY_MS);
 
+      // destinationAddress is the admin-configured receiving address (Integrations
+      // Center -> Deposit Addresses), stamped on server-side by create_demo_deposit.
+      // Falls back to a fake per-transaction address when the admin hasn't
+      // configured that currency/network pair yet, so the flow keeps working.
+      const address = deposit.destinationAddress ?? `demo-${network.toLowerCase()}-address-${deposit.id.slice(0, 8)}`;
+
       return {
         deposit,
-        address: `demo-${network.toLowerCase()}-address-${deposit.id.slice(0, 8)}`,
+        address,
         qrCodeData: `demo:${currency}:${network}:${amount}:${deposit.id}`,
       };
     },

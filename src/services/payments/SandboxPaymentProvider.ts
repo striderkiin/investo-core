@@ -36,9 +36,15 @@ export function createSandboxPaymentProvider(client: SupabaseClient = getSupabas
 
       const deposit = mapDepositRow(data as DepositRow);
 
+      // destinationAddress is the admin-configured receiving address (Integrations
+      // Center -> Deposit Addresses), stamped on server-side by create_sandbox_deposit.
+      // Falls back to a fake per-transaction address when the admin hasn't
+      // configured that currency/network pair yet, so the flow keeps working.
+      const address = deposit.destinationAddress ?? `sandbox-${network.toLowerCase()}-address-${deposit.id.slice(0, 8)}`;
+
       return {
         deposit,
-        address: `sandbox-${network.toLowerCase()}-address-${deposit.id.slice(0, 8)}`,
+        address,
         qrCodeData: `sandbox:${currency}:${network}:${amount}:${deposit.id}`,
       };
     },
