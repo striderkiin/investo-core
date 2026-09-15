@@ -40,6 +40,7 @@ const adminProfile: Profile = {
   email: 'admin@investo.test',
   fullName: 'Test Admin',
   avatarUrl: null,
+  avatarKey: null,
   role: 'super_admin',
   accountStatus: 'active',
   totalBalance: 0,

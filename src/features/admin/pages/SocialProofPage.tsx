@@ -3,6 +3,7 @@ import { createSocialProofService } from '../../../services/api/socialProofServi
 import type { SocialProofDemoActivity, SocialProofDemoEventType, SocialProofEvent, SocialProofMetric, SocialProofSettings, SocialProofTemplate } from '../../../types/database';
 import { LoadingScreen } from '../../../components/common/LoadingScreen';
 import { ErrorState } from '../../../components/common/ErrorState';
+import { Avatar } from '../../../components/common/Avatar';
 import { useToast } from '../../../hooks/useToast';
 import { usePermission } from '../../../hooks/usePermission';
 
@@ -151,6 +152,8 @@ export function SocialProofPage() {
       broadcastScope: 'production',
       createdAt: new Date().toISOString(),
       expiresAt: new Date().toISOString(),
+      avatarUrl: null,
+      avatarKey: null,
     };
   }
 
@@ -449,10 +452,15 @@ export function SocialProofPage() {
                 <span className="ic-social-proof-dot" aria-hidden="true" />
                 <span className="small fw-semibold">Recent Activity</span>
               </div>
-              <p className="mb-1 small">{previewEvent.message}</p>
-              <p className="mb-0 text-secondary" style={{ fontSize: '0.75rem' }}>
-                Just now
-              </p>
+              <div className="d-flex align-items-start gap-2">
+                <Avatar photoUrl={previewEvent.avatarUrl} avatarKey={previewEvent.avatarKey} displayName={previewEvent.displayName} size={32} />
+                <div className="flex-grow-1">
+                  <p className="mb-1 small">{previewEvent.message}</p>
+                  <p className="mb-0 text-secondary" style={{ fontSize: '0.75rem' }}>
+                    Just now
+                  </p>
+                </div>
+              </div>
             </div>
           )}
 

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createSocialProofService } from '../../services/api/socialProofService';
 import { isSupabaseConfigured } from '../../services/supabase/client';
 import type { SocialProofDemoActivity, SocialProofSettings } from '../../types/database';
+import { Avatar } from '../../components/common/Avatar';
 
 const DISPLAY_MS = 6000;
 const GAP_MS = 8000;
@@ -71,7 +72,10 @@ export function DemoActivityTicker() {
         <span className="ic-social-proof-dot" aria-hidden="true" />
         <span className="small fw-semibold">Recent Activity</span>
       </div>
-      <p className="mb-0 small">{current.message}</p>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.55rem' }}>
+        <Avatar size={32} />
+        <p className="mb-0 small">{current.message}</p>
+      </div>
     </div>
   );
 }

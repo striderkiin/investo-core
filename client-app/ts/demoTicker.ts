@@ -1,5 +1,5 @@
 import { createSocialProofService } from '../../src/services/api/socialProofService';
-import { ensurePopupElement, showPopupCard, hidePopupCard, getRotationState, setRotationState } from './socialProofUI';
+import { ensurePopupElement, showPopupCard, hidePopupCard, getRotationState, setRotationState, createPausableTimer } from './socialProofUI';
 import type { PopupPosition } from './socialProofUI';
 import type { SocialProofDemoActivity } from '../../src/types/database';
 
@@ -46,13 +46,13 @@ function runTicker(position: PopupPosition, activities: SocialProofDemoActivity[
 
     showPopupCard(el, { message: current.message });
 
-    setTimeout(() => {
+    createPausableTimer(el, DISPLAY_MS, () => {
       hidePopupCard(el);
       setTimeout(() => {
         index = nextIndex;
         cycle();
       }, GAP_MS);
-    }, DISPLAY_MS);
+    });
   }
 
   const now = Date.now();

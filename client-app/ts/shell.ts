@@ -4,6 +4,7 @@ import { createNotificationService } from '../../src/services/api/notificationSe
 import { createSupportService } from '../../src/services/api/supportService';
 import type { Profile, SupportTicketStatus } from '../../src/types/database';
 import { formatRelativeTime } from './format';
+import { renderAvatar } from './avatarRender';
 import { mountDemoTicker } from './demoTicker';
 import { mountSocialProofPopup } from './socialProofPopup';
 import { applyMaintenanceGuard } from './maintenanceGuard';
@@ -68,8 +69,7 @@ function populateHeader(profile: Profile): void {
   const roleEl = document.getElementById('userRole');
   if (roleEl) roleEl.textContent = profile.accountStatus === 'active' ? 'Client' : profile.accountStatus.replace('_', ' ');
 
-  const avatarEl = document.getElementById('userAvatar') as HTMLImageElement | null;
-  if (avatarEl && profile.avatarUrl) avatarEl.src = profile.avatarUrl;
+  renderAvatar('userAvatar', { photoUrl: profile.avatarUrl, avatarKey: profile.avatarKey, displayName: profile.fullName });
 }
 
 /**

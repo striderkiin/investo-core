@@ -6,6 +6,8 @@ import type { Profile, InvestmentPlan } from '../../src/types/database';
 import { formatCurrency } from './format';
 import { bucketByRecency, renderActivityList } from './walletActivity';
 import { mountMarketWidget } from './marketWidget';
+import { renderAvatar, buildAvatarNode } from './avatarRender';
+import { resolveAvatar, AVATAR_LIBRARY } from '../../src/shared/avatar';
 
 const userService = createUserService();
 const investmentService = createInvestmentService();
@@ -14,14 +16,50 @@ const transactionService = createTransactionService();
 const CARD_BACKGROUNDS = ['bg-YellowGreen bg-5', 'bg-blue-1 bg-6', 'bg-pink-1 bg-7', 'bg-Black bg-8'];
 
 function renderProfile(profile: Profile): void {
-  const avatarEl = document.getElementById('profileAvatar') as HTMLImageElement | null;
-  if (avatarEl && profile.avatarUrl) avatarEl.src = profile.avatarUrl;
+  renderAvatar('profileAvatar', { photoUrl: profile.avatarUrl, avatarKey: profile.avatarKey, displayName: profile.fullName });
 
   const nameEl = document.getElementById('profileName');
   if (nameEl) nameEl.textContent = profile.fullName || profile.email;
 
   const joinEl = document.getElementById('profileJoinDate');
   if (joinEl) joinEl.textContent = new Date(profile.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+/**
+ * "None" (avatarKey null, falls to initials/brand-mark) plus every library
+ * entry, each drawn as a real preview via resolveAvatar/buildAvatarNode so
+ * a tile always looks exactly like the avatar it produces.
+ */
+function renderAvatarPickerGrid(profile: Profile, selectedKey: string | null, onSelect: (key: string | null) => void): void {
+  const grid = document.getElementById('avatarPickerGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  const options: Array<{ key: string | null; label: string }> = [
+    { key: null, label: 'None (use initials)' },
+    ...AVATAR_LIBRARY.map((entry) => ({ key: entry.key, label: entry.label })),
+  ];
+
+  for (const option of options) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.title = option.label;
+    button.setAttribute('aria-pressed', String(option.key === selectedKey));
+    Object.assign(button.style, {
+      width: '40px',
+      height: '40px',
+      padding: '0',
+      border: option.key === selectedKey ? '2px solid var(--ic-primary)' : '2px solid transparent',
+      borderRadius: '50%',
+      background: 'none',
+      cursor: 'pointer',
+      flexShrink: '0',
+    });
+    const resolution = resolveAvatar({ avatarKey: option.key, displayName: profile.fullName });
+    button.appendChild(buildAvatarNode(resolution));
+    button.addEventListener('click', () => onSelect(option.key));
+    grid.appendChild(button);
+  }
 }
 
 function wireProfileEdit(profile: Profile): void {
@@ -33,6 +71,19 @@ function wireProfileEdit(profile: Profile): void {
   const submitButton = document.getElementById('profileEditSubmit') as HTMLButtonElement | null;
   const errorEl = document.getElementById('profileEditError');
   if (!toggle || !form || !cancel || !nameInput || !avatarInput || !submitButton || !errorEl) return;
+
+  // Undefined = the user hasn't touched the picker this edit session, so
+  // Save leaves avatarKey exactly as it was; null/a library key means they
+  // explicitly chose one, which always also clears the uploaded photo
+  // (unless they *also* pick a new file this same session — see below)
+  // since otherwise the pick would have no visible effect, photoUrl always
+  // wins the fallback chain over avatarKey.
+  let pendingAvatarKey: string | null | undefined;
+
+  function onAvatarPick(key: string | null): void {
+    pendingAvatarKey = key;
+    renderAvatarPickerGrid(profile, key, onAvatarPick);
+  }
 
   function showError(message: string): void {
     if (errorEl) {
@@ -48,6 +99,8 @@ function wireProfileEdit(profile: Profile): void {
   toggle.addEventListener('click', () => {
     nameInput.value = profile.fullName;
     avatarInput.value = '';
+    pendingAvatarKey = undefined;
+    renderAvatarPickerGrid(profile, profile.avatarKey, onAvatarPick);
     hideError();
     form.style.display = 'block';
     toggle.style.display = 'none';
@@ -75,19 +128,25 @@ function wireProfileEdit(profile: Profile): void {
     const uploadStep = avatarFile ? userService.uploadAvatar(profile.id, avatarFile) : Promise.resolve(undefined);
 
     void uploadStep
-      .then((avatarUrl) => userService.updateProfile(profile.id, { fullName, ...(avatarUrl ? { avatarUrl } : {}) }))
+      .then((uploadedUrl) => {
+        const updates: Partial<Pick<Profile, 'fullName' | 'avatarUrl' | 'avatarKey'>> = { fullName };
+        if (uploadedUrl) updates.avatarUrl = uploadedUrl;
+        if (pendingAvatarKey !== undefined) {
+          updates.avatarKey = pendingAvatarKey;
+          if (!uploadedUrl) updates.avatarUrl = null;
+        }
+        return userService.updateProfile(profile.id, updates);
+      })
       .then((updated) => {
         profile.fullName = updated.fullName;
         profile.avatarUrl = updated.avatarUrl;
+        profile.avatarKey = updated.avatarKey;
 
         const nameEl = document.getElementById('profileName');
         if (nameEl) nameEl.textContent = updated.fullName;
 
-        const avatarEl = document.getElementById('profileAvatar') as HTMLImageElement | null;
-        if (avatarEl && updated.avatarUrl) avatarEl.src = updated.avatarUrl;
-
-        const headerAvatarEl = document.getElementById('userAvatar') as HTMLImageElement | null;
-        if (headerAvatarEl && updated.avatarUrl) headerAvatarEl.src = updated.avatarUrl;
+        renderAvatar('profileAvatar', { photoUrl: updated.avatarUrl, avatarKey: updated.avatarKey, displayName: updated.fullName });
+        renderAvatar('userAvatar', { photoUrl: updated.avatarUrl, avatarKey: updated.avatarKey, displayName: updated.fullName });
 
         form.style.display = 'none';
         toggle.style.display = '';

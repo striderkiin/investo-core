@@ -71,6 +71,11 @@ export function useSocialProofFeed() {
   const seenIdsRef = useRef<Set<string>>(new Set());
   const recentTimestampsRef = useRef<number[]>([]);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Only meaningful while timerRef holds the display-duration hide (not the
+  // maxPerMinute retry or the between-cards gap) — pause() reads these to
+  // know how much display time was left when the pointer entered.
+  const hideDeadlineRef = useRef(0);
+  const hideRemainingMsRef = useRef(0);
   const serviceRef = useRef(isSupabaseConfigured() ? createSocialProofService() : null);
 
   const advance = useCallback(() => {
@@ -105,12 +110,34 @@ export function useSocialProofFeed() {
     setCurrent(next);
     void service.recordInteraction(next.id, 'shown').catch(() => undefined);
 
+    const displayMs = settingsNow.displayDurationSeconds * 1000;
+    hideDeadlineRef.current = Date.now() + displayMs;
     timerRef.current = setTimeout(() => {
       setCurrent(null);
       const delay = settingsNow.minDelaySeconds + Math.random() * (settingsNow.maxDelaySeconds - settingsNow.minDelaySeconds);
       timerRef.current = setTimeout(advance, delay * 1000);
-    }, settingsNow.displayDurationSeconds * 1000);
+    }, displayMs);
   }, [settings]);
+
+  /** Pauses the auto-dismiss countdown for the card currently showing — a no-op once it's already hidden or already paused. */
+  const pause = useCallback(() => {
+    if (!current || !timerRef.current) return;
+    clearTimeout(timerRef.current);
+    timerRef.current = null;
+    hideRemainingMsRef.current = Math.max(0, hideDeadlineRef.current - Date.now());
+  }, [current]);
+
+  /** Resumes with whatever display time was left when pause() was called. */
+  const resume = useCallback(() => {
+    const settingsNow = settings;
+    if (!current || !settingsNow || timerRef.current) return;
+    hideDeadlineRef.current = Date.now() + hideRemainingMsRef.current;
+    timerRef.current = setTimeout(() => {
+      setCurrent(null);
+      const delay = settingsNow.minDelaySeconds + Math.random() * (settingsNow.maxDelaySeconds - settingsNow.minDelaySeconds);
+      timerRef.current = setTimeout(advance, delay * 1000);
+    }, hideRemainingMsRef.current);
+  }, [current, settings, advance]);
 
   const enqueue = useCallback(
     (event: SocialProofEvent) => {
@@ -187,5 +214,5 @@ export function useSocialProofFeed() {
     if (current) void serviceRef.current?.recordInteraction(current.id, 'clicked').catch(() => undefined);
   }, [current]);
 
-  return { settings, current, dismiss, click };
+  return { settings, current, dismiss, click, pause, resume };
 }

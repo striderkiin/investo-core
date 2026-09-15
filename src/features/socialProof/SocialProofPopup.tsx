@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSocialProofFeed } from './useSocialProofFeed';
+import { Avatar } from '../../components/common/Avatar';
 
 const CLICK_DESTINATION: Record<string, string> = {
   new_account: '/dashboard',
@@ -26,7 +27,7 @@ function timeAgo(iso: string): string {
  * "test" label this component could even render (spec items 21/22).
  */
 export function SocialProofPopup() {
-  const { settings, current, dismiss, click } = useSocialProofFeed();
+  const { settings, current, dismiss, click, pause, resume } = useSocialProofFeed();
   const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
 
@@ -50,6 +51,8 @@ export function SocialProofPopup() {
       className={`ic-social-proof-popup ${side} ${visible ? 'ic-social-proof-enter' : 'ic-social-proof-exit'}`}
       role="status"
       aria-live="polite"
+      onMouseEnter={pause}
+      onMouseLeave={resume}
     >
       <div className="d-flex justify-content-between align-items-start gap-2">
         <div className="d-flex align-items-center gap-2 mb-1">
@@ -68,11 +71,20 @@ export function SocialProofPopup() {
           />
         )}
       </div>
-      <div role="button" tabIndex={0} onClick={handleClick} onKeyDown={(e) => e.key === 'Enter' && handleClick()} style={{ cursor: 'pointer' }}>
-        <p className="mb-1 small">{current.message}</p>
-        <p className="mb-0 text-secondary" style={{ fontSize: '0.75rem' }}>
-          {timeAgo(current.createdAt)}
-        </p>
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={handleClick}
+        onKeyDown={(e) => e.key === 'Enter' && handleClick()}
+        style={{ cursor: 'pointer', display: 'flex', alignItems: 'flex-start', gap: '0.55rem' }}
+      >
+        <Avatar photoUrl={current.avatarUrl} avatarKey={current.avatarKey} displayName={current.displayName} size={32} />
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <p className="mb-1 small">{current.message}</p>
+          <p className="mb-0 text-secondary" style={{ fontSize: '0.75rem' }}>
+            {timeAgo(current.createdAt)}
+          </p>
+        </div>
       </div>
     </div>
   );

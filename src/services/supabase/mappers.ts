@@ -58,6 +58,7 @@ export interface ProfileRow {
   email: string;
   full_name: string;
   avatar_url: string | null;
+  avatar_key: string | null;
   role: RoleName;
   account_status: AccountStatus;
   total_balance: number;
@@ -79,6 +80,7 @@ export function mapProfileRow(row: ProfileRow): Profile {
     email: row.email,
     fullName: row.full_name,
     avatarUrl: row.avatar_url,
+    avatarKey: row.avatar_key,
     role: row.role,
     accountStatus: row.account_status,
     totalBalance: Number(row.total_balance),
@@ -642,6 +644,8 @@ export interface SocialProofEventRow {
   broadcast_scope: SocialProofBroadcastScope;
   created_at: string;
   expires_at: string;
+  avatar_url: string | null;
+  avatar_key: string | null;
 }
 
 export function mapSocialProofEventRow(row: SocialProofEventRow): SocialProofEvent {
@@ -660,6 +664,8 @@ export function mapSocialProofEventRow(row: SocialProofEventRow): SocialProofEve
     broadcastScope: row.broadcast_scope,
     createdAt: row.created_at,
     expiresAt: row.expires_at,
+    avatarUrl: row.avatar_url,
+    avatarKey: row.avatar_key,
   };
 }
 

@@ -9,6 +9,8 @@ export interface Profile {
   email: string;
   fullName: string;
   avatarUrl: string | null;
+  /** Key into AVATAR_LIBRARY (src/shared/avatar.ts) for the illustrated default avatar this user picked on the Account page — used only when avatarUrl is null. */
+  avatarKey: string | null;
   role: RoleName;
   accountStatus: AccountStatus;
   totalBalance: number;
@@ -354,6 +356,10 @@ export interface SocialProofEvent {
   broadcastScope: SocialProofBroadcastScope;
   createdAt: string;
   expiresAt: string;
+  /** Null unless the acting user opted in with a non-anonymous display mode — mirrors profiles.avatar_url at the time of the event, not a live reference. */
+  avatarUrl: string | null;
+  /** Same privacy gate as avatarUrl — mirrors profiles.avatar_key. */
+  avatarKey: string | null;
 }
 
 export interface SocialProofMetric {

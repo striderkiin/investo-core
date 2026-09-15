@@ -4,7 +4,7 @@ import { mapSocialProofEventRow, mapSocialProofSettingsRow } from '../../src/ser
 import type { SocialProofEventRow, SocialProofSettingsRow } from '../../src/services/supabase/mappers';
 import type { SocialProofEvent, SocialProofSettings } from '../../src/types/database';
 import { formatRelativeTime } from './format';
-import { ensurePopupElement, showPopupCard, hidePopupCard } from './socialProofUI';
+import { ensurePopupElement, showPopupCard, hidePopupCard, createPausableTimer } from './socialProofUI';
 import type { PopupPosition } from './socialProofUI';
 
 const DISMISS_KEY = 'ic_social_proof_dismissed_until';
@@ -109,7 +109,13 @@ function runFeed(initialSettings: SocialProofSettings): void {
   const queue: SocialProofEvent[] = [];
   const seenIds = new Set<string>();
   const recentTimestamps: number[] = [];
-  let timer: ReturnType<typeof setTimeout> | null = null;
+  // Two different kinds of pending work share this slot at different times:
+  // a plain setTimeout while nothing is showing (retry-after-rate-limit, or
+  // the gap between cards), and a hover-pausable timer while a card is
+  // actually up (the display duration itself). Only the latter needs to be
+  // pause-aware, so it's tracked separately.
+  let gapTimer: ReturnType<typeof setTimeout> | null = null;
+  let displayTimer: { cancel(): void } | null = null;
   let current: SocialProofEvent | null = null;
 
   function show(event: SocialProofEvent): void {
@@ -117,9 +123,11 @@ function runFeed(initialSettings: SocialProofSettings): void {
     showPopupCard(el, {
       message: event.message,
       timeText: formatRelativeTime(event.createdAt),
+      avatar: { photoUrl: event.avatarUrl, avatarKey: event.avatarKey, displayName: event.displayName },
       closable: settings.showCloseButton,
       onClose: () => {
-        if (timer) clearTimeout(timer);
+        displayTimer?.cancel();
+        displayTimer = null;
         void socialProofService.recordInteraction(event.id, 'dismissed').catch(() => undefined);
         dismissFor('session');
         hide();
@@ -143,7 +151,7 @@ function runFeed(initialSettings: SocialProofSettings): void {
     const now = Date.now();
     while (recentTimestamps.length && now - recentTimestamps[0] >= 60_000) recentTimestamps.shift();
     if (recentTimestamps.length >= settings.maxPerMinute) {
-      timer = setTimeout(advance, 5000);
+      gapTimer = setTimeout(advance, 5000);
       return;
     }
     if (getSessionCount() >= settings.maxPerSession) return;
@@ -157,11 +165,12 @@ function runFeed(initialSettings: SocialProofSettings): void {
     show(next);
     void socialProofService.recordInteraction(next.id, 'shown').catch(() => undefined);
 
-    timer = setTimeout(() => {
+    displayTimer = createPausableTimer(ensurePopupElement(settings.popupPosition as PopupPosition), settings.displayDurationSeconds * 1000, () => {
+      displayTimer = null;
       hide();
       const delay = settings.minDelaySeconds + Math.random() * (settings.maxDelaySeconds - settings.minDelaySeconds);
-      timer = setTimeout(advance, delay * 1000);
-    }, settings.displayDurationSeconds * 1000);
+      gapTimer = setTimeout(advance, delay * 1000);
+    });
   }
 
   function enqueue(event: SocialProofEvent): void {
@@ -169,7 +178,7 @@ function runFeed(initialSettings: SocialProofSettings): void {
     seenIds.add(event.id);
     queue.push(event);
     if (queue.length > settings.maxQueue) queue.splice(0, queue.length - settings.maxQueue);
-    if (!current && !timer) advance();
+    if (!current && !gapTimer && !displayTimer) advance();
   }
 
   backfillRecentEvents(enqueue);

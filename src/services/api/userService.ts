@@ -39,11 +39,12 @@ export function createUserService(client: SupabaseClient = getSupabaseClient()) 
 
     async updateProfile(
       userId: string,
-      updates: Partial<Pick<Profile, 'fullName' | 'avatarUrl' | 'socialProofOptIn' | 'socialProofNickname' | 'socialProofDisplayMode'>>
+      updates: Partial<Pick<Profile, 'fullName' | 'avatarUrl' | 'avatarKey' | 'socialProofOptIn' | 'socialProofNickname' | 'socialProofDisplayMode'>>
     ): Promise<Profile> {
       const payload: Record<string, unknown> = {};
       if (updates.fullName !== undefined) payload.full_name = updates.fullName;
       if (updates.avatarUrl !== undefined) payload.avatar_url = updates.avatarUrl;
+      if (updates.avatarKey !== undefined) payload.avatar_key = updates.avatarKey;
       if (updates.socialProofOptIn !== undefined) payload.social_proof_opt_in = updates.socialProofOptIn;
       if (updates.socialProofNickname !== undefined) payload.social_proof_nickname = updates.socialProofNickname;
       if (updates.socialProofDisplayMode !== undefined) payload.social_proof_display_mode = updates.socialProofDisplayMode;

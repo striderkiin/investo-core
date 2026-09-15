@@ -1,5 +1,10 @@
 :root {
   --ic-primary: #a8442e;
+  /* .tf-button's actual radius (public/client-app/css/styles.css) — the
+     dashboard's real button shape, reused here instead of an invented
+     value so the "Recent Activity" popup's corners read as part of the
+     same design system rather than a bolted-on generic SaaS widget. */
+  --ic-radius: 4px;
   --ic-secondary: #a8a6a1;
   --ic-success: #198754;
   --ic-warning: #ffc107;
@@ -97,7 +102,7 @@ h1, h2, h3, h4, h5, h6 {
   background-color: var(--ic-surface);
   color: var(--ic-text);
   border: 1px solid var(--bs-border-color, rgba(0, 0, 0, 0.08));
-  border-radius: 0.625rem;
+  border-radius: var(--ic-radius);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   padding: 0.65rem 0.8rem;
   font-family: var(--ic-font-primary);
