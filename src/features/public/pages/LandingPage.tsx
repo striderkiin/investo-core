@@ -238,7 +238,7 @@ export function LandingPage() {
                   Create free account
                 </a>
                 <Link
-                  to="/#pricing"
+                  to="/#plans"
                   className="video-popup tw:w-10 tw:md:w-12 tw:h-10 tw:md:h-12 tw:rounded-full tw:bg-title_black tw:flex tw:items-center tw:justify-center tw:text-background"
                   aria-label="View plans"
                 >
@@ -362,7 +362,7 @@ export function LandingPage() {
             </ScrollReveal>
             <ScrollReveal className="tw:bg-[#5c2015] tw:p-5 tw:sm:p-8 tw:rounded-2xl tw:flex tw:flex-col tw:justify-between tw:gap-5" index={2}>
               <div className="tw:flex tw:items-start tw:gap-1">
-                <h2 className="counter tw:text-primary tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">24/7</h2>
+                <h2 className="counter tw:text-white tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">24/7</h2>
               </div>
               <div>
                 <h3 className="tw:text-white tw:text-lg tw:md:text-xl tw:font-semibold">Platform Availability</h3>
@@ -376,8 +376,8 @@ export function LandingPage() {
 
             <ScrollReveal className="tw:bg-[#1a1a1a] tw:p-5 tw:sm:p-8 tw:rounded-2xl tw:flex tw:flex-col tw:justify-between tw:gap-5" index={4}>
               <div className="tw:flex tw:items-start tw:gap-1">
-                <h2 className="counter tw:text-primary tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">100</h2>
-                <h2 className="tw:text-primary tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">%</h2>
+                <h2 className="counter tw:text-white tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">100</h2>
+                <h2 className="tw:text-white tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">%</h2>
               </div>
               <div>
                 <h3 className="tw:text-white tw:text-lg tw:md:text-xl tw:font-semibold">Server-Validated Transactions</h3>
@@ -389,7 +389,7 @@ export function LandingPage() {
       </section>
 
       {/* ===== 3.4 Pricing — verbatim from services.php lines 55-106 (toggle at 68-93 excluded) + pricing-cards.php ===== */}
-      <section id="pricing" className="section-spacing-md-lg">
+      <section id="plans" className="section-spacing-md-lg">
         <div className="tw:container">
           <ScrollReveal className="tw:flex tw:items-start tw:gap-4 tw:mb-12 tw:sm:mb-14 tw:md:mb-16 tw:lg:mb-20 tw:flex-col tw:max-w-125 tw:md:max-w-170">
             <div className="tw:md:max-w-170 tw:w-full">

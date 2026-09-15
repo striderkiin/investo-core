@@ -11,7 +11,7 @@ const socialLinksService = createSocialLinksService();
 const NAV_LINKS = [
   { to: '/', label: 'Home', end: true },
   { to: '/#about', label: 'About' },
-  { to: '/#pricing', label: 'Plans' },
+  { to: '/#plans', label: 'Plans' },
   { to: '/#faq', label: 'FAQ' },
   { to: '/#contact', label: 'Contact' },
 ];
@@ -168,7 +168,7 @@ export function PublicLayout() {
                     </Link>
                   </li>
                   <li>
-                    <Link className="tw:text-paragraph_white tw:leading-none tw:duration-300 hover:tw:text-primary tw:block" to="/#pricing">
+                    <Link className="tw:text-paragraph_white tw:leading-none tw:duration-300 hover:tw:text-primary tw:block" to="/#plans">
                       Plans
                     </Link>
                   </li>

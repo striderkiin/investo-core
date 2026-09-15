@@ -13,30 +13,40 @@
    title_black/title_white/paragraph_black/paragraph_white utilities on
    any h1-h5/p element (tag+class beats a bare class, and !important always
    beats non-important). Re-assert the intended color explicitly, on every
-   element carrying one of those classes regardless of tag. */
-.sv-page [class*='tw:text-title_black'] { color: var(--tw-color-title_black) !important; }
-.sv-page [class*='tw:text-title_white'] { color: var(--tw-color-title_white) !important; }
-.sv-page [class*='tw:text-paragraph_black'] { color: var(--tw-color-paragraph_black) !important; }
-.sv-page [class*='tw:text-paragraph_white'] { color: var(--tw-color-paragraph_white) !important; }
-.sv-page [class*='tw:text-white']:not([class*='tw:text-white/']) { color: #fff !important; }
+   element carrying one of those classes regardless of tag.
+
+   [class~='...'] (exact whitespace-separated token match), not
+   [class*='...'] (substring match): a `[class*]` match on 'tw:text-white'
+   also matched inside a variant token like 'hover:tw:text-white' (Tailwind
+   glues the variant prefix onto the same class token, no space), wrongly
+   forcing the hover color onto the element's resting state too — that's
+   what made the non-highlighted pricing-card buttons render invisible
+   white-on-white in dark mode. `~=` only matches a token that IS exactly
+   'tw:text-white', so 'hover:tw:text-white' — and 'tw:text-white/80' — are
+   correctly left alone. */
+.sv-page [class~='tw:text-title_black'] { color: var(--tw-color-title_black) !important; }
+.sv-page [class~='tw:text-title_white'] { color: var(--tw-color-title_white) !important; }
+.sv-page [class~='tw:text-paragraph_black'] { color: var(--tw-color-paragraph_black) !important; }
+.sv-page [class~='tw:text-paragraph_white'] { color: var(--tw-color-paragraph_white) !important; }
+.sv-page [class~='tw:text-white'] { color: #fff !important; }
 /* public-theme.css also sets `.ic-public a { color: inherit }` — same clash,
    but on any <a>/<Link> (tag+class beats a bare class too). Hits the hero
    play-button link and the pricing cards' non-highlighted CTA link, both of
    which use text-background so their text stays legible against a fill
    (bg-title_black) that itself flips with the canvas. */
-.sv-page [class*='tw:text-background'] { color: var(--tw-color-background) !important; }
+.sv-page [class~='tw:text-background'] { color: var(--tw-color-background) !important; }
 /* The hero/feature eyebrows are <p> tags carrying text-secondary/text-primary
    (matching the source exactly) — same !important clash as above. */
-.sv-page p[class*='tw:text-secondary'] { color: var(--tw-color-secondary) !important; }
-.sv-page p[class*='tw:text-primary'] { color: var(--tw-color-primary) !important; }
+.sv-page p[class~='tw:text-secondary'] { color: var(--tw-color-secondary) !important; }
+.sv-page p[class~='tw:text-primary'] { color: var(--tw-color-primary) !important; }
 
 /* Footer recolor exception: it stays black (see PublicLayout.tsx) while
    paragraph_white flips dark everywhere else for the now-light secondary
    blocks. Pin the footer's own paragraph_white/border-paragraph_white back
    to light-on-black so its body text and dividers stay legible. */
-footer.sv-page [class*='tw:text-paragraph_white'] { color: rgba(255, 255, 255, 0.7) !important; }
-footer.sv-page [class*='tw:border-paragraph_white'] { border-color: rgba(255, 255, 255, 0.3) !important; }
-footer.sv-page input[class*='placeholder:tw:text-paragraph_white']::placeholder { color: rgba(255, 255, 255, 0.5) !important; }
+footer.sv-page [class~='tw:text-paragraph_white'] { color: rgba(255, 255, 255, 0.7) !important; }
+footer.sv-page [class~='tw:border-paragraph_white'] { border-color: rgba(255, 255, 255, 0.3) !important; }
+footer.sv-page input[class~='placeholder:tw:text-paragraph_white']::placeholder { color: rgba(255, 255, 255, 0.5) !important; }
 
 /* Font swap: Playfair Display for headings (a formal serif that doesn't
    shout the way the earlier bold display font did, at any size),
