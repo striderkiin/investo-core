@@ -44,7 +44,11 @@ function runTicker(position: PopupPosition, activities: SocialProofDemoActivity[
     // here, no earlier than this" marker for the next page.
     setRotationState(STATE_KEY, { index: nextIndex, nextEligibleAt: Date.now() + DISPLAY_MS + GAP_MS });
 
-    showPopupCard(el, { message: current.message });
+    showPopupCard(el, {
+      message: current.message,
+      nameLocation: current.simulatedName ? `${current.simulatedName}${current.simulatedLocation ? ` from ${current.simulatedLocation}` : ''}` : undefined,
+      avatar: { displayName: current.simulatedName },
+    });
 
     createPausableTimer(el, DISPLAY_MS, () => {
       hidePopupCard(el);

@@ -60,7 +60,9 @@ export function ensurePopupElement(position: PopupPosition): HTMLDivElement {
 export interface PopupCardOptions {
   message: string;
   timeText?: string;
-  /** Omitted for canned demo content (no real person behind it) — falls to the brand-mark tier. */
+  /** "Name from Location", rendered bold above the message — which then drops to regular weight, since the name line carries the emphasis instead. Omitted for 'market' rows (no person behind a price tick) and the real-feed popup (no location data), which keep the single bold-message layout. */
+  nameLocation?: string;
+  /** Omitted for canned demo content with no simulated name — falls to the brand-mark tier. */
   avatar?: AvatarInput;
   closable?: boolean;
   onClose?: () => void;
@@ -74,11 +76,13 @@ function escapeHtml(value: string): string {
 }
 
 export function showPopupCard(el: HTMLDivElement, options: PopupCardOptions): void {
+  const messageWeight = options.nameLocation ? '400' : '700';
   el.innerHTML = `
     <div style="display:flex;align-items:flex-start;gap:0.7rem;">
       <span data-popup-avatar style="width:2.75rem;height:2.75rem;flex-shrink:0;"></span>
       <div style="min-width:0;flex:1;">
-        <p style="margin:0;font-size:0.8rem;font-weight:700;line-height:1.35;color:#1a1710;">${escapeHtml(options.message)}</p>
+        ${options.nameLocation ? `<p style="margin:0;font-size:0.8rem;font-weight:700;line-height:1.3;color:#1a1710;">${escapeHtml(options.nameLocation)}</p>` : ''}
+        <p style="margin:${options.nameLocation ? '0.2rem' : '0'} 0 0;font-size:0.8rem;font-weight:${messageWeight};line-height:1.3;color:#1a1710;">${escapeHtml(options.message)}</p>
         ${options.timeText ? `<p style="margin:0.2rem 0 0;font-size:0.7rem;color:rgba(26,23,16,0.45);">${escapeHtml(options.timeText)}</p>` : ''}
       </div>
       ${options.closable ? '<button type="button" data-popup-close aria-label="Close" style="background:none;border:none;color:rgba(26,23,16,0.4);opacity:0.8;cursor:pointer;font-size:0.9rem;line-height:1;padding:0;flex-shrink:0;align-self:flex-start;">&times;</button>' : ''}

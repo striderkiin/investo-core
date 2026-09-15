@@ -42,6 +42,8 @@ export function SocialProofPage() {
   const [metrics, setMetrics] = useState<SocialProofMetric[]>([]);
   const [demoActivities, setDemoActivities] = useState<SocialProofDemoActivity[]>([]);
   const [newDemoMessage, setNewDemoMessage] = useState('');
+  const [newDemoName, setNewDemoName] = useState('');
+  const [newDemoLocation, setNewDemoLocation] = useState('');
   const [newDemoType, setNewDemoType] = useState<SocialProofDemoEventType>('deposit');
   const [previewEvent, setPreviewEvent] = useState<SocialProofEvent | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -101,6 +103,26 @@ export function SocialProofPage() {
     }
   }
 
+  async function saveDemoName(id: string, simulatedName: string) {
+    try {
+      const updated = await socialProofService.updateDemoActivity(id, { simulatedName: simulatedName || null });
+      setDemoActivities((prev) => prev.map((a) => (a.id === id ? updated : a)));
+      showSuccess('Activity updated.');
+    } catch (err) {
+      showError(err instanceof Error ? err.message : 'Failed to save activity');
+    }
+  }
+
+  async function saveDemoLocation(id: string, simulatedLocation: string) {
+    try {
+      const updated = await socialProofService.updateDemoActivity(id, { simulatedLocation: simulatedLocation || null });
+      setDemoActivities((prev) => prev.map((a) => (a.id === id ? updated : a)));
+      showSuccess('Activity updated.');
+    } catch (err) {
+      showError(err instanceof Error ? err.message : 'Failed to save activity');
+    }
+  }
+
   async function toggleDemoActive(id: string, isActive: boolean) {
     try {
       const updated = await socialProofService.updateDemoActivity(id, { isActive });
@@ -124,9 +146,11 @@ export function SocialProofPage() {
     const message = newDemoMessage.trim();
     if (!message) return;
     try {
-      const created = await socialProofService.createDemoActivity(newDemoType, message);
+      const created = await socialProofService.createDemoActivity(newDemoType, message, newDemoName.trim() || null, newDemoLocation.trim() || null);
       setDemoActivities((prev) => [...prev, created]);
       setNewDemoMessage('');
+      setNewDemoName('');
+      setNewDemoLocation('');
       showSuccess('Activity added.');
     } catch (err) {
       showError(err instanceof Error ? err.message : 'Failed to add activity');
@@ -205,12 +229,34 @@ export function SocialProofPage() {
             </label>
           </div>
 
-          <div className="d-flex flex-column gap-2 mb-3" style={{ maxHeight: 320, overflowY: 'auto' }}>
+          <p className="small text-secondary mb-2">
+            Name and location render bold above the activity line, "Name from Location" — matching the popup's card layout. Leave
+            both blank for a 'Market' row (a price tick has no person behind it, so it renders as a single line).
+          </p>
+          <div className="d-flex flex-column gap-2 mb-3" style={{ maxHeight: 380, overflowY: 'auto' }}>
             {demoActivities.map((activity) => (
               <div className="d-flex gap-2 align-items-center" key={activity.id}>
                 <span className="badge text-bg-secondary text-capitalize" style={{ minWidth: 90 }}>
                   {DEMO_EVENT_TYPE_LABELS[activity.eventType]}
                 </span>
+                <input
+                  type="text"
+                  className="form-control form-control-sm"
+                  style={{ maxWidth: 130 }}
+                  placeholder="Name"
+                  defaultValue={activity.simulatedName ?? ''}
+                  disabled={!canManage}
+                  onBlur={(e) => e.target.value !== (activity.simulatedName ?? '') && saveDemoName(activity.id, e.target.value)}
+                />
+                <input
+                  type="text"
+                  className="form-control form-control-sm"
+                  style={{ maxWidth: 140 }}
+                  placeholder="Location"
+                  defaultValue={activity.simulatedLocation ?? ''}
+                  disabled={!canManage}
+                  onBlur={(e) => e.target.value !== (activity.simulatedLocation ?? '') && saveDemoLocation(activity.id, e.target.value)}
+                />
                 <input
                   type="text"
                   className="form-control form-control-sm"
@@ -246,7 +292,25 @@ export function SocialProofPage() {
             <input
               type="text"
               className="form-control form-control-sm"
-              placeholder="e.g. Jordan P. just deposited $1,000"
+              style={{ maxWidth: 130 }}
+              placeholder="Name (optional)"
+              value={newDemoName}
+              disabled={!canManage}
+              onChange={(e) => setNewDemoName(e.target.value)}
+            />
+            <input
+              type="text"
+              className="form-control form-control-sm"
+              style={{ maxWidth: 140 }}
+              placeholder="Location (optional)"
+              value={newDemoLocation}
+              disabled={!canManage}
+              onChange={(e) => setNewDemoLocation(e.target.value)}
+            />
+            <input
+              type="text"
+              className="form-control form-control-sm"
+              placeholder="e.g. just deposited $1,000"
               value={newDemoMessage}
               disabled={!canManage}
               onChange={(e) => setNewDemoMessage(e.target.value)}

@@ -334,7 +334,11 @@ export type SocialProofDemoEventType = 'deposit' | 'investment' | 'withdrawal' |
 export interface SocialProofDemoActivity {
   id: string;
   eventType: SocialProofDemoEventType;
+  /** The short activity line — "just deposited $500", not the full sentence; the name/location (if any) render above it. */
   message: string;
+  /** Null for 'market' rows — a price tick has no person behind it, so the ticker renders just the message, no name/location line. */
+  simulatedName: string | null;
+  simulatedLocation: string | null;
   sortOrder: number;
   isActive: boolean;
   createdAt: string;

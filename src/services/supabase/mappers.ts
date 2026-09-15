@@ -611,6 +611,8 @@ export interface SocialProofDemoActivityRow {
   id: string;
   event_type: SocialProofDemoEventType;
   message: string;
+  simulated_name: string | null;
+  simulated_location: string | null;
   sort_order: number;
   is_active: boolean;
   created_at: string;
@@ -622,6 +624,8 @@ export function mapSocialProofDemoActivityRow(row: SocialProofDemoActivityRow): 
     id: row.id,
     eventType: row.event_type,
     message: row.message,
+    simulatedName: row.simulated_name,
+    simulatedLocation: row.simulated_location,
     sortOrder: row.sort_order,
     isActive: row.is_active,
     createdAt: row.created_at,

@@ -72,11 +72,19 @@ export function DemoActivityTicker() {
         <span className="ic-social-proof-dot" aria-hidden="true" />
         <span className="small fw-semibold">Recent Activity</span>
       </div>
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.55rem' }}>
-        <Avatar size={44} />
-        <p className="mb-0 small fw-bold" style={{ lineHeight: 1.35 }}>
-          {current.message}
-        </p>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.7rem' }}>
+        <Avatar displayName={current.simulatedName} size={44} />
+        <div style={{ minWidth: 0, flex: 1 }}>
+          {current.simulatedName && (
+            <p className="mb-0 small fw-bold" style={{ lineHeight: 1.3 }}>
+              {current.simulatedName}
+              {current.simulatedLocation && ` from ${current.simulatedLocation}`}
+            </p>
+          )}
+          <p className={`mb-0 small ${current.simulatedName ? '' : 'fw-bold'}`} style={{ lineHeight: 1.3, marginTop: current.simulatedName ? '0.2rem' : 0 }}>
+            {current.message}
+          </p>
+        </div>
       </div>
     </div>
   );

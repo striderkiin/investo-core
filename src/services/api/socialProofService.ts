@@ -77,19 +77,29 @@ export function createSocialProofService(client: SupabaseClient = getSupabaseCli
       return (data as SocialProofDemoActivityRow[]).map(mapSocialProofDemoActivityRow);
     },
 
-    async createDemoActivity(eventType: SocialProofDemoEventType, message: string): Promise<SocialProofDemoActivity> {
+    async createDemoActivity(
+      eventType: SocialProofDemoEventType,
+      message: string,
+      simulatedName?: string | null,
+      simulatedLocation?: string | null
+    ): Promise<SocialProofDemoActivity> {
       const { data, error } = await client
         .from('social_proof_demo_activities')
-        .insert({ event_type: eventType, message, sort_order: 0 })
+        .insert({ event_type: eventType, message, simulated_name: simulatedName ?? null, simulated_location: simulatedLocation ?? null, sort_order: 0 })
         .select('*')
         .single();
       if (error) throw error;
       return mapSocialProofDemoActivityRow(data as SocialProofDemoActivityRow);
     },
 
-    async updateDemoActivity(id: string, updates: Partial<{ message: string; isActive: boolean }>): Promise<SocialProofDemoActivity> {
+    async updateDemoActivity(
+      id: string,
+      updates: Partial<{ message: string; simulatedName: string | null; simulatedLocation: string | null; isActive: boolean }>
+    ): Promise<SocialProofDemoActivity> {
       const payload: Record<string, unknown> = {};
       if (updates.message !== undefined) payload.message = updates.message;
+      if (updates.simulatedName !== undefined) payload.simulated_name = updates.simulatedName;
+      if (updates.simulatedLocation !== undefined) payload.simulated_location = updates.simulatedLocation;
       if (updates.isActive !== undefined) payload.is_active = updates.isActive;
 
       const { data, error } = await client.from('social_proof_demo_activities').update(payload).eq('id', id).select('*').single();
