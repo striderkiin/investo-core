@@ -14,16 +14,17 @@ const ICON_SVG_ATTRS = 'viewBox="0 0 24 24" fill="none" stroke="currentColor" st
  * tag, not the container.
  */
 export function buildAvatarNode(resolution: AvatarResolution, id?: string): HTMLElement {
-  const node = document.createElement(resolution.tier === 'photo' ? 'img' : 'div');
+  const isImage = resolution.tier === 'photo' || resolution.tier === 'illustrated';
+  const node = document.createElement(isImage ? 'img' : 'div');
   if (id) node.id = id;
   node.style.width = '100%';
   node.style.height = '100%';
   node.style.borderRadius = '50%';
   node.style.flexShrink = '0';
 
-  if (resolution.tier === 'photo') {
+  if (isImage) {
     const img = node as HTMLImageElement;
-    img.src = resolution.url;
+    img.src = resolution.tier === 'photo' ? resolution.url : resolution.entry.imageDataUri;
     img.alt = '';
     img.style.objectFit = 'cover';
     img.style.display = 'block';
@@ -37,9 +38,7 @@ export function buildAvatarNode(resolution: AvatarResolution, id?: string): HTML
   node.style.background = 'var(--ic-primary)';
   node.style.color = '#fff';
 
-  if (resolution.tier === 'illustrated') {
-    node.innerHTML = `<svg ${ICON_SVG_ATTRS} width="60%" height="60%">${resolution.entry.svgPaths}</svg>`;
-  } else if (resolution.tier === 'initials') {
+  if (resolution.tier === 'initials') {
     const span = document.createElement('span');
     span.textContent = resolution.letter;
     span.style.fontWeight = '600';

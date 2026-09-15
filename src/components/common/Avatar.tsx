@@ -15,24 +15,17 @@ export interface AvatarProps extends AvatarInput {
   className?: string;
 }
 
-/** React counterpart of client-app/ts/avatarRender.ts — same fallback chain (resolveAvatar), same visual result: a photo, or a solid brand-color circle holding the picked illustrated icon, an initial, or the brand mark. */
+/** React counterpart of client-app/ts/avatarRender.ts — same fallback chain (resolveAvatar), same visual result: a photo (real or picked-illustration), an initial, or the brand mark. */
 export function Avatar({ photoUrl, avatarKey, displayName, size = 32, className }: AvatarProps) {
   const resolution = resolveAvatar({ photoUrl, avatarKey, displayName });
   const style = { width: size, height: size, borderRadius: '50%', flexShrink: 0 };
 
-  if (resolution.tier === 'photo') {
-    return <img src={resolution.url} alt="" className={className} style={{ ...style, objectFit: 'cover', display: 'block' }} />;
+  if (resolution.tier === 'photo' || resolution.tier === 'illustrated') {
+    const src = resolution.tier === 'photo' ? resolution.url : resolution.entry.imageDataUri;
+    return <img src={src} alt="" className={className} style={{ ...style, objectFit: 'cover', display: 'block' }} />;
   }
 
   const fallbackStyle = { ...style, background: 'var(--ic-primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' as const };
-
-  if (resolution.tier === 'illustrated') {
-    return (
-      <span className={className} style={fallbackStyle} aria-hidden="true">
-        <svg {...ICON_SVG_ATTRS} width="60%" height="60%" dangerouslySetInnerHTML={{ __html: resolution.entry.svgPaths }} />
-      </span>
-    );
-  }
 
   if (resolution.tier === 'initials') {
     return (

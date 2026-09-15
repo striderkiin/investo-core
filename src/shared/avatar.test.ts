@@ -3,14 +3,14 @@ import { resolveAvatar, AVATAR_LIBRARY } from './avatar';
 
 describe('resolveAvatar', () => {
   it('prefers the uploaded photo over everything else', () => {
-    const result = resolveAvatar({ photoUrl: 'https://example.com/me.jpg', avatarKey: 'peak', displayName: 'Amara' });
+    const result = resolveAvatar({ photoUrl: 'https://example.com/me.jpg', avatarKey: 'curly', displayName: 'Amara' });
     expect(result).toEqual({ tier: 'photo', url: 'https://example.com/me.jpg' });
   });
 
   it('falls back to the picked illustrated avatar when there is no photo', () => {
-    const result = resolveAvatar({ photoUrl: null, avatarKey: 'wave', displayName: 'Amara' });
+    const result = resolveAvatar({ photoUrl: null, avatarKey: 'bob', displayName: 'Amara' });
     expect(result.tier).toBe('illustrated');
-    expect(result.tier === 'illustrated' && result.entry.key).toBe('wave');
+    expect(result.tier === 'illustrated' && result.entry.key).toBe('bob');
   });
 
   it('ignores an unknown avatarKey and falls through to initials', () => {
