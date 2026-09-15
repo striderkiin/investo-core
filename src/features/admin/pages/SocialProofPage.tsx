@@ -453,10 +453,12 @@ export function SocialProofPage() {
                 <span className="small fw-semibold">Recent Activity</span>
               </div>
               <div className="d-flex align-items-start gap-2">
-                <Avatar photoUrl={previewEvent.avatarUrl} avatarKey={previewEvent.avatarKey} displayName={previewEvent.displayName} size={32} />
+                <Avatar photoUrl={previewEvent.avatarUrl} avatarKey={previewEvent.avatarKey} displayName={previewEvent.displayName} size={44} />
                 <div className="flex-grow-1">
-                  <p className="mb-1 small">{previewEvent.message}</p>
-                  <p className="mb-0 text-secondary" style={{ fontSize: '0.75rem' }}>
+                  <p className="mb-1 small fw-bold" style={{ lineHeight: 1.35 }}>
+                    {previewEvent.message}
+                  </p>
+                  <p className="mb-0" style={{ fontSize: '0.7rem', color: 'rgba(26,23,16,0.45)' }}>
                     Just now
                   </p>
                 </div>

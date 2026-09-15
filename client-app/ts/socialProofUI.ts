@@ -22,8 +22,9 @@ function prefersReducedMotion(): boolean {
  * dashboard. Both callers share the same DOM node (looked up by id, created
  * once) so the two systems can never render two overlapping cards at once.
  *
- * Corner radius (4px) matches .tf-button — this dashboard's actual button
- * radius (public/client-app/css/styles.css) — rather than an invented value.
+ * Corner radius (16px) matches .wg-card — this dashboard's actual CARD
+ * radius (public/client-app/css/styles.css; .tf-button's 4px is for
+ * buttons, much tighter, and was the wrong token for a floating card).
  */
 export function ensurePopupElement(position: PopupPosition): HTMLDivElement {
   const existing = document.getElementById(POPUP_ID) as HTMLDivElement | null;
@@ -39,13 +40,13 @@ export function ensurePopupElement(position: PopupPosition): HTMLDivElement {
     [position === 'bottom-right' ? 'right' : 'left']: '1rem',
     zIndex: '1050',
     width: 'calc(100% - 2rem)',
-    maxWidth: '280px',
-    background: '#ffffff',
-    color: '#161326',
-    border: '1px solid rgba(22,19,38,0.08)',
-    borderRadius: '4px',
-    boxShadow: '0 6px 20px rgba(22,19,38,0.12)',
-    padding: '0.65rem 0.8rem',
+    maxWidth: '320px',
+    background: '#f8f5f0',
+    color: '#1a1710',
+    border: '1px solid rgba(168,68,46,0.3)',
+    borderRadius: '16px',
+    boxShadow: '0 12px 32px rgba(0,0,0,0.28)',
+    padding: '0.875rem 1rem 0.75rem',
     fontFamily: "'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
     opacity: '0',
     transform: 'translateY(10px)',
@@ -74,13 +75,13 @@ function escapeHtml(value: string): string {
 
 export function showPopupCard(el: HTMLDivElement, options: PopupCardOptions): void {
   el.innerHTML = `
-    <div style="display:flex;align-items:flex-start;gap:0.55rem;">
-      <span data-popup-avatar style="width:2rem;height:2rem;flex-shrink:0;"></span>
+    <div style="display:flex;align-items:flex-start;gap:0.7rem;">
+      <span data-popup-avatar style="width:2.75rem;height:2.75rem;flex-shrink:0;"></span>
       <div style="min-width:0;flex:1;">
-        <p style="margin:0;font-size:0.78rem;font-weight:600;line-height:1.35;color:#161326;">${escapeHtml(options.message)}</p>
-        ${options.timeText ? `<p style="margin:0.15rem 0 0;font-size:0.68rem;color:#8A8A8E;">${escapeHtml(options.timeText)}</p>` : ''}
+        <p style="margin:0;font-size:0.8rem;font-weight:700;line-height:1.35;color:#1a1710;">${escapeHtml(options.message)}</p>
+        ${options.timeText ? `<p style="margin:0.2rem 0 0;font-size:0.7rem;color:rgba(26,23,16,0.45);">${escapeHtml(options.timeText)}</p>` : ''}
       </div>
-      ${options.closable ? '<button type="button" data-popup-close aria-label="Close" style="background:none;border:none;color:#8A8A8E;opacity:0.7;cursor:pointer;font-size:0.9rem;line-height:1;padding:0;flex-shrink:0;align-self:flex-start;">&times;</button>' : ''}
+      ${options.closable ? '<button type="button" data-popup-close aria-label="Close" style="background:none;border:none;color:rgba(26,23,16,0.4);opacity:0.8;cursor:pointer;font-size:0.9rem;line-height:1;padding:0;flex-shrink:0;align-self:flex-start;">&times;</button>' : ''}
     </div>
   `;
 

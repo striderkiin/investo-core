@@ -73,8 +73,10 @@ export function DemoActivityTicker() {
         <span className="small fw-semibold">Recent Activity</span>
       </div>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.55rem' }}>
-        <Avatar size={32} />
-        <p className="mb-0 small">{current.message}</p>
+        <Avatar size={44} />
+        <p className="mb-0 small fw-bold" style={{ lineHeight: 1.35 }}>
+          {current.message}
+        </p>
       </div>
     </div>
   );

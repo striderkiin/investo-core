@@ -78,10 +78,12 @@ export function SocialProofPopup() {
         onKeyDown={(e) => e.key === 'Enter' && handleClick()}
         style={{ cursor: 'pointer', display: 'flex', alignItems: 'flex-start', gap: '0.55rem' }}
       >
-        <Avatar photoUrl={current.avatarUrl} avatarKey={current.avatarKey} displayName={current.displayName} size={32} />
+        <Avatar photoUrl={current.avatarUrl} avatarKey={current.avatarKey} displayName={current.displayName} size={44} />
         <div style={{ minWidth: 0, flex: 1 }}>
-          <p className="mb-1 small">{current.message}</p>
-          <p className="mb-0 text-secondary" style={{ fontSize: '0.75rem' }}>
+          <p className="mb-1 small fw-bold" style={{ lineHeight: 1.35 }}>
+            {current.message}
+          </p>
+          <p className="mb-0" style={{ fontSize: '0.7rem', color: 'rgba(26,23,16,0.45)' }}>
             {timeAgo(current.createdAt)}
           </p>
         </div>

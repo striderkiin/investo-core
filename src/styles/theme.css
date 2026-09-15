@@ -1,10 +1,10 @@
 :root {
   --ic-primary: #a8442e;
-  /* .tf-button's actual radius (public/client-app/css/styles.css) — the
-     dashboard's real button shape, reused here instead of an invented
-     value so the "Recent Activity" popup's corners read as part of the
-     same design system rather than a bolted-on generic SaaS widget. */
-  --ic-radius: 4px;
+  /* .wg-card's actual radius (public/client-app/css/styles.css) — this
+     dashboard's real CARD shape (not .tf-button's, which is for buttons
+     and much tighter) — reused so the "Recent Activity" popup's corners
+     read as a card in this design system, not an invented value. */
+  --ic-radius: 16px;
   --ic-secondary: #a8a6a1;
   --ic-success: #198754;
   --ic-warning: #ffc107;
@@ -92,19 +92,22 @@ h1, h2, h3, h4, h5, h6 {
   touch-action: manipulation;
 }
 
-/* Quiet, system-notification-like — not a bright floating SaaS toast. */
+/* Warm-white card with dark text — always the color that contrasts with
+   whatever's directly behind it (the spec's own rule), and every route
+   this mounts on (public hero, admin, client dashboard) has a dark
+   section right where this sits, so that's always white-on-dark here. */
 .ic-social-proof-popup {
   position: fixed;
   bottom: 1rem;
   z-index: 1050;
   width: calc(100% - 2rem);
-  max-width: 280px;
-  background-color: var(--ic-surface);
-  color: var(--ic-text);
-  border: 1px solid var(--bs-border-color, rgba(0, 0, 0, 0.08));
+  max-width: 320px;
+  background-color: #f8f5f0;
+  color: #1a1710;
+  border: 1px solid color-mix(in srgb, var(--ic-primary) 30%, transparent);
   border-radius: var(--ic-radius);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  padding: 0.65rem 0.8rem;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+  padding: 0.875rem 1rem 0.75rem;
   font-family: var(--ic-font-primary);
   font-size: 0.8rem;
   transition: transform 0.3s ease, opacity 0.3s ease;
@@ -116,6 +119,14 @@ h1, h2, h3, h4, h5, h6 {
 
 .ic-social-proof-popup.ic-social-proof-right {
   right: 1rem;
+}
+
+/* This card is always light (see the rule above), but the app's dark
+   theme flips Bootstrap's .btn-close to white globally
+   ([data-bs-theme=dark] .btn-close { filter: invert(1) ... }) — that
+   would make the × invisible against this card specifically. */
+.ic-social-proof-popup .btn-close {
+  filter: none !important;
 }
 
 .ic-social-proof-popup.ic-social-proof-enter {
