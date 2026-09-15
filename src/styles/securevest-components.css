@@ -202,11 +202,12 @@ footer.sv-page input[class*='placeholder:tw:text-paragraph_white']::placeholder 
   cursor: pointer;
   align-items: center;
   border-radius: 100px;
-  /* Only used in the calculator, which sits directly on the black page
-     canvas (not a light secondary card), so this needs light-on-dark
-     rather than the source's dark-on-light styling. */
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background-color: rgba(255, 255, 255, 0.05);
+  /* Only used in the calculator, which sits directly on the page canvas
+     (not a light secondary card) — light-on-dark in dark mode, flipped to
+     dark-on-light in light mode via the override below, either way tinted
+     off title_black (the canvas-text token) rather than a fixed color. */
+  border: 1px solid color-mix(in srgb, var(--tw-color-title_black) 10%, transparent);
+  background-color: color-mix(in srgb, var(--tw-color-title_black) 5%, transparent);
   padding-inline: 1.25rem;
   font-size: 1rem;
   color: var(--tw-color-title_black);

@@ -218,14 +218,14 @@ export function LandingPage() {
   return (
     <div className="sv-page">
       {/* ===== 3.1 Hero — verbatim from index-two.php lines 14-60 ===== */}
-      <section className="tw:py-14 tw:md:py-20 tw:lg:py-24 tw:xl:py-27 tw:bg-black tw:relative tw:z-1">
+      <section className="tw:py-14 tw:md:py-20 tw:lg:py-24 tw:xl:py-27 tw:bg-background tw:relative tw:z-1">
         <img className="tw:hidden tw:lg:block tw:absolute tw:top-[4%] tw:left-0 tw:-z-1" src={`${S}/img/home-v2/banner/background-shape.webp`} alt="background-shape" />
         <div className="tw:container">
           <div className="tw:flex tw:items-center tw:justify-between tw:gap-10 tw:flex-col tw:md:flex-row">
             <div className="tw:md:max-w-137.5 tw:w-full">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
-                <p className="tw:m-0! tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-secondary tw:uppercase tw:tracking-wide">INVESTMENT INFRASTRUCTURE</p>
+                <p className="tw:m-0! tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide">INVESTMENT INFRASTRUCTURE</p>
               </div>
               <h1 className="tw:text-[28px] tw:sm:text-3xl tw:md:text-4xl tw:lg:text-5xl tw:xl:text-[56px] tw:font-bold tw:leading-[1.15]! tw:text-title_black tw:mt-4! tw:md:mt-5!">
                 Your capital. In full view.
@@ -339,7 +339,7 @@ export function LandingPage() {
             <div className="tw:md:max-w-170 tw:w-full">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
-                <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-secondary tw:uppercase tw:tracking-wide tw:block">PLATFORM RELIABILITY</span>
+                <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide tw:block">PLATFORM RELIABILITY</span>
               </div>
               <h2 className="tw:text-2xl tw:sm:text-[28px] tw:md:text-3xl tw:lg:text-4xl tw:xl:text-[40px] tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">Built for Trust, Measured in Numbers</h2>
             </div>
@@ -395,7 +395,7 @@ export function LandingPage() {
             <div className="tw:md:max-w-170 tw:w-full">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
-                <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-secondary tw:uppercase tw:tracking-wide tw:block">PRICING PLAN</span>
+                <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide tw:block">PRICING PLAN</span>
               </div>
               <h2 className="tw:text-2xl tw:sm:text-[28px] tw:md:text-3xl tw:lg:text-4xl tw:xl:text-[40px] tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">Choose the Plan that Best Fits Your Goals</h2>
             </div>
@@ -517,7 +517,7 @@ export function LandingPage() {
                     <label className="tw:text-base tw:font-normal tw:leading-normal tw:text-title_black tw:mb-2 tw:block">Investment Amount</label>
                     <div className="tw:relative">
                       <input
-                        className="tw:h-10 tw:w-full tw:bg-white/5 tw:border tw:border-white/10 tw:rounded-[100px] tw:cursor-pointer tw:text-base tw:font-semibold tw:text-title_black tw:flex tw:items-center tw:relative tw:pl-9 tw:pr-5 tw:appearance-none tw:outline-none tw:duration-300 focus:tw:border-primary"
+                        className="tw:h-10 tw:w-full tw:bg-title_black/5 tw:border tw:border-title_black/10 tw:rounded-[100px] tw:cursor-pointer tw:text-base tw:font-semibold tw:text-title_black tw:flex tw:items-center tw:relative tw:pl-9 tw:pr-5 tw:appearance-none tw:outline-none tw:duration-300 focus:tw:border-primary"
                         type="number"
                         min={calcPlan.minAmount}
                         max={calcPlan.maxAmount}
