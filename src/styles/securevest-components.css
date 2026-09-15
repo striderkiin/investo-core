@@ -59,7 +59,10 @@ footer.sv-page input[class*='placeholder:tw:text-paragraph_white']::placeholder 
   justify-content: center;
   gap: 0.5rem;
   overflow: hidden;
-  border-radius: 100px;
+  /* 6px to match .ic-public-btn-primary/-outline (the header's Log In /
+     Get Started buttons) — every button on the page should read as the
+     same shape family, not a mix of pills and rounded rects. */
+  border-radius: 6px;
   border-style: solid;
   border-width: 1px;
   padding-inline: 1.25rem;

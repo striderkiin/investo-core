@@ -451,8 +451,8 @@ export function LandingPage() {
                           href="/client-app/sign-up.html"
                           className={
                             highlighted
-                              ? 'tw:w-full tw:px-6 tw:py-4 tw:text-base tw:leading-none tw:font-semibold tw:text-white tw:bg-primary tw:rounded-full tw:cursor-pointer tw:text-center tw:justify-center!'
-                              : 'tw:w-full tw:px-6 tw:py-4 tw:text-base tw:leading-none tw:font-semibold tw:text-background tw:bg-title_black tw:rounded-full tw:cursor-pointer hover:tw:text-white hover:tw:bg-primary tw:transition tw:duration-300 tw:text-center tw:justify-center!'
+                              ? 'tw:w-full tw:px-6 tw:py-4 tw:text-base tw:leading-none tw:font-semibold tw:text-white tw:bg-primary tw:rounded-[6px] tw:cursor-pointer tw:text-center tw:justify-center!'
+                              : 'tw:w-full tw:px-6 tw:py-4 tw:text-base tw:leading-none tw:font-semibold tw:text-background tw:bg-title_black tw:rounded-[6px] tw:cursor-pointer hover:tw:text-white hover:tw:bg-primary tw:transition tw:duration-300 tw:text-center tw:justify-center!'
                           }
                         >
                           Get Started Today
@@ -492,7 +492,7 @@ export function LandingPage() {
           ) : !calcPlan || !projection ? (
             <p className="tw:text-center tw:text-paragraph_black">Plans are being updated. Check back shortly.</p>
           ) : (
-            <div className="tw:flex tw:items-center tw:gap-10 tw:flex-col tw:lg:flex-row">
+            <div className="tw:flex tw:items-start tw:gap-10 tw:flex-col tw:lg:flex-row">
               <div className="tw:lg:max-w-125 tw:w-full tw:lg:flex-shrink-0">
                 <form className="home-1-roi-calculator tw:grid tw:sm:grid-cols-2 tw:lg:flex tw:lg:flex-col tw:gap-6 tw:w-full" onSubmit={(e) => e.preventDefault()}>
                   <div className="select-box-dark">
@@ -525,14 +525,14 @@ export function LandingPage() {
                     <label className="tw:text-base tw:font-normal tw:leading-normal tw:text-title_black tw:mb-2 tw:block">Investment Amount</label>
                     <div className="tw:relative">
                       <input
-                        className="tw:h-10 tw:w-full tw:bg-title_black/5 tw:border tw:border-title_black/10 tw:rounded-[100px] tw:cursor-pointer tw:text-base tw:font-semibold tw:text-title_black tw:flex tw:items-center tw:relative tw:pl-9 tw:pr-5 tw:appearance-none tw:outline-none tw:duration-300 focus:tw:border-primary"
+                        className="tw:w-full tw:bg-transparent tw:border-0 tw:border-b tw:border-title_black/20 tw:rounded-none tw:cursor-pointer tw:text-base tw:font-semibold tw:text-title_black tw:pl-6 tw:pb-3 tw:appearance-none tw:outline-none tw:duration-300 focus:tw:border-primary"
                         type="number"
                         min={calcPlan.minAmount}
                         max={calcPlan.maxAmount}
                         value={calcAmount}
                         onChange={(e) => setCalcAmount(Number(e.target.value))}
                       />
-                      <span className="tw:text-base tw:font-semibold tw:text-title_black tw:absolute tw:top-1/2 tw:transform tw:-translate-1/2 tw:left-6.25">$</span>
+                      <span className="tw:text-base tw:font-semibold tw:text-title_black tw:absolute tw:left-0 tw:bottom-3">$</span>
                     </div>
                     <p className="tw:text-sm tw:mt-2 tw:text-paragraph_black">
                       {money.format(calcPlan.minAmount)} – {money.format(calcPlan.maxAmount)} range · {calcPlan.rate}% {calcPlan.rateType} · {calcPlan.durationDays}-day duration
@@ -540,14 +540,14 @@ export function LandingPage() {
                   </div>
                 </form>
               </div>
-              <div className="tw:md:max-w-175 tw:w-full tw:grid tw:gap-8">
+              <div className="tw:md:max-w-140 tw:w-full tw:mx-auto tw:grid tw:gap-8">
                 <div className="tw:text-center">
                   <h3 className="tw:text-title_black tw:font-bold tw:text-3xl tw:md:text-4xl tw:lg:text-5xl tw:leading-none">{money.format(projection.total)}</h3>
                   <p className="tw:text-base tw:sm:text-lg tw:mt-3 tw:text-paragraph_black">
                     Projected value after {calcPlan.durationDays} days ({money.format(projection.profit)} profit)
                   </p>
                 </div>
-                <div className="tw:w-full tw:h-56 tw:sm:h-64">
+                <div className="tw:w-full tw:h-44 tw:sm:h-52">
                   <Line
                     data={{
                       labels: projection.labels,
@@ -624,7 +624,7 @@ export function LandingPage() {
       {/* ===== 3.6 FAQ — structure verbatim from accordion.php + its JS behavior; the reference's paired thumbnail column (excellence-accordion-thumb-0N.webp) is dropped per the brief since there's no equivalent FAQ imagery, and the accordion now takes the full width ===== */}
       <section id="faq" className="section-spacing-lg tw:bg-secondary">
         <div className="tw:container">
-          <div className="tw:flex tw:flex-col tw:lg:flex-row tw:items-center tw:gap-10 tw:lg:gap-16">
+          <div className="tw:flex tw:flex-col tw:lg:flex-row tw:items-start tw:gap-10 tw:lg:gap-16">
             <ScrollReveal className="tw:w-full tw:lg:max-w-100 tw:lg:flex-shrink-0">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
