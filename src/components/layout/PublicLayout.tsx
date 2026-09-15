@@ -16,11 +16,23 @@ const NAV_LINKS = [
   { to: '/#contact', label: 'Contact' },
 ];
 
+type PublicTheme = 'dark' | 'light';
+const THEME_STORAGE_KEY = 'ic-public-theme';
+
+function getStoredTheme(): PublicTheme {
+  try {
+    return window.localStorage.getItem(THEME_STORAGE_KEY) === 'light' ? 'light' : 'dark';
+  } catch {
+    return 'dark';
+  }
+}
+
 export function PublicLayout() {
   const { branding } = useBranding();
   const navRef = useRef<HTMLDivElement>(null);
   const togglerRef = useRef<HTMLButtonElement>(null);
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
+  const [theme, setTheme] = useState<PublicTheme>(getStoredTheme);
 
   useEffect(() => {
     socialLinksService
@@ -28,6 +40,16 @@ export function PublicLayout() {
       .then(setSocialLinks)
       .catch((err) => console.error('Failed to load social links', err));
   }, []);
+
+  function toggleTheme() {
+    const next = theme === 'light' ? 'dark' : 'light';
+    setTheme(next);
+    try {
+      window.localStorage.setItem(THEME_STORAGE_KEY, next);
+    } catch {
+      // private window / blocked storage — theme just won't persist across visits
+    }
+  }
 
   // Clicking a Link inside the mobile menu is a client-side route change,
   // not a page load — Bootstrap's own data-bs-toggle collapse never sees a
@@ -48,7 +70,7 @@ export function PublicLayout() {
   }
 
   return (
-    <div className="ic-public d-flex flex-column min-vh-100">
+    <div className="ic-public d-flex flex-column min-vh-100" data-theme={theme}>
       <SvgSymbols />
       <nav className="ic-public-nav navbar navbar-expand-lg sticky-top py-3">
         <div className="container">
@@ -62,7 +84,8 @@ export function PublicLayout() {
           </Link>
           <button
             ref={togglerRef}
-            className="navbar-toggler border-0 text-white"
+            className="navbar-toggler border-0"
+            style={{ color: 'var(--pub-text)' }}
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#publicNav"
@@ -137,7 +160,7 @@ export function PublicLayout() {
             <div className="tw:w-full tw:lg:w-px tw:h-px tw:lg:h-auto tw:bg-white/10" />
             <div className="tw:py-10 tw:lg:py-12.5 tw:lg:max-w-115 tw:w-full tw:grid tw:grid-cols-2 tw:sm:flex tw:items-start tw:justify-between tw:gap-10">
               <div>
-                <h3 className="tw:mb-6! tw:text-white tw:text-lg tw:md:text-xl tw:font-semibold tw:leading-none!">Platform</h3>
+                <h3 className="tw:mb-6! tw:text-white tw:text-lg tw:md:text-xl tw:font-semibold tw:leading-none!">Menu</h3>
                 <ul className="tw:list-none tw:flex tw:flex-col tw:items-start tw:gap-3 tw:sm:gap-5">
                   <li>
                     <Link className="tw:text-paragraph_white tw:leading-none tw:duration-300 hover:tw:text-primary tw:block" to="/#pricing">
@@ -213,6 +236,31 @@ export function PublicLayout() {
           </div>
         </div>
       </footer>
+      <button
+        type="button"
+        onClick={toggleTheme}
+        aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+        title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+        style={{
+          position: 'fixed',
+          bottom: '1.5rem',
+          right: '1.5rem',
+          zIndex: 1040,
+          width: 48,
+          height: 48,
+          borderRadius: '50%',
+          border: '1px solid var(--pub-border-strong)',
+          background: 'var(--pub-surface)',
+          color: 'var(--pub-accent)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 8px 24px -8px rgba(0,0,0,0.4)',
+          cursor: 'pointer',
+        }}
+      >
+        <i className={`bi ${theme === 'light' ? 'bi-moon-stars-fill' : 'bi-sun-fill'} fs-5`} aria-hidden="true" />
+      </button>
     </div>
   );
 }

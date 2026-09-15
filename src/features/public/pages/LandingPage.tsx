@@ -51,12 +51,12 @@ function ContactSection() {
   }
 
   const flatInputClass =
-    'tw:w-full tw:bg-transparent tw:border-0 tw:border-b tw:border-white/20 tw:text-white tw:text-base tw:pb-3 tw:appearance-none tw:outline-none tw:duration-300 focus:tw:border-primary';
+    'tw:w-full tw:bg-transparent tw:border-0 tw:border-b tw:border-title_black/20 tw:text-title_black tw:text-base tw:pb-3 tw:appearance-none tw:outline-none tw:duration-300 focus:tw:border-primary';
 
   return (
     <div>
       {status === 'sent' ? (
-        <div className="tw:flex tw:items-center tw:gap-2 tw:text-white">
+        <div className="tw:flex tw:items-center tw:gap-2 tw:text-title_black">
           <i className="bi bi-check-circle-fill tw:text-primary" aria-hidden="true" />
           <span>Thanks, your message has been sent. We&apos;ll reply to {email} as soon as we can.</span>
         </div>
@@ -558,7 +558,7 @@ export function LandingPage() {
                             return gradient;
                           },
                           fill: true,
-                          tension: 0.35,
+                          tension: 0,
                           borderWidth: 2,
                           pointRadius: 0,
                           pointHoverRadius: 5,
@@ -637,26 +637,25 @@ export function LandingPage() {
       </section>
 
       {/* Contact — kept on the landing page at the user's request even though it isn't one of the brief's listed sections; not sourced from SecureVest */}
-      <section id="contact" className="tw:bg-black tw:py-5">
+      <section id="contact" className="tw:bg-background tw:py-5">
         <div className="container py-5">
           <ScrollReveal className="text-center mb-5">
             <span className="ic-public-eyebrow mb-2 d-inline-flex">Contact</span>
-            <h2 className="h3 mb-0 text-white">Get in touch</h2>
+            <h2 className="h3 mb-0 tw:text-title_black">Get in touch</h2>
           </ScrollReveal>
-          <div className="row g-5" style={{ maxWidth: 840, margin: '0 auto' }}>
-            <ScrollReveal className="col-12 col-lg-4">
-              <div className="mb-3">
+          <div className="row g-5" style={{ maxWidth: 1040, margin: '0 auto' }}>
+            <ScrollReveal className="col-12 col-lg-5">
+              <div className="mb-4">
                 <IconBadge size={48}>
                   <IconMail width={22} height={22} />
                 </IconBadge>
               </div>
-              <p className="mb-3 text-white-50">
-                Have a question about a deposit or a withdrawal? Send us a message and our team will get back to you. Already have an account? You can also open a ticket from your dashboard&apos;s
-                Support Center for the fastest response.
+              <p className="mb-4 tw:text-paragraph_black">
+                Have a question about a deposit or a withdrawal? Send us a message and our team will get back to you. Already have an account? You can also open a ticket from your dashboard&apos;s Support Center for the fastest response.
               </p>
               <SocialLinksRow links={socialLinks.length > 0 ? socialLinks : DEFAULT_SOCIAL_LINKS} />
             </ScrollReveal>
-            <ScrollReveal className="col-12 col-lg-8" index={1}>
+            <ScrollReveal className="col-12 col-lg-7" index={1}>
               <ContactSection />
             </ScrollReveal>
           </div>

@@ -84,3 +84,17 @@
   --color-paragraph_white: #4d4d4d;
   --color-paragraph_black: #a3a3a3;
 }
+
+/* Light mode: same role mapping as the dark recolor pass above, run in
+   reverse. secondary/title_white/paragraph_white keep their dark-on-light
+   values unchanged (the "secondary block" was already light and stays
+   light), since only the page-canvas roles (background/title_black/
+   paragraph_black/border) actually need to flip. .ic-public carries the
+   data-theme attribute (see PublicLayout's theme toggle), and .sv-page
+   nests inside it everywhere. */
+.ic-public[data-theme='light'] {
+  --tw-color-background: #faf8f4;
+  --tw-color-title_black: #14121f;
+  --tw-color-paragraph_black: #6b6660;
+  --tw-color-border: rgba(0, 0, 0, 0.12);
+}

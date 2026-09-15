@@ -213,6 +213,33 @@
   }
 }
 
+/* Light mode — same warm-neutral canvas as .ic-public-band-light, just
+   applied site-wide. --pub-accent is intentionally left untouched (the
+   brand color doesn't change with theme). Toggled via the floating switch
+   in PublicLayout, which sets data-theme on this same .ic-public root. */
+.ic-public[data-theme='light'] {
+  --pub-bg: #faf8f4;
+  --pub-bg-secondary: #f1efe8;
+  --pub-surface: #ffffff;
+  --pub-border: rgba(0, 0, 0, 0.1);
+  --pub-border-strong: rgba(0, 0, 0, 0.16);
+  --pub-text: #14121f;
+  --pub-text-muted: #57534a;
+  --pub-text-subtle: #8a857a;
+}
+
+.ic-public[data-theme='light'] .ic-public-nav {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.ic-public[data-theme='light'] .ic-public-btn-outline:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.ic-public[data-theme='light'] .ic-faq-row:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
 /* ---------------------------------------------------------------------
    Icon badge: replaces bare glyphs in plain outline circles. Tint fill +
    hover lift on the badge, hover stroke shift on the SVG itself (that's
