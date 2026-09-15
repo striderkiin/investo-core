@@ -54,23 +54,18 @@ export function SocialProofPopup() {
       onMouseEnter={pause}
       onMouseLeave={resume}
     >
-      <div className="d-flex justify-content-between align-items-start gap-2">
-        <div className="d-flex align-items-center gap-2 mb-1">
-          <span className="ic-social-proof-dot" aria-hidden="true" />
-          <span className="small fw-semibold">Recent Activity</span>
-        </div>
-        {settings.showCloseButton && (
-          <button
-            type="button"
-            className="btn btn-sm btn-close"
-            aria-label="Close"
-            onClick={(e) => {
-              e.stopPropagation();
-              dismiss('session');
-            }}
-          />
-        )}
-      </div>
+      {settings.showCloseButton && (
+        <button
+          type="button"
+          className="btn btn-sm btn-close"
+          aria-label="Close"
+          style={{ position: 'absolute', top: '0.6rem', right: '0.6rem' }}
+          onClick={(e) => {
+            e.stopPropagation();
+            dismiss('session');
+          }}
+        />
+      )}
       <div
         role="button"
         tabIndex={0}

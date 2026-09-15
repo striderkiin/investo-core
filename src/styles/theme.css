@@ -148,14 +148,6 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-.ic-social-proof-dot {
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 50%;
-  background-color: var(--ic-primary);
-  display: inline-block;
-}
-
 @media (max-width: 575.98px) {
   .ic-social-proof-popup.ic-social-proof-left {
     right: auto;

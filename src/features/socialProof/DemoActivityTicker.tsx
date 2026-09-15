@@ -68,10 +68,6 @@ export function DemoActivityTicker() {
       role="status"
       aria-live="polite"
     >
-      <div className="d-flex align-items-center gap-2 mb-1">
-        <span className="ic-social-proof-dot" aria-hidden="true" />
-        <span className="small fw-semibold">Recent Activity</span>
-      </div>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.7rem' }}>
         <Avatar displayName={current.simulatedName} size={44} />
         <div style={{ minWidth: 0, flex: 1 }}>
