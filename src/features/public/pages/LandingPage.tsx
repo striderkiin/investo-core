@@ -335,7 +335,7 @@ export function LandingPage() {
       {/* ===== 3.3 Institutional stats — verbatim from index-two.php lines 111-134 + stats-counter.php ===== */}
       <section id="about" className="section-spacing-md-lg">
         <div className="tw:container">
-          <ScrollReveal className="tw:flex tw:items-start tw:justify-between tw:gap-4 tw:md:gap-10 tw:mb-12 tw:sm:mb-14 tw:md:mb-16 tw:lg:mb-20 tw:flex-col tw:md:flex-row tw:max-w-125 tw:md:max-w-full">
+          <ScrollReveal className="tw:flex tw:items-start tw:gap-4 tw:mb-12 tw:sm:mb-14 tw:md:mb-16 tw:lg:mb-20 tw:flex-col tw:max-w-125 tw:md:max-w-170">
             <div className="tw:md:max-w-170 tw:w-full">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
@@ -391,7 +391,7 @@ export function LandingPage() {
       {/* ===== 3.4 Pricing — verbatim from services.php lines 55-106 (toggle at 68-93 excluded) + pricing-cards.php ===== */}
       <section id="pricing" className="section-spacing-md-lg">
         <div className="tw:container">
-          <ScrollReveal className="tw:flex tw:items-start tw:justify-between tw:gap-4 tw:md:gap-10 tw:mb-12 tw:sm:mb-14 tw:md:mb-16 tw:lg:mb-20 tw:flex-col tw:md:flex-row tw:max-w-125 tw:md:max-w-full">
+          <ScrollReveal className="tw:flex tw:items-start tw:gap-4 tw:mb-12 tw:sm:mb-14 tw:md:mb-16 tw:lg:mb-20 tw:flex-col tw:max-w-125 tw:md:max-w-170">
             <div className="tw:md:max-w-170 tw:w-full">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
@@ -475,7 +475,7 @@ export function LandingPage() {
            card's border instead of another box. ===== */}
       <section className="section-spacing-lg-md">
         <div className="tw:container-lg">
-          <ScrollReveal className="tw:flex tw:items-start tw:justify-between tw:gap-4 tw:md:gap-10 tw:mb-12 tw:sm:mb-14 tw:md:mb-16 tw:lg:mb-20 tw:flex-col tw:md:flex-row tw:max-w-125 tw:md:max-w-full">
+          <ScrollReveal className="tw:flex tw:items-start tw:gap-4 tw:mb-12 tw:sm:mb-14 tw:md:mb-16 tw:lg:mb-20 tw:flex-col tw:max-w-125 tw:md:max-w-170">
             <div className="tw:md:max-w-170 tw:w-full">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
@@ -616,7 +616,7 @@ export function LandingPage() {
       {/* ===== 3.6 FAQ — structure verbatim from accordion.php + its JS behavior; the reference's paired thumbnail column (excellence-accordion-thumb-0N.webp) is dropped per the brief since there's no equivalent FAQ imagery, and the accordion now takes the full width ===== */}
       <section id="faq" className="section-spacing-lg tw:bg-secondary">
         <div className="tw:container">
-          <ScrollReveal className="tw:flex tw:items-start tw:justify-between tw:gap-4 tw:md:gap-10 tw:mb-12 tw:sm:mb-14 tw:md:mb-16 tw:lg:mb-20 tw:flex-col tw:md:flex-row tw:max-w-125 tw:md:max-w-full">
+          <ScrollReveal className="tw:flex tw:items-start tw:gap-4 tw:mb-12 tw:sm:mb-14 tw:md:mb-16 tw:lg:mb-20 tw:flex-col tw:max-w-125 tw:md:max-w-170">
             <div className="tw:md:max-w-170 tw:w-full">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
@@ -644,7 +644,7 @@ export function LandingPage() {
             <h2 className="h3 mb-0 tw:text-title_black">Get in touch</h2>
           </ScrollReveal>
           <div className="row g-5" style={{ maxWidth: 1040, margin: '0 auto' }}>
-            <ScrollReveal className="col-12 col-lg-5">
+            <ScrollReveal className="col-12 col-lg-5 tw:lg:pe-10">
               <div className="mb-4">
                 <IconBadge size={48}>
                   <IconMail width={22} height={22} />
@@ -655,7 +655,7 @@ export function LandingPage() {
               </p>
               <SocialLinksRow links={socialLinks.length > 0 ? socialLinks : DEFAULT_SOCIAL_LINKS} />
             </ScrollReveal>
-            <ScrollReveal className="col-12 col-lg-7" index={1}>
+            <ScrollReveal className="col-12 col-lg-7 tw:lg:ps-10" index={1}>
               <ContactSection />
             </ScrollReveal>
           </div>
