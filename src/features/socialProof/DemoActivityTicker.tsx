@@ -68,7 +68,7 @@ export function DemoActivityTicker() {
       role="status"
       aria-live="polite"
     >
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.7rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
         <Avatar displayName={current.simulatedName} size={44} />
         <div style={{ minWidth: 0, flex: 1 }}>
           {current.simulatedName && (

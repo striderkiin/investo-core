@@ -78,7 +78,7 @@ function escapeHtml(value: string): string {
 export function showPopupCard(el: HTMLDivElement, options: PopupCardOptions): void {
   const messageWeight = options.nameLocation ? '400' : '700';
   el.innerHTML = `
-    <div style="display:flex;align-items:flex-start;gap:0.7rem;">
+    <div style="display:flex;align-items:center;gap:0.7rem;">
       <span data-popup-avatar style="width:2.75rem;height:2.75rem;flex-shrink:0;"></span>
       <div style="min-width:0;flex:1;">
         ${options.nameLocation ? `<p style="margin:0;font-size:0.8rem;font-weight:700;line-height:1.3;color:#1a1710;">${escapeHtml(options.nameLocation)}</p>` : ''}

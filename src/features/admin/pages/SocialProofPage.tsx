@@ -512,7 +512,7 @@ export function SocialProofPage() {
 
           {previewEvent && (
             <div className="ic-social-proof-popup ic-social-proof-enter position-relative mb-3" style={{ position: 'static' }}>
-              <div className="d-flex align-items-start gap-2">
+              <div className="d-flex align-items-center gap-2">
                 <Avatar photoUrl={previewEvent.avatarUrl} avatarKey={previewEvent.avatarKey} displayName={previewEvent.displayName} size={44} />
                 <div className="flex-grow-1">
                   <p className="mb-1 small fw-bold" style={{ lineHeight: 1.35 }}>

@@ -71,7 +71,7 @@ export function SocialProofPopup() {
         tabIndex={0}
         onClick={handleClick}
         onKeyDown={(e) => e.key === 'Enter' && handleClick()}
-        style={{ cursor: 'pointer', display: 'flex', alignItems: 'flex-start', gap: '0.55rem' }}
+        style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.55rem' }}
       >
         <Avatar photoUrl={current.avatarUrl} avatarKey={current.avatarKey} displayName={current.displayName} size={44} />
         <div style={{ minWidth: 0, flex: 1 }}>
