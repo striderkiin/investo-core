@@ -540,7 +540,7 @@ export function LandingPage() {
                   </div>
                 </form>
               </div>
-              <div className="tw:md:max-w-140 tw:w-full tw:mx-auto tw:grid tw:gap-8">
+              <div className="tw:md:max-w-140 tw:w-full tw:mx-auto tw:grid tw:gap-4">
                 <div className="tw:text-center">
                   <h3 className="tw:text-title_black tw:font-bold tw:text-3xl tw:md:text-4xl tw:lg:text-5xl tw:leading-none">{money.format(projection.total)}</h3>
                   <p className="tw:text-base tw:sm:text-lg tw:mt-3 tw:text-paragraph_black">
