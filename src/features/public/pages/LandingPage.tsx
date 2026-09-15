@@ -492,8 +492,8 @@ export function LandingPage() {
           ) : !calcPlan || !projection ? (
             <p className="tw:text-center tw:text-paragraph_black">Plans are being updated. Check back shortly.</p>
           ) : (
-            <div className="tw:flex tw:items-start tw:gap-10 tw:flex-col tw:lg:flex-row">
-              <div className="tw:lg:max-w-87 tw:w-full">
+            <div className="tw:flex tw:items-center tw:gap-10 tw:flex-col tw:lg:flex-row">
+              <div className="tw:lg:max-w-125 tw:w-full tw:lg:flex-shrink-0">
                 <form className="home-1-roi-calculator tw:grid tw:sm:grid-cols-2 tw:lg:flex tw:lg:flex-col tw:gap-6 tw:w-full" onSubmit={(e) => e.preventDefault()}>
                   <div className="select-box-dark">
                     <label className="tw:text-base tw:font-normal tw:leading-normal tw:text-title_black tw:mb-2 tw:block">Investment Plan</label>
@@ -512,6 +512,14 @@ export function LandingPage() {
                         </option>
                       ))}
                     </select>
+                    <span className="select-caret" aria-hidden="true">
+                      <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
+                        <path d="M1 5L5 1L9 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
+                        <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </span>
                   </div>
                   <div>
                     <label className="tw:text-base tw:font-normal tw:leading-normal tw:text-title_black tw:mb-2 tw:block">Investment Amount</label>
@@ -532,7 +540,7 @@ export function LandingPage() {
                   </div>
                 </form>
               </div>
-              <div className="tw:md:max-w-227 tw:w-full tw:grid tw:gap-8">
+              <div className="tw:md:max-w-175 tw:w-full tw:grid tw:gap-8">
                 <div className="tw:text-center">
                   <h3 className="tw:text-title_black tw:font-bold tw:text-3xl tw:md:text-4xl tw:lg:text-5xl tw:leading-none">{money.format(projection.total)}</h3>
                   <p className="tw:text-base tw:sm:text-lg tw:mt-3 tw:text-paragraph_black">

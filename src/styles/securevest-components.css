@@ -207,18 +207,35 @@ footer.sv-page input[class*='placeholder:tw:text-paragraph_white']::placeholder 
   width: 100%;
   cursor: pointer;
   align-items: center;
-  border-radius: 100px;
-  /* Only used in the calculator, which sits directly on the page canvas
-     (not a light secondary card) — light-on-dark in dark mode, flipped to
-     dark-on-light in light mode via the override below, either way tinted
-     off title_black (the canvas-text token) rather than a fixed color. */
-  border: 1px solid color-mix(in srgb, var(--tw-color-title_black) 10%, transparent);
-  background-color: color-mix(in srgb, var(--tw-color-title_black) 5%, transparent);
-  padding-inline: 1.25rem;
+  /* Flat underline, matching the Contact form's fields, instead of a
+     rounded pill — no fill, just a hairline bottom border tinted off
+     title_black (the canvas-text token) so it still reads in both
+     themes. The native arrow is suppressed in favor of the custom
+     up/down caret pair (.select-caret) added beside it in markup. */
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--tw-color-title_black) 20%, transparent);
+  border-radius: 0;
+  padding-inline: 0;
+  padding-right: 1.5rem;
   font-size: 1rem;
   color: var(--tw-color-title_black);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
 }
 .sv-page .select-active:focus {
   border-color: var(--tw-color-primary);
   outline: none;
+}
+.sv-page .select-caret {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: var(--tw-color-title_black);
+  pointer-events: none;
 }
