@@ -239,7 +239,7 @@ export function LandingPage() {
                 </a>
                 <Link
                   to="/#pricing"
-                  className="video-popup tw:w-10 tw:md:w-12 tw:h-10 tw:md:h-12 tw:rounded-full tw:bg-title_black tw:flex tw:items-center tw:justify-center tw:text-title_white"
+                  className="video-popup tw:w-10 tw:md:w-12 tw:h-10 tw:md:h-12 tw:rounded-full tw:bg-title_black tw:flex tw:items-center tw:justify-center tw:text-background"
                   aria-label="View plans"
                 >
                   <svg className="tw:fill-current tw:w-3.25 tw:h-3.75">
@@ -366,7 +366,7 @@ export function LandingPage() {
               </div>
               <div>
                 <h3 className="tw:text-white tw:text-lg tw:md:text-xl tw:font-semibold">Platform Availability</h3>
-                <p className="tw:pt-3 tw:sm:pt-4 tw:text-white/80 tw:text-base tw:leading-[1.5]">Manage deposits, withdrawals, and investments from your dashboard any time.</p>
+                <p className="tw:pt-3 tw:sm:pt-4 tw:text-white tw:text-base tw:leading-[1.5]">Manage deposits, withdrawals, and investments from your dashboard any time.</p>
               </div>
             </ScrollReveal>
 
@@ -381,7 +381,7 @@ export function LandingPage() {
               </div>
               <div>
                 <h3 className="tw:text-white tw:text-lg tw:md:text-xl tw:font-semibold">Server-Validated Transactions</h3>
-                <p className="tw:pt-3 tw:sm:pt-4 tw:text-white/80 tw:text-base tw:leading-[1.5]">Every balance-affecting action runs through audited, server-side logic, never the browser.</p>
+                <p className="tw:pt-3 tw:sm:pt-4 tw:text-white tw:text-base tw:leading-[1.5]">Every balance-affecting action runs through audited, server-side logic, never the browser.</p>
               </div>
             </ScrollReveal>
           </div>
@@ -451,8 +451,8 @@ export function LandingPage() {
                           href="/client-app/sign-up.html"
                           className={
                             highlighted
-                              ? 'tw:w-full tw:px-6 tw:py-4 tw:text-base tw:leading-none tw:font-semibold tw:text-title_white tw:bg-primary tw:rounded-full tw:cursor-pointer tw:text-center tw:justify-center!'
-                              : 'tw:w-full tw:px-6 tw:py-4 tw:text-base tw:leading-none tw:font-semibold tw:text-title_white tw:bg-title_black tw:rounded-full tw:cursor-pointer hover:tw:text-title_white hover:tw:bg-primary tw:transition tw:duration-300 tw:text-center tw:justify-center!'
+                              ? 'tw:w-full tw:px-6 tw:py-4 tw:text-base tw:leading-none tw:font-semibold tw:text-white tw:bg-primary tw:rounded-full tw:cursor-pointer tw:text-center tw:justify-center!'
+                              : 'tw:w-full tw:px-6 tw:py-4 tw:text-base tw:leading-none tw:font-semibold tw:text-background tw:bg-title_black tw:rounded-full tw:cursor-pointer hover:tw:text-white hover:tw:bg-primary tw:transition tw:duration-300 tw:text-center tw:justify-center!'
                           }
                         >
                           Get Started Today
