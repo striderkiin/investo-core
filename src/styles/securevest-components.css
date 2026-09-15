@@ -19,6 +19,12 @@
 .sv-page [class*='tw:text-paragraph_black'] { color: var(--tw-color-paragraph_black) !important; }
 .sv-page [class*='tw:text-paragraph_white'] { color: var(--tw-color-paragraph_white) !important; }
 .sv-page [class*='tw:text-white']:not([class*='tw:text-white/']) { color: #fff !important; }
+/* public-theme.css also sets `.ic-public a { color: inherit }` — same clash,
+   but on any <a>/<Link> (tag+class beats a bare class too). Hits the hero
+   play-button link and the pricing cards' non-highlighted CTA link, both of
+   which use text-background so their text stays legible against a fill
+   (bg-title_black) that itself flips with the canvas. */
+.sv-page [class*='tw:text-background'] { color: var(--tw-color-background) !important; }
 /* The hero/feature eyebrows are <p> tags carrying text-secondary/text-primary
    (matching the source exactly) — same !important clash as above. */
 .sv-page p[class*='tw:text-secondary'] { color: var(--tw-color-secondary) !important; }
