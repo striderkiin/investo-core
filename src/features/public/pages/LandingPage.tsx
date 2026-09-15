@@ -638,13 +638,13 @@ export function LandingPage() {
 
       {/* Contact — kept on the landing page at the user's request even though it isn't one of the brief's listed sections; not sourced from SecureVest */}
       <section id="contact" className="tw:bg-background tw:py-5">
-        <div className="container py-5">
+        <div className="tw:container py-5">
           <ScrollReveal className="text-center mb-5">
             <span className="ic-public-eyebrow mb-2 d-inline-flex">Contact</span>
             <h2 className="h3 mb-0 tw:text-title_black">Get in touch</h2>
           </ScrollReveal>
-          <div className="row g-5" style={{ maxWidth: 1040, margin: '0 auto' }}>
-            <ScrollReveal className="col-12 col-lg-5 tw:lg:pe-10">
+          <div className="tw:flex tw:flex-col tw:lg:flex-row tw:gap-12 tw:lg:gap-24">
+            <ScrollReveal className="tw:w-full tw:lg:max-w-100 tw:lg:flex-shrink-0">
               <div className="mb-4">
                 <IconBadge size={48}>
                   <IconMail width={22} height={22} />
@@ -655,7 +655,7 @@ export function LandingPage() {
               </p>
               <SocialLinksRow links={socialLinks.length > 0 ? socialLinks : DEFAULT_SOCIAL_LINKS} />
             </ScrollReveal>
-            <ScrollReveal className="col-12 col-lg-7 tw:lg:ps-10" index={1}>
+            <ScrollReveal className="tw:w-full tw:lg:flex-1" index={1}>
               <ContactSection />
             </ScrollReveal>
           </div>
