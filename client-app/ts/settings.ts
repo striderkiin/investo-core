@@ -7,7 +7,9 @@ import { createSupportService } from '../../src/services/api/supportService';
 import { createKycService } from '../../src/services/api/kycService';
 import type { Profile, SocialProofDisplayMode } from '../../src/types/database';
 import type { ReferredUserSummary } from '../../src/services/api/referralService';
+import type { UserSession } from '../../src/services/api/securityService';
 import { formatCurrency } from './format';
+import { loadSection, showLoading } from './pageState';
 
 const securityService = createSecurityService();
 const authService = createAuthService();
@@ -24,20 +26,24 @@ function setText(id: string, text: string): void {
 }
 
 async function loadTwoFaStatus(): Promise<void> {
-  const factors = await securityService.listMfaFactors();
-  const verified = factors.find((f) => f.status === 'verified');
-  const checkbox = document.getElementById('twoFaCheckbox') as HTMLInputElement | null;
+  try {
+    const factors = await securityService.listMfaFactors();
+    const verified = factors.find((f) => f.status === 'verified');
+    const checkbox = document.getElementById('twoFaCheckbox') as HTMLInputElement | null;
 
-  if (verified) {
-    enrolledFactorId = verified.id;
-    if (checkbox) checkbox.checked = true;
-    setText('twoFaSubtitle', 'Enabled');
-    setText('securityTwoFaStatus', 'Enabled');
-  } else {
-    enrolledFactorId = null;
-    if (checkbox) checkbox.checked = false;
-    setText('twoFaSubtitle', 'Not enabled');
-    setText('securityTwoFaStatus', 'Disabled');
+    if (verified) {
+      enrolledFactorId = verified.id;
+      if (checkbox) checkbox.checked = true;
+      setText('twoFaSubtitle', 'Enabled');
+      setText('securityTwoFaStatus', 'Enabled');
+    } else {
+      enrolledFactorId = null;
+      if (checkbox) checkbox.checked = false;
+      setText('twoFaSubtitle', 'Not enabled');
+      setText('securityTwoFaStatus', 'Disabled');
+    }
+  } catch (err) {
+    setText('twoFaSubtitle', err instanceof Error ? err.message : 'Unable to load status');
   }
 }
 
@@ -96,21 +102,113 @@ function wireTwoFa(profile: Profile): void {
   });
 }
 
-async function loadSessions(userId: string): Promise<void> {
-  const sessions = await securityService.listMySessions(userId);
-  setText('securitySessionCount', String(sessions.length));
-  setText('deviceManagementSubtitle', `${sessions.length} tracked session${sessions.length === 1 ? '' : 's'} on this account`);
-
-  const mostRecent = sessions[0];
-  setText('lastSignedInAt', mostRecent ? new Date(mostRecent.lastActiveAt).toLocaleString() : 'No active sessions');
+/** A short device/browser label parsed from the recorded user agent — good enough to tell sessions apart, not a full UA parser. */
+function describeUserAgent(userAgent: string | null): string {
+  if (!userAgent) return 'Unknown device';
+  const browser = /Edg\//.test(userAgent)
+    ? 'Edge'
+    : /Chrome\//.test(userAgent)
+      ? 'Chrome'
+      : /Firefox\//.test(userAgent)
+        ? 'Firefox'
+        : /Safari\//.test(userAgent)
+          ? 'Safari'
+          : 'Browser';
+  const os = /Windows/.test(userAgent)
+    ? 'Windows'
+    : /Mac OS X/.test(userAgent)
+      ? 'macOS'
+      : /Android/.test(userAgent)
+        ? 'Android'
+        : /iPhone|iPad/.test(userAgent)
+          ? 'iOS'
+          : /Linux/.test(userAgent)
+            ? 'Linux'
+            : '';
+  return os ? `${browser} on ${os}` : browser;
 }
 
-function wireSessionManagement(): void {
+/**
+ * user_sessions has no is_current flag — it's a manually-inserted side
+ * record, not tied 1:1 to the actual Supabase Auth session token. The best
+ * available heuristic: among sessions recorded on this exact browser
+ * (matching navigator.userAgent), the most recently created one is almost
+ * certainly this tab's own session.
+ */
+function findCurrentSessionId(sessions: UserSession[]): string | null {
+  const onThisAgent = sessions.filter((s) => s.userAgent === navigator.userAgent);
+  if (onThisAgent.length === 0) return null;
+  return onThisAgent.reduce((latest, s) => (new Date(s.createdAt) > new Date(latest.createdAt) ? s : latest)).id;
+}
+
+function renderSessionList(sessions: UserSession[], currentId: string | null, onRevoked: () => void): void {
+  const container = document.getElementById('sessionListContainer');
+  if (!container) return;
+
+  if (sessions.length === 0) {
+    container.innerHTML = '<p class="f12-regular text-Gray mb-0">No active sessions.</p>';
+    return;
+  }
+
+  container.innerHTML = sessions
+    .map((session) => {
+      const isCurrent = session.id === currentId;
+      return `
+        <div class="content-item" data-session-id="${session.id}" style="border-top:1px solid var(--Gainsboro);padding-top:12px;margin-top:12px;">
+          <div class="flex-grow">
+            <div class="mb-4 f12-bold">${describeUserAgent(session.userAgent)}${isCurrent ? ' <span style="color:var(--YellowGreen);">(This device)</span>' : ''}</div>
+            <div class="f12-regular text-GrayDark">Last active ${new Date(session.lastActiveAt).toLocaleString()}</div>
+          </div>
+          ${isCurrent ? '' : '<button type="button" class="tf-button f12-bold bg-Gainsboro flex-shrink-0 js-revoke-session">Revoke</button>'}
+        </div>`;
+    })
+    .join('');
+
+  container.querySelectorAll<HTMLButtonElement>('.js-revoke-session').forEach((button) => {
+    button.addEventListener('click', () => {
+      const row = button.closest<HTMLElement>('[data-session-id]');
+      const sessionId = row?.dataset.sessionId;
+      if (!sessionId) return;
+      button.disabled = true;
+      button.textContent = 'Revoking…';
+      void securityService.terminateSession(sessionId).then(onRevoked);
+    });
+  });
+}
+
+async function loadSessions(userId: string): Promise<void> {
+  showLoading(document.getElementById('sessionListContainer'), 'Loading sessions…');
+  await loadSection(document.getElementById('sessionListContainer'), async () => {
+    const sessions = await securityService.listMySessions(userId);
+    setText('securitySessionCount', String(sessions.length));
+    setText('deviceManagementSubtitle', `${sessions.length} tracked session${sessions.length === 1 ? '' : 's'} on this account`);
+
+    const mostRecent = sessions[0];
+    setText('lastSignedInAt', mostRecent ? new Date(mostRecent.lastActiveAt).toLocaleString() : 'No active sessions');
+
+    const currentId = findCurrentSessionId(sessions);
+    renderSessionList(sessions, currentId, () => void loadSessions(userId));
+  });
+}
+
+function wireSessionManagement(userId: string): void {
   const button = document.getElementById('terminateSessionsButton');
   if (!button) return;
   button.addEventListener('click', () => {
     if (!window.confirm('Sign out of all other devices/sessions?')) return;
-    void securityService.terminateOtherSessions();
+    void securityService
+      .listMySessions(userId)
+      .then((sessions) => {
+        const currentId = findCurrentSessionId(sessions);
+        // terminateOtherSessions() invalidates the actual Supabase Auth
+        // tokens for every other session — the real security boundary.
+        // Looping terminateSession() alongside it keeps user_sessions
+        // (what this page reads) consistent with that instead of showing
+        // stale "active" rows for sessions that can no longer do anything.
+        const others = sessions.filter((s) => s.id !== currentId);
+        return Promise.all([securityService.terminateOtherSessions(), ...others.map((s) => securityService.terminateSession(s.id))]);
+      })
+      .then(() => loadSessions(userId));
   });
 }
 
@@ -268,6 +366,12 @@ async function renderReferral(profile: Profile): Promise<void> {
     if (linkInput) void navigator.clipboard.writeText(linkInput.value);
   });
 
+  const container = document.getElementById('referralListContainer');
+  showLoading(container);
+  return loadSection(container, () => renderReferralListInner(profile));
+}
+
+async function renderReferralListInner(profile: Profile): Promise<void> {
   const [referredUsers, earnings] = await Promise.all([referralService.getReferredUsers(profile.id), referralService.getTotalEarnings(profile.id)]);
   setText('referralCount', String(referredUsers.length));
   setText('referralEarnings', formatCurrency(earnings));
@@ -285,6 +389,13 @@ const EVENT_LABEL: Record<string, string> = {
 };
 
 async function renderActivityLog(userId: string): Promise<void> {
+  const container = document.getElementById('activityLogContainer');
+  if (!container) return;
+  showLoading(container);
+  return loadSection(container, () => renderActivityLogInner(userId));
+}
+
+async function renderActivityLogInner(userId: string): Promise<void> {
   const container = document.getElementById('activityLogContainer');
   if (!container) return;
 
@@ -332,7 +443,16 @@ async function renderKyc(profile: Profile): Promise<void> {
   const countryInput = document.getElementById('kycCountryInput') as HTMLInputElement | null;
   if (!form || !statusMessage || !rejectionNotice || !legalNameInput || !dobInput || !countryInput) return;
 
-  const submission = await kycService.getMySubmission(profile.id);
+  let submission;
+  try {
+    submission = await kycService.getMySubmission(profile.id);
+  } catch (err) {
+    setKycBadge('ERROR', 'bg-LightGray type-red');
+    statusMessage.textContent = err instanceof Error ? err.message : 'Unable to load verification status.';
+    rejectionNotice.style.display = 'none';
+    form.style.display = 'none';
+    return;
+  }
 
   if (!submission) {
     setKycBadge('NOT SUBMITTED', 'bg-LightGray');
@@ -427,7 +547,7 @@ async function main() {
   renderSocialProofPrivacy(profile);
   wireSocialProofPrivacy(profile);
   wireTwoFa(profile);
-  wireSessionManagement();
+  wireSessionManagement(profile.id);
   wirePasswordReset(profile);
   wireDeleteAccount(profile);
   wireKyc(profile);

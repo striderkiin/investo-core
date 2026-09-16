@@ -56,10 +56,34 @@ export async function requireClientSession(): Promise<Profile> {
 
   populateHeader(profile);
   wireLogout();
+  wireHeaderSearch();
   void populateHeaderWidgets(profile);
   mountDemoTicker();
   mountSocialProofPopup();
   return profile;
+}
+
+/**
+ * The header search box (top of every page except deposit/withdraw's
+ * stripped-down header) submitted a plain GET to the current page and did
+ * nothing — there's no unified search index across transactions/plans/
+ * investments to build here, so this sends the query to the one page that
+ * already has a real local filter (transaction.ts reads ?q= on load).
+ * `.header-left form.form-search` scopes to this one specifically — some
+ * pages (transaction.html) also have their own separate in-page search
+ * form with its own id, which this must not intercept.
+ */
+function wireHeaderSearch(): void {
+  const form = document.querySelector<HTMLFormElement>('.header-left form.form-search');
+  const input = form?.querySelector<HTMLInputElement>('input[name="name"]');
+  if (!form || !input) return;
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const query = input.value.trim();
+    if (!query) return;
+    window.location.href = `transaction.html?q=${encodeURIComponent(query)}`;
+  });
 }
 
 function populateHeader(profile: Profile): void {
@@ -89,7 +113,12 @@ async function populateHeaderWidgets(profile: Profile): Promise<void> {
     notifications.slice(0, 4),
     (n) => n.title,
     (n) => n.message,
-    (n) => formatRelativeTime(n.createdAt)
+    (n) => formatRelativeTime(n.createdAt),
+    // AppNotification carries no related-entity id to deep-link to, so a
+    // click here goes to the full list (and marks it read) rather than a
+    // specific target — still real navigation instead of the dead click
+    // this had before.
+    (n) => void notificationService.markAsRead(n.id).finally(() => window.location.assign('notifications.html'))
   );
 
   fillSlots(
@@ -97,7 +126,11 @@ async function populateHeaderWidgets(profile: Profile): Promise<void> {
     tickets.slice(0, 4),
     (t) => t.subject,
     (t) => t.status.replace('_', ' '),
-    (t) => formatRelativeTime(t.updatedAt)
+    (t) => formatRelativeTime(t.updatedAt),
+    undefined,
+    // Tickets, unlike notifications, always have their own id in hand
+    // here — deep-link straight to the thread instead of the generic list.
+    (t) => `message.html?ticket=${t.id}`
   );
 
   const openCount = tickets.filter((t) => OPEN_TICKET_STATUSES.includes(t.status)).length;
@@ -110,7 +143,9 @@ function fillSlots<T>(
   items: T[],
   getTitle: (item: T) => string,
   getDesc: (item: T) => string,
-  getTime: (item: T) => string
+  getTime: (item: T) => string,
+  onClick?: (item: T) => void,
+  getHref?: (item: T) => string
 ): void {
   for (let i = 0; i < 4; i++) {
     const slot = document.getElementById(`${prefix}Slot${i}`);
@@ -127,6 +162,16 @@ function fillSlots<T>(
     if (title) title.textContent = getTitle(item);
     if (desc) desc.textContent = getDesc(item);
     if (time) time.textContent = getTime(item);
+    if (getHref && title instanceof HTMLAnchorElement) title.href = getHref(item);
+    if (onClick) {
+      slot.style.cursor = 'pointer';
+      slot.onclick = (event) => {
+        // The title itself may be its own <a> (message slots) — let that
+        // handle its own navigation via getHref rather than double-firing.
+        if ((event.target as HTMLElement).closest('a')) return;
+        onClick(item);
+      };
+    }
   }
 
   const emptyEl = document.getElementById(`${prefix}Empty`);

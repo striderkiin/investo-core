@@ -8,6 +8,7 @@ import { bucketByRecency, renderActivityList } from './walletActivity';
 import { mountMarketWidget } from './marketWidget';
 import { renderAvatar, buildAvatarNode } from './avatarRender';
 import { resolveAvatar, AVATAR_LIBRARY } from '../../src/shared/avatar';
+import { loadSection, showLoading } from './pageState';
 
 const userService = createUserService();
 const investmentService = createInvestmentService();
@@ -173,6 +174,12 @@ interface HoldingGroup {
 }
 
 async function renderHoldings(userId: string): Promise<void> {
+  const container = document.getElementById('investmentHoldings');
+  showLoading(container);
+  return loadSection(container, () => renderHoldingsInner(userId));
+}
+
+async function renderHoldingsInner(userId: string): Promise<void> {
   const [investments, plans] = await Promise.all([investmentService.listMyInvestments(userId), investmentService.listPlans()]);
   const planById = new Map<string, InvestmentPlan>(plans.map((p) => [p.id, p]));
 
@@ -253,15 +260,22 @@ async function renderHoldings(userId: string): Promise<void> {
 }
 
 async function renderActivity(userId: string): Promise<void> {
-  const transactions = await transactionService.list({ userId });
-  const buckets = bucketByRecency(transactions);
-
   const week = document.getElementById('accountActivityWeek');
   const month = document.getElementById('accountActivityMonth');
   const year = document.getElementById('accountActivityYear');
-  if (week) renderActivityList(week, buckets.week);
-  if (month) renderActivityList(month, buckets.month);
-  if (year) renderActivityList(year, buckets.year);
+
+  try {
+    const transactions = await transactionService.list({ userId });
+    const buckets = bucketByRecency(transactions);
+    if (week) renderActivityList(week, buckets.week);
+    if (month) renderActivityList(month, buckets.month);
+    if (year) renderActivityList(year, buckets.year);
+  } catch (err) {
+    const message = `<p class="f14-regular text-Gray mb-0">${err instanceof Error ? err.message : 'Unable to load activity.'}</p>`;
+    for (const el of [week, month, year]) {
+      if (el) el.innerHTML = message;
+    }
+  }
 }
 
 async function main() {

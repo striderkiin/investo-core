@@ -3,6 +3,7 @@ import { createInvestmentService } from '../../src/services/api/investmentServic
 import { createFinancialService } from '../../src/services/api/financialService';
 import type { InvestmentPlan } from '../../src/types/database';
 import { formatCurrency } from './format';
+import { loadSection } from './pageState';
 
 declare const bootstrap: {
   Modal: new (el: Element) => { show: () => void; hide: () => void };
@@ -10,8 +11,11 @@ declare const bootstrap: {
 
 const investmentService = createInvestmentService();
 const financialService = createFinancialService();
+const PAGE_SIZE = 12;
 
 let allPlans: InvestmentPlan[] = [];
+let currentPage = 0;
+let hasMorePages = true;
 
 function renderRows(plans: InvestmentPlan[]): void {
   const tbody = document.getElementById('planRows');
@@ -110,6 +114,38 @@ function wireControls(): void {
     applyFilter();
   });
   searchInput?.addEventListener('input', applyFilter);
+}
+
+function updateLoadMoreButton(): void {
+  const button = document.getElementById('plansLoadMoreButton') as HTMLButtonElement | null;
+  if (button) button.style.display = hasMorePages ? '' : 'none';
+}
+
+/** Same progressive-loading tradeoff as transaction.ts: the name search only searches plans fetched so far. */
+async function loadNextPage(): Promise<void> {
+  const button = document.getElementById('plansLoadMoreButton') as HTMLButtonElement | null;
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Loading…';
+  }
+  try {
+    const page = await investmentService.listPlans(currentPage, PAGE_SIZE);
+    const active = page.filter((p) => p.status === 'active');
+    allPlans = [...allPlans, ...active];
+    hasMorePages = page.length === PAGE_SIZE;
+    currentPage += 1;
+    applyFilter();
+    updateLoadMoreButton();
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = 'Load More';
+    }
+  }
+}
+
+function wireLoadMore(): void {
+  document.getElementById('plansLoadMoreButton')?.addEventListener('click', () => void loadNextPage());
 }
 
 function wireInvestModal(userId: string): void {
@@ -216,9 +252,19 @@ async function main() {
   const profile = await requireClientSession();
   wireControls();
   wireInvestModal(profile.id);
-  const plans = await investmentService.listPlans();
-  allPlans = plans.filter((p) => p.status === 'active');
-  applyFilter();
+  wireLoadMore();
+
+  const tbody = document.getElementById('planRows');
+  if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="f14-regular text-Gray text-center py-4">Loading…</td></tr>';
+  await loadSection(document.getElementById('plansMobileList'), async () => {
+    currentPage = 0;
+    const page = await investmentService.listPlans(0, PAGE_SIZE);
+    allPlans = page.filter((p) => p.status === 'active');
+    hasMorePages = page.length === PAGE_SIZE;
+    currentPage = 1;
+    applyFilter();
+    updateLoadMoreButton();
+  });
 }
 
 void main();

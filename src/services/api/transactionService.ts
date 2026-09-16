@@ -9,6 +9,9 @@ export interface TransactionFilters {
   type?: TransactionType;
   status?: TransactionStatus;
   search?: string;
+  /** Zero-based page index, paired with pageSize — omit both for the full unpaginated list (existing callers). */
+  page?: number;
+  pageSize?: number;
 }
 
 export function createTransactionService(client: SupabaseClient = getSupabaseClient()) {
@@ -19,6 +22,10 @@ export function createTransactionService(client: SupabaseClient = getSupabaseCli
       if (filters.type) query = query.eq('type', filters.type);
       if (filters.status) query = query.eq('status', filters.status);
       if (filters.search) query = query.ilike('reference', `%${filters.search}%`);
+      if (filters.pageSize) {
+        const from = (filters.page ?? 0) * filters.pageSize;
+        query = query.range(from, from + filters.pageSize - 1);
+      }
 
       const { data, error } = await query;
       if (error) throw error;

@@ -12,6 +12,7 @@ const CLIENT_APP_PAGES = [
   'index',
   'my-wallet',
   'account',
+  'investments',
   'transaction',
   'crypto',
   'settings',

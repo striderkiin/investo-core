@@ -3,7 +3,7 @@ import { createFinancialService } from '../../src/services/api/financialService'
 import { createMarketService } from '../../src/services/market/marketService';
 import { createExternalMarketService, EXTERNAL_MARKETS } from '../../src/services/market/externalMarketService';
 import { createInvestmentService } from '../../src/services/api/investmentService';
-import type { InvestmentPlan } from '../../src/types/database';
+import type { Investment, InvestmentPlan } from '../../src/types/database';
 
 declare const ApexCharts: new (el: Element, options: Record<string, unknown>) => { render: () => void };
 
@@ -41,18 +41,28 @@ function setText(id: string, text: string): void {
 }
 
 async function renderStatTiles(userId: string): Promise<void> {
-  const summary = await financialService.getPortfolioSummary(userId);
-  setText('statTotalBalance', formatCurrency(summary.totalBalance));
-  setText('statAvailableBalance', formatCurrency(summary.availableBalance));
-  setText('statTotalInvested', formatCurrency(summary.totalInvested));
-  setText('statTotalEarnings', formatCurrency(summary.totalEarnings));
+  try {
+    const summary = await financialService.getPortfolioSummary(userId);
+    setText('statTotalBalance', formatCurrency(summary.totalBalance));
+    setText('statAvailableBalance', formatCurrency(summary.availableBalance));
+    setText('statTotalInvested', formatCurrency(summary.totalInvested));
+    setText('statTotalEarnings', formatCurrency(summary.totalEarnings));
 
-  // Total balance = available + invested + bonus; surface the bonus portion
-  // so the total doesn't look unexplained when it's non-zero.
-  const captionEl = document.getElementById('statBonusCaption');
-  if (captionEl && summary.bonusBalance > 0) {
-    captionEl.textContent = `Includes ${formatCurrency(summary.bonusBalance)} bonus`;
-    captionEl.style.display = '';
+    // Total balance = available + invested + bonus; surface the bonus portion
+    // so the total doesn't look unexplained when it's non-zero.
+    const captionEl = document.getElementById('statBonusCaption');
+    if (captionEl && summary.bonusBalance > 0) {
+      captionEl.textContent = `Includes ${formatCurrency(summary.bonusBalance)} bonus`;
+      captionEl.style.display = '';
+    }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unable to load balances.';
+    for (const id of ['statTotalBalance', 'statAvailableBalance', 'statTotalInvested', 'statTotalEarnings']) {
+      setText(id, '--');
+    }
+    setText('statBonusCaption', message);
+    const captionEl = document.getElementById('statBonusCaption');
+    if (captionEl) captionEl.style.display = '';
   }
 }
 
@@ -91,21 +101,30 @@ function renderMarketChart(selector: string, history: ChartPoint[], change: numb
 }
 
 async function loadPlatformIndex(): Promise<void> {
-  const [settings, week, month, year] = await Promise.all([
-    marketService.getCurrent(),
-    marketService.getHistoryRange(7),
-    marketService.getHistoryRange(30),
-    marketService.getHistoryRange(365),
-  ]);
+  try {
+    const [settings, week, month, year] = await Promise.all([
+      marketService.getCurrent(),
+      marketService.getHistoryRange(7),
+      marketService.getHistoryRange(30),
+      marketService.getHistoryRange(365),
+    ]);
 
-  setText('marketPriceValue', formatCurrency(settings.currentMarketValue));
-  const change = settings.currentPercentageChange;
-  setText('marketChangeValue', `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`);
+    setText('marketPriceValue', formatCurrency(settings.currentMarketValue));
+    const change = settings.currentPercentageChange;
+    setText('marketChangeValue', `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`);
 
-  const empty = 'No market data for this period yet.';
-  renderMarketChart('#candlestick-1', week, change, 'time', empty);
-  renderMarketChart('#candlestick-4', month, change, 'date', empty);
-  renderMarketChart('#candlestick-5', year, change, 'date', empty);
+    const empty = 'No market data for this period yet.';
+    renderMarketChart('#candlestick-1', week, change, 'time', empty);
+    renderMarketChart('#candlestick-4', month, change, 'date', empty);
+    renderMarketChart('#candlestick-5', year, change, 'date', empty);
+  } catch {
+    setText('marketPriceValue', '--');
+    setText('marketChangeValue', '--');
+    const unavailable = 'Live market data is temporarily unavailable. Please try again shortly.';
+    for (const selector of ['#candlestick-1', '#candlestick-4', '#candlestick-5']) {
+      renderMarketChart(selector, [], 0, 'date', unavailable);
+    }
+  }
 }
 
 // CoinGecko's public API needs no key for this volume — real crypto majors
@@ -171,7 +190,17 @@ async function renderMarketOverview(): Promise<void> {
 }
 
 async function renderPortfolioComposition(userId: string): Promise<void> {
-  const [investments, plans] = await Promise.all([investmentService.listMyInvestments(userId), investmentService.listPlans()]);
+  const container = document.querySelector('#line-chart-twoline');
+  let investments: Investment[];
+  let plans: InvestmentPlan[];
+  try {
+    [investments, plans] = await Promise.all([investmentService.listMyInvestments(userId), investmentService.listPlans()]);
+  } catch (err) {
+    if (container) {
+      container.innerHTML = `<p class="f14-regular text-White text-center pt-4">${err instanceof Error ? err.message : 'Unable to load portfolio composition.'}</p>`;
+    }
+    return;
+  }
   const planName = new Map<string, string>(plans.map((p: InvestmentPlan) => [p.id, p.name]));
 
   const byPlan = new Map<string, number>();
@@ -208,7 +237,6 @@ async function renderPortfolioComposition(userId: string): Promise<void> {
     }
   }
 
-  const container = document.querySelector('#line-chart-twoline');
   if (!container) return;
 
   if (holdings.length === 0) {

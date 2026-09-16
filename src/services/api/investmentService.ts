@@ -6,8 +6,13 @@ import type { Investment, InvestmentPlan } from '../../types/database';
 
 export function createInvestmentService(client: SupabaseClient = getSupabaseClient()) {
   return {
-    async listPlans(): Promise<InvestmentPlan[]> {
-      const { data, error } = await client.from('investment_plans').select('*').order('min_amount', { ascending: true });
+    async listPlans(page?: number, pageSize?: number): Promise<InvestmentPlan[]> {
+      let query = client.from('investment_plans').select('*').order('min_amount', { ascending: true });
+      if (pageSize) {
+        const from = (page ?? 0) * pageSize;
+        query = query.range(from, from + pageSize - 1);
+      }
+      const { data, error } = await query;
       if (error) throw error;
       return (data as InvestmentPlanRow[]).map(mapInvestmentPlanRow);
     },
@@ -77,12 +82,13 @@ export function createInvestmentService(client: SupabaseClient = getSupabaseClie
       if (error) throw error;
     },
 
-    async listMyInvestments(userId: string): Promise<Investment[]> {
-      const { data, error } = await client
-        .from('investments')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false });
+    async listMyInvestments(userId: string, page?: number, pageSize?: number): Promise<Investment[]> {
+      let query = client.from('investments').select('*').eq('user_id', userId).order('created_at', { ascending: false });
+      if (pageSize) {
+        const from = (page ?? 0) * pageSize;
+        query = query.range(from, from + pageSize - 1);
+      }
+      const { data, error } = await query;
       if (error) throw error;
       return (data as InvestmentRow[]).map(mapInvestmentRow);
     },

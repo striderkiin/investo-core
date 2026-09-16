@@ -2,6 +2,7 @@ import { requireClientSession } from './shell';
 import { createNotificationService } from '../../src/services/api/notificationService';
 import type { AppNotification, NotificationType } from '../../src/types/database';
 import { formatRelativeTime } from './format';
+import { loadSection, showLoading } from './pageState';
 
 const notificationService = createNotificationService();
 
@@ -65,9 +66,12 @@ function updateMarkAllButton(notifications: AppNotification[]): void {
 }
 
 async function load(): Promise<void> {
-  const notifications = await notificationService.list(userId);
-  renderList(notifications);
-  updateMarkAllButton(notifications);
+  showLoading(document.getElementById('notificationsList'));
+  await loadSection(document.getElementById('notificationsList'), async () => {
+    const notifications = await notificationService.list(userId);
+    renderList(notifications);
+    updateMarkAllButton(notifications);
+  });
 }
 
 function wireMarkAllRead(): void {

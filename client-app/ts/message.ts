@@ -2,14 +2,19 @@ import { requireClientSession } from './shell';
 import { createSupportService } from '../../src/services/api/supportService';
 import type { SupportMessage, SupportTicket, SupportTicketCategory } from '../../src/types/database';
 import { formatRelativeTime } from './format';
+import { loadSection, showLoading } from './pageState';
 
 const supportService = createSupportService();
 
 let userId = '';
 let unsubscribeThread: (() => void) | null = null;
 
-async function loadTickets(): Promise<void> {
+/** Populated by loadTickets() each call, read by main() to auto-open the ticket named in ?ticket=<id> (set by the header dropdown's per-ticket links — see shell.ts). */
+let loadedTickets: SupportTicket[] = [];
+
+async function loadTicketsInner(): Promise<void> {
   const tickets = await supportService.listMyTickets(userId);
+  loadedTickets = tickets;
   const list = document.getElementById('ticketList');
   if (!list) return;
 
@@ -89,6 +94,11 @@ async function openThread(ticket: SupportTicket): Promise<void> {
   }
 }
 
+function loadTickets(): Promise<void> {
+  showLoading(document.getElementById('ticketList'));
+  return loadSection(document.getElementById('ticketList'), loadTicketsInner);
+}
+
 function closeThread(): void {
   unsubscribeThread?.();
   unsubscribeThread = null;
@@ -135,6 +145,13 @@ async function main() {
   wireNewTicketForm();
   wireBackButton();
   await loadTickets();
+
+  // The header dropdown's per-ticket links (see shell.ts populateHeaderWidgets)
+  // point here with ?ticket=<id> — open that thread directly instead of
+  // always landing on the generic list.
+  const ticketId = new URLSearchParams(window.location.search).get('ticket');
+  const ticket = ticketId ? loadedTickets.find((t) => t.id === ticketId) : undefined;
+  if (ticket) void openThread(ticket);
 }
 
 void main();

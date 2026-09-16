@@ -2,8 +2,10 @@ import { requireClientSession } from './shell';
 import { createTransactionService } from '../../src/services/api/transactionService';
 import type { Profile, Transaction, TransactionStatus, TransactionType } from '../../src/types/database';
 import { formatCurrency, formatSignedCurrency } from './format';
+import { loadSection } from './pageState';
 
 const transactionService = createTransactionService();
+const PAGE_SIZE = 25;
 
 const TYPE_LABEL: Record<TransactionType, string> = {
   deposit: 'Deposit',
@@ -35,6 +37,9 @@ const STATUS_CLASS: Record<TransactionStatus, string> = {
 
 let allTransactions: Transaction[] = [];
 let currentFiltered: Transaction[] = [];
+let currentUserId = '';
+let currentPage = 0;
+let hasMorePages = true;
 
 function renderRows(transactions: Transaction[]): void {
   const tbody = document.getElementById('transactionRows');
@@ -168,6 +173,44 @@ function applyFilters(): void {
   renderRows(filtered);
 }
 
+function updateLoadMoreButton(): void {
+  const button = document.getElementById('transactionLoadMoreButton') as HTMLButtonElement | null;
+  if (!button) return;
+  button.style.display = hasMorePages ? '' : 'none';
+}
+
+/**
+ * Progressive loading: search/sort operate on whatever pages have been
+ * fetched so far, not the client's entire history — a page beyond what's
+ * loaded won't show up in a search until "Load More" reaches it. That's a
+ * deliberate tradeoff over loading the full history up front, which is
+ * exactly the unbounded payload this pagination exists to avoid.
+ */
+async function loadNextPage(): Promise<void> {
+  const button = document.getElementById('transactionLoadMoreButton') as HTMLButtonElement | null;
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Loading…';
+  }
+  try {
+    const page = await transactionService.list({ userId: currentUserId, page: currentPage, pageSize: PAGE_SIZE });
+    allTransactions = [...allTransactions, ...page];
+    hasMorePages = page.length === PAGE_SIZE;
+    currentPage += 1;
+    applyFilters();
+    updateLoadMoreButton();
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = 'Load More';
+    }
+  }
+}
+
+function wireLoadMore(): void {
+  document.getElementById('transactionLoadMoreButton')?.addEventListener('click', () => void loadNextPage());
+}
+
 function csvEscape(value: string): string {
   return `"${value.replace(/"/g, '""')}"`;
 }
@@ -229,11 +272,33 @@ function wireControls(): void {
 
 async function main() {
   const profile = await requireClientSession();
+  currentUserId = profile.id;
   wireControls();
   wireCopyReference();
   wireExportControls(profile);
-  allTransactions = await transactionService.list({ userId: profile.id });
-  applyFilters();
+  wireLoadMore();
+
+  // Sent here by the header search box (shell.ts wireHeaderSearch), which
+  // has no search index of its own to query — this page's existing local
+  // filter is the closest real destination for a global search term.
+  const query = new URLSearchParams(window.location.search).get('q');
+  const searchInput = document.getElementById('transactionSearchInput') as HTMLInputElement | null;
+  if (query && searchInput) searchInput.value = query;
+
+  // A plain <p> loading/error message doesn't nest inside a <tbody> — the
+  // real render target for that state is the mobile list div, which every
+  // viewport shows or hides via CSS but which always exists in the DOM.
+  const errorTarget = document.getElementById('transactionMobileList');
+  const tbody = document.getElementById('transactionRows');
+  if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="f14-regular text-Gray text-center py-4">Loading…</td></tr>';
+  await loadSection(errorTarget, async () => {
+    currentPage = 0;
+    allTransactions = await transactionService.list({ userId: currentUserId, page: 0, pageSize: PAGE_SIZE });
+    hasMorePages = allTransactions.length === PAGE_SIZE;
+    currentPage = 1;
+    applyFilters();
+    updateLoadMoreButton();
+  });
 }
 
 void main();
