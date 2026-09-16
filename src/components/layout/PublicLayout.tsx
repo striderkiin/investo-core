@@ -33,6 +33,10 @@ export function PublicLayout() {
   const togglerRef = useRef<HTMLButtonElement>(null);
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [theme, setTheme] = useState<PublicTheme>(getStoredTheme);
+  // The nav's background follows this page's own light/dark toggle (separate
+  // from admin's site-wide branding.theme), so the logo variant follows it too.
+  const navLogoUrl = (theme === 'light' ? branding.logoLightUrl : branding.logoDarkUrl) ?? branding.logoUrl;
+  const footerLogoUrl = branding.logoDarkUrl ?? branding.logoUrl;
 
   useEffect(() => {
     socialLinksService
@@ -75,8 +79,8 @@ export function PublicLayout() {
       <nav className="ic-public-nav navbar navbar-expand-lg sticky-top py-3">
         <div className="container">
           <Link className="navbar-brand fw-bold d-flex align-items-center" to="/">
-            {branding.logoUrl ? (
-              <img src={branding.logoUrl} alt={branding.logoText ?? branding.siteName} style={{ height: 32, width: 'auto' }} />
+            {navLogoUrl ? (
+              <img src={navLogoUrl} alt={branding.logoText ?? branding.siteName} style={{ height: 32, width: 'auto' }} />
             ) : (
               <>
                 <i className="bi bi-graph-up-arrow me-2" style={{ color: 'var(--pub-accent)' }} aria-hidden="true" />
@@ -148,8 +152,9 @@ export function PublicLayout() {
           <div className="tw:flex tw:justify-between tw:lg:gap-10 tw:border-y tw:border-white/10 tw:flex-col tw:lg:flex-row">
             <div className="tw:py-10 tw:lg:py-12.5 tw:lg:max-w-100 tw:w-full">
               <Link className="tw:flex tw:items-center tw:gap-2" to="/">
-                {branding.logoUrl ? (
-                  <img src={branding.logoUrl} alt={branding.logoText ?? branding.siteName} className="tw:h-9 tw:w-auto" />
+                {/* Footer is always tw:bg-black regardless of the page's own theme toggle, so it always wants the dark-background logo variant. */}
+                {footerLogoUrl ? (
+                  <img src={footerLogoUrl} alt={branding.logoText ?? branding.siteName} className="tw:h-9 tw:w-auto" />
                 ) : (
                   <>
                     <i className="bi bi-graph-up-arrow tw:text-primary tw:text-2xl" aria-hidden="true" />

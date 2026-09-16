@@ -73,6 +73,10 @@ export function AdminLayout() {
   const title = TITLES[location.pathname] ?? 'Admin';
 
   const items = ALL_NAV_ITEMS.filter((item) => !item.permission || can(item.permission));
+  // .ic-sidebar's background is branding.surfaceColor, dark by default (and
+  // whenever theme isn't explicitly 'light') — pick the logo variant that
+  // reads against that, not the single generic logoUrl.
+  const sidebarLogoUrl = (branding.theme === 'light' ? branding.logoLightUrl : branding.logoDarkUrl) ?? branding.logoUrl;
 
   return (
     <div className="d-flex flex-column min-vh-100">
@@ -81,7 +85,7 @@ export function AdminLayout() {
       <div className="d-flex flex-grow-1">
         <Sidebar
           brand={`${branding.siteName} Admin`}
-          logoUrl={branding.logoUrl}
+          logoUrl={sidebarLogoUrl}
           items={items}
           show={sidebarOpen}
           onNavigate={() => setSidebarOpen(false)}
