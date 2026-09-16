@@ -7,7 +7,7 @@ import { isSupabaseConfigured } from '../../services/supabase/client';
 const DEFAULT_BRANDING: Branding = {
   id: 'default',
   siteName: 'Investo',
-  logoUrl: null,
+  logoUrl: '/brand/investo-logo.png',
   logoLightUrl: null,
   logoDarkUrl: null,
   faviconUrl: null,

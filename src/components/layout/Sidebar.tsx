@@ -21,11 +21,13 @@ export function Sidebar({ brand, logoUrl, items, show, onNavigate }: SidebarProp
       <aside className={`ic-sidebar d-flex flex-column p-3 ${show ? 'show' : ''}`} aria-label="Primary navigation">
         <div className="d-flex align-items-center mb-4 px-1">
           {logoUrl ? (
-            <img src={logoUrl} alt="" className="me-2" style={{ height: 28, width: 'auto' }} />
+            <img src={logoUrl} alt={brand} style={{ height: 32, width: 'auto' }} />
           ) : (
-            <i className="bi bi-graph-up-arrow text-primary fs-4 me-2" aria-hidden="true" />
+            <>
+              <i className="bi bi-graph-up-arrow text-primary fs-4 me-2" aria-hidden="true" />
+              <span className="fw-bold fs-5">{brand}</span>
+            </>
           )}
-          <span className="fw-bold fs-5">{brand}</span>
         </div>
         <nav className="ic-sidebar-nav d-flex flex-column gap-1 overflow-auto flex-grow-1">
           {items.map((item) => (

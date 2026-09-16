@@ -76,11 +76,13 @@ export function PublicLayout() {
         <div className="container">
           <Link className="navbar-brand fw-bold d-flex align-items-center" to="/">
             {branding.logoUrl ? (
-              <img src={branding.logoUrl} alt="" className="me-2" style={{ height: 28, width: 'auto' }} />
+              <img src={branding.logoUrl} alt={branding.logoText ?? branding.siteName} style={{ height: 32, width: 'auto' }} />
             ) : (
-              <i className="bi bi-graph-up-arrow me-2" style={{ color: 'var(--pub-accent)' }} aria-hidden="true" />
+              <>
+                <i className="bi bi-graph-up-arrow me-2" style={{ color: 'var(--pub-accent)' }} aria-hidden="true" />
+                {branding.logoText ?? branding.siteName}
+              </>
             )}
-            {branding.logoText ?? branding.siteName}
           </Link>
           <button
             ref={togglerRef}
@@ -147,11 +149,13 @@ export function PublicLayout() {
             <div className="tw:py-10 tw:lg:py-12.5 tw:lg:max-w-100 tw:w-full">
               <Link className="tw:flex tw:items-center tw:gap-2" to="/">
                 {branding.logoUrl ? (
-                  <img src={branding.logoUrl} alt="" className="tw:h-8 tw:w-auto" />
+                  <img src={branding.logoUrl} alt={branding.logoText ?? branding.siteName} className="tw:h-9 tw:w-auto" />
                 ) : (
-                  <i className="bi bi-graph-up-arrow tw:text-primary tw:text-2xl" aria-hidden="true" />
+                  <>
+                    <i className="bi bi-graph-up-arrow tw:text-primary tw:text-2xl" aria-hidden="true" />
+                    <span className="tw:text-white tw:text-xl tw:font-semibold">{branding.logoText ?? branding.siteName}</span>
+                  </>
                 )}
-                <span className="tw:text-white tw:text-xl tw:font-semibold">{branding.logoText ?? branding.siteName}</span>
               </Link>
               <p className="tw:mt-4 tw:sm:mt-6 tw:text-paragraph_white tw:max-w-100">
                 A transparent, server-validated platform for tracking deposits, investments, and withdrawals, all in one dashboard.
