@@ -169,7 +169,7 @@ declare
 begin
   select template into v_template from social_proof_templates where event_type = p_event_type;
   if v_template is null then
-    v_template := '{name} — ' || p_event_type;
+    v_template := '{name}: ' || p_event_type;
   end if;
 
   v_result := v_template;
@@ -356,7 +356,7 @@ begin
 
   select * into v_settings from social_proof_settings limit 1;
   if not v_settings.test_mode_enabled then
-    raise exception 'live-looking test notifications are disabled — enable them in Social Proof settings first';
+    raise exception 'live-looking test notifications are disabled. Enable them in Social Proof settings first.';
   end if;
   if not (p_event_type = any(v_settings.test_event_types)) then
     raise exception 'event type % is not enabled for test broadcasts', p_event_type;

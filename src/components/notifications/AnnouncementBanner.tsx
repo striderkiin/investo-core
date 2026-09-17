@@ -35,7 +35,7 @@ export function AnnouncementBanner() {
         <div key={announcement.id} className="alert alert-info rounded-0 mb-0 d-flex justify-content-between align-items-center py-2" role="status">
           <span>
             <i className={`bi ${TYPE_ICON[announcement.type]} me-2`} aria-hidden="true" />
-            <strong>{announcement.title}</strong> — {announcement.body}
+            <strong>{announcement.title}</strong>: {announcement.body}
           </span>
           <button
             type="button"

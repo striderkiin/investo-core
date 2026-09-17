@@ -97,7 +97,7 @@ export function TreasuryPage() {
         <div className="alert alert-info" role="alert">
           <i className="bi bi-info-circle me-2" aria-hidden="true" />
           {IS_PRODUCTION
-            ? 'Treasury simulation actions are disabled in Production — operations must go through the provider integration (Phase 7).'
+            ? 'Treasury simulation actions are disabled in Production. Operations must go through the provider integration (Phase 7).'
             : 'You do not have permission to manage the treasury.'}
         </div>
       )}

@@ -50,7 +50,7 @@ function renderBanner(title: string, message: string): void {
     fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
     boxShadow: '0 1px 4px rgba(0,0,0,0.15)',
   });
-  banner.innerHTML = `<strong>${escapeHtml(title)}</strong> — ${escapeHtml(message)}`;
+  banner.innerHTML = `<strong>${escapeHtml(title)}</strong>: ${escapeHtml(message)}`;
   document.body.prepend(banner);
 }
 

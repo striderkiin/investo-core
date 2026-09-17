@@ -30,7 +30,7 @@ export function UserDetailModal({ user, show, onClose }: UserDetailModalProps) {
   const totalWithdrawn = transactions.filter((t) => t.type === 'withdrawal' && t.status === 'completed').reduce((s, t) => s + Math.abs(t.amount), 0);
 
   return (
-    <Modal title={`${user.fullName || user.email} — Ledger`} show={show} onClose={onClose} size="lg">
+    <Modal title={`${user.fullName || user.email}: Ledger`} show={show} onClose={onClose} size="lg">
       <div className="row g-3 mb-3 text-center">
         <div className="col-4">
           <p className="text-secondary small mb-0">Total Balance</p>

@@ -66,7 +66,7 @@ export function MaintenanceModePage() {
         <div className="card-body d-flex justify-content-between align-items-center flex-wrap gap-3">
           <div>
             <h3 className="h6 mb-1">Maintenance Mode</h3>
-            <p className="text-secondary small mb-0">Master switch — every option below only takes effect while this is ON.</p>
+            <p className="text-secondary small mb-0">Master switch: every option below only takes effect while this is ON.</p>
           </div>
           <div className="form-check form-switch fs-5 mb-0">
             <input

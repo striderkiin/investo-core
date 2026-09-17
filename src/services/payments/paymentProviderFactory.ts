@@ -24,6 +24,6 @@ export function getPaymentProvider(): PaymentProvider {
       cachedProvider = createSandboxPaymentProvider();
       return cachedProvider;
     case 'production':
-      throw new Error('Production payment provider is not configured yet — connect a real provider in the Integrations Center.');
+      throw new Error('Production payment provider is not configured yet. Connect a real provider in the Integrations Center.');
   }
 }

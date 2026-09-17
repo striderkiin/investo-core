@@ -193,7 +193,7 @@ begin
       v_client_ids[v_i],
       'system_announcement',
       'Welcome to Investo',
-      'Thanks for joining — explore your dashboard to get started.',
+      'Thanks for joining. Explore your dashboard to get started.',
       case when v_i % 3 = 0 then now() else null end
     );
   end loop;

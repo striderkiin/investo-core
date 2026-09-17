@@ -177,7 +177,7 @@ export function SocialProofPage() {
   }
 
   function buildPreview(eventType: string): SocialProofEvent {
-    const template = templates.find((t) => t.eventType === eventType)?.template ?? '{name} — ' + eventType;
+    const template = templates.find((t) => t.eventType === eventType)?.template ?? '{name}: ' + eventType;
     const vars: Record<string, string> = { name: 'Alex K.', siteName: 'the platform', planName: 'Growth Plan', amount: '$500' };
     const message = Object.entries(vars).reduce((msg, [key, value]) => msg.replace(`{${key}}`, value), template);
     return {
@@ -225,12 +225,12 @@ export function SocialProofPage() {
           <div className="d-flex justify-content-between align-items-center mb-2">
             <h3 className="h6 mb-0">Demo Activity Ticker</h3>
             <span className={`badge text-bg-${settings.demoModeEnabled ? 'success' : 'secondary'}`}>
-              {settings.demoModeEnabled ? '● ON — Visible to all visitors' : '● OFF'}
+              {settings.demoModeEnabled ? '● ON, visible to all visitors' : '● OFF'}
             </span>
           </div>
           <p className="small text-secondary">
             A rotating toast of canned, fictional activity messages (not tied to real users) for marketing purposes. Shown
-            everywhere — the public landing page, the client dashboard, and this admin panel — independent of the real
+            everywhere: the public landing page, the client dashboard, and this admin panel, independent of the real
             production Social Proof system below. Uses the same Popup Position setting.
           </p>
           <div className="form-check form-switch mb-3">
@@ -249,7 +249,7 @@ export function SocialProofPage() {
           </div>
 
           <p className="small text-secondary mb-2">
-            Name and location render bold above the activity line, "Name from Location" — matching the popup's card layout. Leave
+            Name and location render bold above the activity line, "Name from Location", matching the popup's card layout. Leave
             both blank for a 'Market' row (a price tick has no person behind it, so it renders as a single line).
           </p>
           <div className="d-flex flex-column gap-2 mb-3" style={{ maxHeight: 380, overflowY: 'auto' }}>
@@ -438,7 +438,7 @@ export function SocialProofPage() {
 
           <div className="row g-3 mb-3">
             <div className="col-12 col-md-4">
-              <label className="form-label small">Privacy — Display Name As</label>
+              <label className="form-label small">Privacy: Display Name As</label>
               <select className="form-select form-select-sm" value={settings.privacyMode} disabled={!canManage} onChange={(e) => persist({ privacyMode: e.target.value as SocialProofSettings['privacyMode'] })}>
                 <option value="first_name">First Name Only</option>
                 <option value="first_initial">First Name + Initial</option>
@@ -478,7 +478,7 @@ export function SocialProofPage() {
             ))}
           </div>
           <p className="text-secondary small mb-0">
-            These apply to real, confirmed activity. "New Accounts" and "Verified Accounts"-style events only fire for genuine signups —
+            These apply to real, confirmed activity. "New Accounts" and "Verified Accounts"-style events only fire for genuine signups;
             nothing here is ever generated in production mode.
           </p>
         </div>
@@ -489,7 +489,7 @@ export function SocialProofPage() {
           <div className="d-flex justify-content-between align-items-center mb-2">
             <h3 className="h6 mb-0">Live-Looking Test Notifications</h3>
             <span className={`badge text-bg-${settings.testModeEnabled ? 'warning' : 'success'}`}>
-              {settings.testModeEnabled ? '● ON — Client-Facing Test Activity Enabled' : '● OFF — Production Activity Only'}
+              {settings.testModeEnabled ? '● ON, client-facing test activity enabled' : '● OFF, production activity only'}
             </span>
           </div>
           <p className="small text-secondary">
@@ -623,7 +623,7 @@ export function SocialProofPage() {
                       </td>
                       <td>{m.shownCount}</td>
                       <td>{m.clickedCount}</td>
-                      <td>{m.shownCount > 0 ? `${((m.clickedCount / m.shownCount) * 100).toFixed(2)}%` : '—'}</td>
+                      <td>{m.shownCount > 0 ? `${((m.clickedCount / m.shownCount) * 100).toFixed(2)}%` : '-'}</td>
                       <td>{m.dismissedCount}</td>
                     </tr>
                   ))}

@@ -101,7 +101,7 @@ export function SecurityCenterPage() {
                           <td className="text-secondary small">{session.userId.slice(0, 8)}</td>
                           <td className="text-truncate small" style={{ maxWidth: 160 }}>
                             {session.isAdminSession && <span className="badge text-bg-warning me-1">Admin</span>}
-                            {session.userAgent ?? '—'}
+                            {session.userAgent ?? '-'}
                           </td>
                           <td className="small">{new Date(session.lastActiveAt).toLocaleString()}</td>
                           <td>
@@ -139,7 +139,7 @@ export function SecurityCenterPage() {
                       {events.map((event) => (
                         <tr key={event.id}>
                           <td className="text-capitalize small">{event.eventType.replace(/_/g, ' ')}</td>
-                          <td className="text-secondary small">{event.userId?.slice(0, 8) ?? '—'}</td>
+                          <td className="text-secondary small">{event.userId?.slice(0, 8) ?? '-'}</td>
                           <td className="small">{new Date(event.createdAt).toLocaleString()}</td>
                         </tr>
                       ))}

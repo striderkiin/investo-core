@@ -36,7 +36,7 @@ export function SandboxTestingPage() {
     setSimulatingId(deposit.id);
     try {
       await sandboxTestingService.simulateWebhook(deposit.id);
-      showSuccess('Webhook simulated — deposit confirmed via HMAC-verified signature.');
+      showSuccess('Webhook simulated: deposit confirmed via HMAC-verified signature.');
       await load();
     } catch (err) {
       showError(err instanceof Error ? err.message : 'Webhook simulation failed. Is the Edge Function deployed and is a sandbox payment integration configured with a webhook secret?');

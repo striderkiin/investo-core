@@ -146,7 +146,7 @@ export function IntegrationsPage() {
     try {
       const updated = await integrationService.testConnection(integration.id);
       setIntegrations((current) => current.map((i) => (i.id === updated.id ? updated : i)));
-      showSuccess(updated.status === 'connected' ? 'Connection test passed.' : 'Connection test failed — check credentials.');
+      showSuccess(updated.status === 'connected' ? 'Connection test passed.' : 'Connection test failed. Check credentials.');
     } catch (err) {
       showError(err instanceof Error ? err.message : 'Test failed');
     }
@@ -171,7 +171,7 @@ export function IntegrationsPage() {
       <div>
         <h2 className="h4 mb-1">Integrations Center</h2>
         <p className="text-secondary mb-0 small">
-          Secrets are never sent back to the browser after saving — only a masked reference is shown, e.g. <code>••••••••••••8F2A</code>.
+          Secrets are never sent back to the browser after saving. Only a masked reference is shown, e.g. <code>••••••••••••8F2A</code>.
         </p>
       </div>
 

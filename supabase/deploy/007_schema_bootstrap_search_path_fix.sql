@@ -49,7 +49,7 @@ declare
 begin
   select template into v_template from social_proof_templates where event_type = p_event_type;
   if v_template is null then
-    v_template := '{name} — ' || p_event_type;
+    v_template := '{name}: ' || p_event_type;
   end if;
 
   v_result := v_template;

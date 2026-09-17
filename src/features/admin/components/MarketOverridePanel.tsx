@@ -330,7 +330,7 @@ export function MarketOverridePanel() {
 
       <div className="card ic-card">
         <div className="card-body">
-          <h3 className="h6">Override History{selectedAsset ? ` — ${selectedAsset.symbol}` : ''}</h3>
+          <h3 className="h6">Override History{selectedAsset ? `: ${selectedAsset.symbol}` : ''}</h3>
           {overrideHistory.length === 0 ? (
             <p className="text-secondary small mb-0">No overrides recorded yet.</p>
           ) : (

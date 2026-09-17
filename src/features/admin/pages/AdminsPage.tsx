@@ -142,7 +142,7 @@ export function AdminsPage() {
               {admins.map((admin) => (
                 <tr key={admin.id}>
                   <td>
-                    <div className="fw-semibold">{admin.fullName || '—'}</div>
+                    <div className="fw-semibold">{admin.fullName || '-'}</div>
                     <div className="text-secondary small">{admin.email}</div>
                   </td>
                   <td>
@@ -226,7 +226,7 @@ export function AdminsPage() {
                 onClick={() => handleAssignRole(user.id, selectedRole)}
               >
                 <span>
-                  {user.fullName || '—'} <span className="text-secondary small">{user.email}</span>
+                  {user.fullName || '-'} <span className="text-secondary small">{user.email}</span>
                 </span>
                 <span className="badge text-bg-primary text-capitalize">Make {selectedRole.replace('_', ' ')}</span>
               </button>

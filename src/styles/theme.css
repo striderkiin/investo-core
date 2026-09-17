@@ -100,8 +100,8 @@ h1, h2, h3, h4, h5, h6 {
   position: fixed;
   bottom: 1rem;
   z-index: 1050;
-  width: calc(100% - 2rem);
-  max-width: 320px;
+  width: calc(100% - 3rem);
+  max-width: 280px;
   background-color: #f8f5f0;
   color: #1a1710;
   border: 1px solid color-mix(in srgb, var(--ic-primary) 30%, transparent);

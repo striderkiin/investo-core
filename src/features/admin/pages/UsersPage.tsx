@@ -104,7 +104,7 @@ export function UsersPage() {
                         <i className="bi bi-person" aria-hidden="true" />
                       </span>
                       <div>
-                        <div className="fw-semibold">{user.fullName || '—'}</div>
+                        <div className="fw-semibold">{user.fullName || '-'}</div>
                         <div className="text-secondary small">{user.email}</div>
                       </div>
                     </div>

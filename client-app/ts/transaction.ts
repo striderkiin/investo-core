@@ -250,7 +250,7 @@ function wireExportControls(profile: Profile): void {
     const nameEl = document.getElementById('statementAccountName');
     const emailEl = document.getElementById('statementAccountEmail');
     const generatedEl = document.getElementById('statementGeneratedAt');
-    if (nameEl) nameEl.textContent = `Account Statement — ${profile.fullName || profile.email}`;
+    if (nameEl) nameEl.textContent = `Account Statement: ${profile.fullName || profile.email}`;
     if (emailEl) emailEl.textContent = profile.email;
     if (generatedEl) generatedEl.textContent = `Generated ${new Date().toLocaleString()}`;
     window.print();

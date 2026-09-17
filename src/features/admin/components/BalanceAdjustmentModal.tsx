@@ -65,7 +65,7 @@ export function BalanceAdjustmentModal({ user, show, onClose, onAdjusted }: Bala
   }
 
   return (
-    <Modal title={`Adjust Balance — ${user.fullName || user.email}`} show={show} onClose={onClose}>
+    <Modal title={`Adjust Balance: ${user.fullName || user.email}`} show={show} onClose={onClose}>
       <form onSubmit={handleSubmit} noValidate>
         {error && (
           <div className="alert alert-danger" role="alert">

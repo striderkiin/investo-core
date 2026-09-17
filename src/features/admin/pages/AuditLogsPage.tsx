@@ -72,12 +72,12 @@ export function AuditLogsPage() {
                   <td className="text-secondary small">{log.adminId.slice(0, 8)}</td>
                   <td className="text-capitalize">{log.action.replace(/_/g, ' ')}</td>
                   <td className="text-capitalize">{log.module}</td>
-                  <td className="text-secondary small">{log.target ?? '—'}</td>
+                  <td className="text-secondary small">{log.target ?? '-'}</td>
                   <td className="text-secondary small text-truncate" style={{ maxWidth: 160 }}>
-                    {log.previousValue ?? '—'}
+                    {log.previousValue ?? '-'}
                   </td>
                   <td className="text-secondary small text-truncate" style={{ maxWidth: 160 }}>
-                    {log.newValue ?? '—'}
+                    {log.newValue ?? '-'}
                   </td>
                   <td className="text-uppercase small">{log.environment}</td>
                 </tr>

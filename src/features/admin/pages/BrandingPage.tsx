@@ -117,7 +117,7 @@ export function BrandingPage() {
       <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div>
           <h2 className="h4 mb-1">Branding</h2>
-          <p className="text-secondary mb-0 small">Changes preview live across the app immediately — click Save to persist them.</p>
+          <p className="text-secondary mb-0 small">Changes preview live across the app immediately. Click Save to persist them.</p>
         </div>
         <button type="button" className="btn btn-primary" onClick={handleSave} disabled={isSaving}>
           {isSaving ? 'Saving…' : 'Save Changes'}
@@ -230,7 +230,7 @@ export function BrandingPage() {
           <div className="card ic-card mt-4">
             <div className="card-body">
               <h3 className="h6 mb-1">Social Links</h3>
-              <p className="text-secondary small mb-3">Shown as icons in the landing page&apos;s Contact section and footer. Turn on whichever platforms you actually have and set the real link — disabled platforms never show on the public site.</p>
+              <p className="text-secondary small mb-3">Shown as icons in the landing page&apos;s Contact section and footer. Turn on whichever platforms you actually have and set the real link. Disabled platforms never show on the public site.</p>
               {socialLinks.map((link) => {
                 const meta = SOCIAL_PLATFORM_META[link.platform];
                 const Icon = meta.icon;
@@ -312,7 +312,7 @@ export function BrandingPage() {
                   Danger
                 </button>
               </div>
-              <p className="mt-3 mb-0 small text-secondary">This preview reflects live changes — check the sidebar and navbar too.</p>
+              <p className="mt-3 mb-0 small text-secondary">This preview reflects live changes. Check the sidebar and navbar too.</p>
             </div>
           </div>
         </div>

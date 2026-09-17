@@ -73,7 +73,7 @@ export function ActivitySimulationPage() {
       <h2 className="h4 mb-0">Activity & Simulation</h2>
       <p className="text-secondary small mb-0">
         <i className="bi bi-info-circle me-1" aria-hidden="true" />
-        For Demo Mode only. All events generated here are clearly labeled as simulated — no real balances are affected.
+        For Demo Mode only. All events generated here are clearly labeled as simulated; no real balances are affected.
       </p>
 
       <div className="card ic-card">
