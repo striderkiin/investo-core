@@ -38,7 +38,7 @@ const Orders = async () => {
               {orders.slice(0, 5).map((order, idx) => (
                 <tr key={idx}>
                   <td>
-                    <Link href="/ecommerce/orders">#{order.id}</Link>
+                    <Link href="/deposits">#{order.id}</Link>
                   </td>
                   <td>
                     <p className="d-inline-block align-middle mb-0">

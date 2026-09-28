@@ -60,7 +60,9 @@ function wireTwoFa(profile: Profile): void {
   checkbox.addEventListener('change', () => {
     if (checkbox.checked) {
       void securityService.enrollMfa().then((data) => {
-        qrCode.src = `data:image/svg+xml;utf-8,${encodeURIComponent(data.totp.qr_code)}`;
+        // supabase-js already returns qr_code as a data: URI; wrapping it again breaks the image.
+        const qr = data.totp.qr_code;
+        qrCode.src = qr.startsWith('data:') ? qr : `data:image/svg+xml;utf-8,${encodeURIComponent(qr)}`;
         secretEl.textContent = data.totp.secret;
         enrollPanel.style.display = 'block';
         checkbox.dataset.pendingFactorId = data.id;

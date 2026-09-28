@@ -15,7 +15,7 @@ const columns: ColumnDef<ProductType>[] = [
       row: {
         original: { id },
       },
-    }) => <Link href={`/apps/ecommerce/orders/${id}`}>#{id}</Link>,
+    }) => <Link href={`/deposits/${id}`}>#{id}</Link>,
   },
   {
     header: 'Product',

@@ -81,7 +81,6 @@ export default defineConfig({
       { find: /^next\/navigation$/, replacement: NEXT_SHIMS('navigation.ts') },
       { find: /^next\/dynamic$/, replacement: NEXT_SHIMS('dynamic.tsx') },
       { find: /^next\/font\/google$/, replacement: NEXT_SHIMS('font-google.ts') },
-      { find: /^next-auth\/react$/, replacement: NEXT_SHIMS('next-auth-react.tsx') },
       { find: /^nextjs-toploader$/, replacement: NEXT_SHIMS('toploader.tsx') },
       { find: /^react-apexcharts$/, replacement: NEXT_SHIMS('react-apexcharts.ts') },
     ],

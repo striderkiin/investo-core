@@ -1,3 +1,13 @@
+// vite/client isn't included because it types image imports as URL strings;
+// these match Next's static-image shape instead. Its env typing is repeated here
+// for the shared services under src/ that read import.meta.env.
+interface ImportMetaEnv {
+  readonly [key: string]: string | undefined
+}
+interface ImportMeta {
+  readonly env: ImportMetaEnv
+}
+
 type StaticImageData = { src: string; width: number; height: number }
 
 declare module '*.png' {

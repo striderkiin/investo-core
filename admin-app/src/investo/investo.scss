@@ -1,0 +1,27 @@
+// Investo overrides on top of the template theme. Kept separate from the
+// template's own SCSS so its files stay a clean copy.
+
+// Investo's full logo already contains the flame mark, so the standalone mark
+// only shows when the sidebar is collapsed to icons.
+.startbar .brand .logo {
+  .logo-sm {
+    display: none;
+  }
+
+  .logo-lg {
+    height: 44px;
+    width: auto;
+  }
+}
+
+@media (min-width: 1200px) {
+  body[data-sidebar-size='collapsed'] .startbar:not(:hover) .brand .logo {
+    .logo-sm {
+      display: inline-block;
+    }
+
+    .logo-lg {
+      display: none;
+    }
+  }
+}

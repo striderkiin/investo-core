@@ -21,7 +21,6 @@
       "next/navigation": ["./next-shims/navigation.ts"],
       "next/dynamic": ["./next-shims/dynamic.tsx"],
       "next/font/google": ["./next-shims/font-google.ts"],
-      "next-auth/react": ["./next-shims/next-auth-react.tsx"],
       "nextjs-toploader": ["./next-shims/toploader.tsx"]
     }
   },

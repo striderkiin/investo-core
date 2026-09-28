@@ -1,6 +1,9 @@
 import type { HTMLAttributeAnchorTarget } from 'react'
+import type { Permission } from '../../../src/types/roles'
 
 export type MenuItemType = {
+  /** Hidden from admins whose role lacks this permission. */
+  permission?: Permission
   key: string
   label: string
   isTitle?: boolean

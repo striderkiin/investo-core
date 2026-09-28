@@ -91,7 +91,7 @@ const Notifications = () => {
             </SimplebarReactClient>
           </Tab>
         </Tabs>
-        <Link href="/pages/notifications" className="dropdown-item text-center text-dark fs-13 py-2">
+        <Link href="/notifications" className="dropdown-item text-center text-dark fs-13 py-2">
           View All <IconifyIcon icon="fi:arrow-right" />
         </Link>
       </DropdownMenu>

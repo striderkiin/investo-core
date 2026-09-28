@@ -26,13 +26,13 @@ import * as PricingPage from '@/app/(admin)/pages/pricing/page'
 import * as LoginPage from '@/app/(other)/auth/login/page'
 import * as RegisterPage from '@/app/(other)/auth/register/page'
 import * as ResetPasswordPage from '@/app/(other)/auth/reset-pass/page'
+import * as SetupTwoFactorPage from '@/app/(other)/auth/setup-2fa/page'
 
-import logoDarkFull from '@/assets/images/logo-dark.png'
-import logoSm from '@/assets/images/logo-sm.png'
-import favicon from '@/app/favicon.ico'
+import { useAdminBranding } from '@/investo/useAdminBranding'
 
 import '@/assets/scss/app.scss'
 import '@/assets/scss/icons.scss'
+import '@/investo/investo.scss'
 
 // Stands in for the template's Next.js file-system router: each route below
 // maps to the page file at the same path under src/app/, wrapped in the same
@@ -50,7 +50,7 @@ type PageModule = {
   generateMetadata?: (props: any) => Promise<Metadata>
 }
 
-const TITLE_TEMPLATE = '%s | Rizz Next - Admin & Dashboard Template'
+const TITLE_TEMPLATE = '%s | Investo Admin'
 
 const toTitle = (metadata?: Metadata) => {
   const title = metadata?.title
@@ -105,7 +105,7 @@ const AsyncPage = ({ page, props }: { page: (props: PageProps) => Promise<ReactN
   return <>{state.node}</>
 }
 
-const Page =({ module }: { module: PageModule }) => {
+const Page = ({ module }: { module: PageModule }) => {
   const params = useParams() as Record<string, string>
   const [searchParams] = useSearchParams()
   const props: PageProps = { params, searchParams: Object.fromEntries(searchParams) }
@@ -155,13 +155,26 @@ const useRemoveSplashOnContent = () => {
   }, [])
 }
 
+const useBrandFavicon = (href: string) => {
+  useEffect(() => {
+    let link = document.querySelector<HTMLLinkElement>('link[rel="icon"]')
+    if (!link) {
+      link = document.createElement('link')
+      link.rel = 'icon'
+      document.head.appendChild(link)
+    }
+    link.href = href
+  }, [href])
+}
+
 const RootLayout = () => {
+  const { logoOnLight, mark, siteName } = useAdminBranding()
   useRemoveSplashOnContent()
+  useBrandFavicon(mark)
   return (
     <>
       <div id="splash-screen">
-        <Image alt="logo-square" width={46} height={46} src={logoSm} style={{ height: 46, width: 46 }} priority />
-        <Image alt="logo-text" width={59} height={24} src={logoDarkFull} style={{ height: 24, width: 59, marginInlineStart: 6 }} priority />
+        <Image alt={siteName} height={46} src={logoOnLight} style={{ height: 46, width: 'auto' }} priority />
       </div>
       <NextTopLoader color="#22c55e" showSpinner={false} />
       <div id="__next_splash">
@@ -173,17 +186,12 @@ const RootLayout = () => {
   )
 }
 
-const faviconLink = document.createElement('link')
-faviconLink.rel = 'icon'
-faviconLink.href = favicon.src
-document.head.appendChild(faviconLink)
-
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter basename="/admin-app">
       <Routes>
         <Route element={<RootLayout />}>
-          <Route index element={<Navigate to="/dashboard/analytics" replace />} />
+          <Route index element={<Navigate to="/dashboard" replace />} />
           <Route
             element={
               <AdminLayout>
@@ -191,16 +199,16 @@ createRoot(document.getElementById('root')!).render(
               </AdminLayout>
             }
           >
-            <Route path="dashboard/analytics" element={<Page module={AnalyticsPage} />} />
-            <Route path="apps/chat" element={<Page module={ChatPage} />} />
-            <Route path="apps/ecommerce/customers" element={<Page module={CustomersPage} />} />
-            <Route path="apps/ecommerce/customers/:customerId" element={<Page module={CustomerDetailsPage} />} />
-            <Route path="apps/ecommerce/orders" element={<Page module={OrdersPage} />} />
-            <Route path="apps/ecommerce/orders/:orderId" element={<Page module={OrderDetailsPage} />} />
-            <Route path="apps/invoice" element={<Page module={InvoicePage} />} />
-            <Route path="pages/profile" element={<Page module={ProfilePage} />} />
-            <Route path="pages/notifications" element={<Page module={NotificationsPage} />} />
-            <Route path="pages/pricing" element={<Page module={PricingPage} />} />
+            <Route path="dashboard" element={<Page module={AnalyticsPage} />} />
+            <Route path="customers" element={<Page module={CustomersPage} />} />
+            <Route path="customers/:customerId" element={<Page module={CustomerDetailsPage} />} />
+            <Route path="deposits" element={<Page module={OrdersPage} />} />
+            <Route path="deposits/:orderId" element={<Page module={OrderDetailsPage} />} />
+            <Route path="statement" element={<Page module={InvoicePage} />} />
+            <Route path="plans" element={<Page module={PricingPage} />} />
+            <Route path="support" element={<Page module={ChatPage} />} />
+            <Route path="notifications" element={<Page module={NotificationsPage} />} />
+            <Route path="profile" element={<Page module={ProfilePage} />} />
           </Route>
           <Route
             element={
@@ -212,6 +220,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="auth/login" element={<Page module={LoginPage} />} />
             <Route path="auth/register" element={<Page module={RegisterPage} />} />
             <Route path="auth/reset-pass" element={<Page module={ResetPasswordPage} />} />
+            <Route path="auth/setup-2fa" element={<Page module={SetupTwoFactorPage} />} />
           </Route>
           <Route path="*" element={<NotFoundRoute />} />
         </Route>

@@ -1,8 +1,18 @@
 import { MENU_ITEMS } from '@/assets/data/menu-items'
 import type { MenuItemType } from '@/types/menu'
+import type { Permission } from '../../../src/types/roles'
 
-export const getMenuItems = (): MenuItemType[] => {
-  return MENU_ITEMS
+// Filters out items the signed-in admin's role can't use, then any section
+// title left with nothing under it.
+export const getMenuItems = (can: (permission: Permission) => boolean = () => true): MenuItemType[] => {
+  const isVisible = (item: MenuItemType) => !item.permission || can(item.permission)
+  const visible = MENU_ITEMS.flatMap((item): MenuItemType[] => {
+    if (!isVisible(item)) return []
+    if (!item.children) return [item]
+    const children = item.children.filter(isVisible)
+    return children.length > 0 ? [{ ...item, children }] : []
+  })
+  return visible.filter((item, index) => !item.isTitle || (visible[index + 1] !== undefined && !visible[index + 1].isTitle))
 }
 
 export const findAllParent = (menuItems: MenuItemType[], menuItem: MenuItemType): string[] => {

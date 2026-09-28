@@ -2,9 +2,9 @@
 import type { ApexOptions } from 'apexcharts'
 import ReactApexChart from 'react-apexcharts'
 
-const CompletionChart = () => {
+const CompletionChart = ({ value }: { value: number }) => {
   const ChartOpts: ApexOptions = {
-    series: [67],
+    series: [value],
     chart: {
       height: 170,
       type: 'radialBar',
@@ -37,7 +37,7 @@ const CompletionChart = () => {
     stroke: {
       dashArray: 2,
     },
-    labels: ['Compleation'],
+    labels: ['Complete'],
   }
   return <ReactApexChart height={170} options={ChartOpts} series={ChartOpts.series} type="radialBar" />
 }

@@ -32,7 +32,7 @@ const columns: ColumnDef<CustomerType>[] = [
         original: { name, avatar, id },
       },
     }) => (
-      <Link href={`/apps/ecommerce/customers/${id}`} className="ps-0 text-body">
+      <Link href={`/customers/${id}`} className="ps-0 text-body">
         <Image src={avatar} alt="avatar" className="thumb-md d-inline rounded-circle me-1" />
         <p className="d-inline-block align-middle mb-0">
           <span className="font-13 fw-medium">{name}</span>

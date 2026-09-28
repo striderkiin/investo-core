@@ -1,16 +1,23 @@
 import IconifyIcon from '@/components/wrappers/IconifyIcon'
+import { permissionLabel, roleLabel } from '@/investo/roles'
 import { Card, CardBody, CardHeader, CardTitle, Col, Row } from 'react-bootstrap'
+import { ROLE_PERMISSIONS } from '../../../../../../../src/types/roles'
+import { useAuth } from '../../../../../../../src/hooks/useAuth'
 
-const PersonalInformation = () => {
+const PersonalInformation = ({ onEdit }: { onEdit: () => void }) => {
+  const { profile } = useAuth()
+  if (!profile) return null
+  const permissions = ROLE_PERMISSIONS[profile.role] ?? []
+
   return (
     <Card>
       <CardHeader>
         <Row className="align-items-center">
           <Col>
-            <CardTitle as="h4">Personal Information</CardTitle>
+            <CardTitle as="h4">Account Details</CardTitle>
           </Col>
           <Col xs="auto">
-            <span role="button" className="float-end text-muted d-inline-flex text-decoration-underline">
+            <span role="button" onClick={onEdit} className="float-end text-muted d-inline-flex text-decoration-underline">
               <IconifyIcon icon="iconoir:edit-pencil" className="fs-18 me-1" />
               Edit
             </span>
@@ -18,56 +25,29 @@ const PersonalInformation = () => {
         </Row>
       </CardHeader>
       <CardBody className="pt-0">
-        <p className="text-muted fw-medium mb-3">
-          It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.
-        </p>
-        <div className="mb-3">
-          <span className="badge bg-transparent border border-light text-gray-700 fs-12 fw-medium mb-1">Javascript</span>
-          <span className="badge bg-transparent border border-light text-gray-700 fs-12 fw-medium mb-1">Python</span>
-          <span className="badge bg-transparent border border-light text-gray-700 fs-12 fw-medium mb-1">Angular</span>
-          <span className="badge bg-transparent border border-light text-gray-700 fs-12 fw-medium mb-1">Reactjs</span>
-          <span className="badge bg-transparent border border-light text-gray-700 fs-12 fw-medium mb-1">Flutter</span>
-        </div>
-        <ul className="list-unstyled mb-0">
+        <ul className="list-unstyled mb-3">
           <li>
-            <IconifyIcon icon="la:birthday-cake" className="me-2 text-secondary fs-22 align-middle" /> <b> Birth Date </b> : 06 June 1989
+            <IconifyIcon icon="la:user" className="me-2 text-secondary fs-22 align-middle" /> <b> Name </b> : {profile.fullName || 'Not set'}
           </li>
           <li className="mt-2">
-            <IconifyIcon icon="la:briefcase" className="me-2 text-secondary fs-22 align-middle" /> <b> Position </b> : Full Stack Developer
+            <IconifyIcon icon="la:briefcase" className="me-2 text-secondary fs-22 align-middle" /> <b> Role </b> : {roleLabel(profile.role)}
           </li>
           <li className="mt-2">
-            <IconifyIcon icon="la:university" className="me-2 text-secondary fs-22 align-middle" /> <b> Education </b> : Stanford Univercity
+            <IconifyIcon icon="la:envelope" className="text-secondary fs-22 align-middle me-2" /> <b> Email </b> : {profile.email}
           </li>
           <li className="mt-2">
-            <IconifyIcon icon="la:language" className="me-2 text-secondary fs-22 align-middle" /> <b> Languages </b> : English, French, Spanish
-          </li>
-          <li className="mt-2">
-            <IconifyIcon icon="la:phone" className="me-2 text-secondary fs-22 align-middle" /> <b> Phone </b> : +91 23456 78910
-          </li>
-          <li className="mt-2">
-            <IconifyIcon icon="la:envelope" className="text-secondary fs-22 align-middle me-2" /> <b> Email </b> : mannat.theme@gmail.com
+            <IconifyIcon icon="la:calendar" className="text-secondary fs-22 align-middle me-2" /> <b> Member Since </b> :{' '}
+            {new Date(profile.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
           </li>
         </ul>
-        <Row className="justify-content-center mt-4">
-          <Col xs="auto" className="text-end border-end">
-            <span className="thumb-md justify-content-center d-flex align-items-center bg-blue text-white rounded-circle ms-auto mb-1">
-              <IconifyIcon icon="fa-brands:facebook-f" />
+        <p className="text-muted fw-medium mb-2">What you can do</p>
+        <div>
+          {permissions.map((permission) => (
+            <span key={permission} className="badge bg-transparent border border-light text-gray-700 fs-12 fw-medium mb-1 me-1">
+              {permissionLabel(permission)}
             </span>
-            <p className="mb-0 fw-semibold">Facebook</p>
-            <h4 className="m-0 fw-bold">
-              25k <span className="text-muted fs-12 fw-normal">Followers</span>
-            </h4>
-          </Col>
-          <Col xs="auto">
-            <span className="thumb-md justify-content-center d-flex align-items-center bg-black text-white rounded-circle mb-1">
-              <IconifyIcon icon="fa6-brands:x-twitter" />
-            </span>
-            <p className="mb-0 fw-semibold">Twitter</p>
-            <h4 className="m-0 fw-bold">
-              58k <span className="text-muted fs-12 fw-normal">Followers</span>
-            </h4>
-          </Col>
-        </Row>
+          ))}
+        </div>
       </CardBody>
     </Card>
   )

@@ -79,7 +79,13 @@ const MenuItem = ({ item, className, linkClassName }: SubMenus) => {
 const MenuItemLink = ({ item, className }: SubMenus) => {
   return (
     <Link href={item.url ?? ''} className={clsx(className)}>
-      {item.label}
+      {item.icon && (
+        <i className="menu-icon">
+          <IconifyIcon icon={item.icon} />
+        </i>
+      )}
+      <span>{item.label}</span>
+      {item.badge && <span className={`badge rounded text-${item.badge.variant} ms-1 bg-${item.badge.variant}-subtle`}>{item.badge.text}</span>}
     </Link>
   )
 }
