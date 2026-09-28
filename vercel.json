@@ -1,5 +1,7 @@
 {
   "rewrites": [
+    { "source": "/admin-app", "destination": "/admin-app/index.html" },
+    { "source": "/admin-app/(.*)", "destination": "/admin-app/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
