@@ -1,78 +1,78 @@
 'use client'
 import { yupResolver } from '@hookform/resolvers/yup'
-import Link from 'next/link'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 
 import PasswordFormInput from '@/components/form/PasswordFormInput'
 import TextFormInput from '@/components/form/TextFormInput'
 import IconifyIcon from '@/components/wrappers/IconifyIcon'
-import { Col } from 'react-bootstrap'
+import { invokeFunction } from '@/investo/functions'
 
-const RegisterForm = () => {
+type Props = { token: string; email: string; onDone: () => void }
+
+// Accepts an admin invite: the email and role come from the invite, the
+// person only chooses their name and password. 2FA setup follows at sign-in.
+const RegisterForm = ({ token, email, onDone }: Props) => {
+  const [error, setError] = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
   const registerSchema = yup.object({
-    username: yup.string().required('Username is required'),
-    email: yup.string().email('Enter a valid email').required('Email is required'),
-    password: yup.string().min(6, 'Password must be of minimum 6 characters').required('Password is required'),
+    fullName: yup.string().trim().required('Enter your full name'),
+    password: yup.string().min(10, 'Use at least 10 characters').required('Choose a password'),
     confirmPassword: yup
       .string()
       .oneOf([yup.ref('password')], 'Passwords must match')
-      .required('Confirm Password is required'),
-    mobile: yup
-      .string()
-      .matches(/^[6-9]\d{9}$/, { message: 'Enter a valid mobile number', excludeEmptyString: false })
-      .required('Username is required'),
+      .required('Type the password again'),
   })
 
   const { control, handleSubmit } = useForm({
     resolver: yupResolver(registerSchema),
   })
 
+  const submit = handleSubmit(async ({ fullName, password }) => {
+    setError(null)
+    setSaving(true)
+    try {
+      await invokeFunction('accept-admin-invite', { token, fullName, password })
+      onDone()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not create the account.')
+    } finally {
+      setSaving(false)
+    }
+  })
+
   return (
-    <form className="my-4" onSubmit={handleSubmit(() => console.log('User registered successfully'))}>
-      <TextFormInput control={control} name="username" label="Username" placeholder="Enter your username" containerClassName="form-group mb-2" />
+    <form className="my-4" onSubmit={submit}>
+      {error && <div className="alert alert-danger py-2">{error}</div>}
+      <div className="form-group mb-2">
+        <label className="form-label" htmlFor="invite-email">
+          Email
+        </label>
+        <input id="invite-email" className="form-control" value={email} readOnly />
+      </div>
 
-      <TextFormInput control={control} name="email" label="Email" placeholder="Enter your email" containerClassName="form-group mb-2" />
+      <TextFormInput control={control} name="fullName" label="Full name" placeholder="Your name" containerClassName="form-group mb-2" />
 
-      <PasswordFormInput control={control} name="password" label="Password" placeholder="Enter your password" containerClassName="form-group mb-2" />
+      <PasswordFormInput control={control} name="password" id="password" label="Password" placeholder="At least 10 characters" containerClassName="form-group mb-2" />
 
       <PasswordFormInput
         control={control}
         name="confirmPassword"
-        label="Confirm Password"
-        placeholder="Re-Enter your password"
+        id="confirmPassword"
+        label="Confirm password"
+        placeholder="Type it again"
         containerClassName="form-group mb-2"
       />
 
-      <TextFormInput
-        control={control}
-        label="Mobile Number"
-        name="mobile"
-        placeholder="Enter your mobile number"
-        containerClassName="form-group mb-2"
-      />
-
-      <div className="form-group row mt-3">
-        <Col xs={12}>
-          <div className="form-check form-switch form-switch-success">
-            <input className="form-check-input" type="checkbox" id="customSwitchSuccess" />
-            <label className="form-check-label" htmlFor="customSwitchSuccess">
-              By registering you agree to the Rizz{' '}
-              <Link href="" className="text-primary">
-                Terms of Use
-              </Link>
-            </label>
-          </div>
-        </Col>
-      </div>
       <div className="form-group mb-0 row">
-        <Col xs={12}>
+        <div className="col-12">
           <div className="d-grid mt-3">
-            <button className="btn btn-primary flex-centered" type="submit">
-              Register <IconifyIcon icon="fa6-solid:right-to-bracket" className="ms-1" />
+            <button className="btn btn-primary flex-centered" type="submit" disabled={saving}>
+              {saving ? 'Creating account…' : 'Create admin account'} <IconifyIcon icon="fa6-solid:right-to-bracket" className="ms-1" />
             </button>
           </div>
-        </Col>
+        </div>
       </div>
     </form>
   )

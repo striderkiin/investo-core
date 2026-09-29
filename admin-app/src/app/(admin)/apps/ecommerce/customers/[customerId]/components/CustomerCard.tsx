@@ -6,7 +6,7 @@ import UserAvatar from '@/investo/UserAvatar'
 import { ACCOUNT_STATUSES, accountStatus } from '@/investo/customers'
 import { countryName, formatDate, statusLabel, statusVariant } from '@/investo/format'
 import { useNotificationContext } from '@/context/useNotificationContext'
-import { userService } from '@/investo/services'
+import { supabase, userService } from '@/investo/services'
 import BalanceAdjustModal from './BalanceAdjustModal'
 import type { CustomerDetail } from '../useCustomer'
 import type { AccountStatus } from '../../../../../../../../../src/types/database'
@@ -37,6 +37,13 @@ const CustomerCard = ({ detail, onChanged }: { detail: CustomerDetail; onChanged
     } catch (err) {
       showNotification({ message: err instanceof Error ? err.message : 'Could not change the status.', variant: 'danger' })
     }
+  }
+
+  const signOutEverywhere = async () => {
+    if (!window.confirm(`Sign ${name} out of every device? They can sign back in unless their account is suspended.`)) return
+    const { data, error } = await supabase.rpc('admin_sign_out_user', { p_user_id: profile.id })
+    if (error) return showNotification({ message: error.message, variant: 'danger' })
+    showNotification({ message: `Signed out of ${data ?? 0} session(s).`, variant: 'success' })
   }
 
   return (
@@ -97,8 +104,13 @@ const CustomerCard = ({ detail, onChanged }: { detail: CustomerDetail; onChanged
             </span>
           </DetailLine>
         </div>
-        {(can('users.adjust_balance') || can('users.manage_status')) && (
+        {(can('users.adjust_balance') || can('users.manage_status') || can('users.read')) && (
           <div className="d-flex gap-2 mt-3 flex-wrap">
+            {can('users.read') && (
+              <Link href={`/statement?customer=${profile.id}`} className="btn btn-light btn-sm d-inline-flex align-items-center">
+                <IconifyIcon icon="iconoir:page" className="me-1" /> Statement
+              </Link>
+            )}
             {can('users.adjust_balance') && (
               <button type="button" className="btn btn-primary btn-sm d-inline-flex align-items-center" onClick={() => setAdjusting(true)}>
                 <IconifyIcon icon="iconoir:coins" className="me-1" /> Adjust balance
@@ -118,6 +130,8 @@ const CustomerCard = ({ detail, onChanged }: { detail: CustomerDetail; onChanged
                       </DropdownItem>
                     </div>
                   ))}
+                  <DropdownDivider />
+                  <DropdownItem onClick={() => void signOutEverywhere()}>Sign out of all devices</DropdownItem>
                 </DropdownMenu>
               </Dropdown>
             )}

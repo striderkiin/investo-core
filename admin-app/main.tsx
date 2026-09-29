@@ -23,6 +23,8 @@ import * as WithdrawalsPage from '@/app/(admin)/apps/ecommerce/withdrawals/page'
 import * as WithdrawalDetailsPage from '@/app/(admin)/apps/ecommerce/withdrawals/[withdrawalId]/page'
 import * as InvestmentsPage from '@/app/(admin)/apps/investments/page'
 import * as TransactionsPage from '@/app/(admin)/apps/transactions/page'
+import * as AdminsPage from '@/app/(admin)/system/admins/page'
+import * as IntegrationsPage from '@/app/(admin)/system/integrations/page'
 import * as InvoicePage from '@/app/(admin)/apps/invoice/page'
 import * as ProfilePage from '@/app/(admin)/pages/profile/page'
 import * as NotificationsPage from '@/app/(admin)/pages/notifications/page'
@@ -213,6 +215,8 @@ createRoot(document.getElementById('root')!).render(
             <Route path="investments" element={<Page module={InvestmentsPage} />} />
             <Route path="transactions" element={<Page module={TransactionsPage} />} />
             <Route path="statement" element={<Page module={InvoicePage} />} />
+            <Route path="system/admins" element={<Page module={AdminsPage} />} />
+            <Route path="system/integrations" element={<Page module={IntegrationsPage} />} />
             <Route path="plans" element={<Page module={PricingPage} />} />
             <Route path="support" element={<Page module={ChatPage} />} />
             <Route path="notifications" element={<Page module={NotificationsPage} />} />

@@ -10,6 +10,7 @@ export const MENU_ITEMS: MenuItemType[] = [
 
   { key: 'customers-title', label: 'Customers', isTitle: true },
   { key: 'customers', icon: 'iconoir:group', label: 'Customers', url: '/customers', permission: 'users.read' },
+  { key: 'statements', icon: 'iconoir:page', label: 'Statements', url: '/statement', permission: 'users.read' },
   { key: 'kyc', icon: 'iconoir:user-badge-check', label: 'KYC Reviews', url: '#', badge: SOON, permission: 'compliance.manage' },
 
   { key: 'money-title', label: 'Money', isTitle: true },
@@ -34,10 +35,10 @@ export const MENU_ITEMS: MenuItemType[] = [
     icon: 'iconoir:settings',
     label: 'System',
     children: [
-      { key: 'admins', label: 'Admins', url: '#', parentKey: 'system', badge: SOON, permission: 'admins.manage' },
+      { key: 'admins', label: 'Admins', url: '/system/admins', parentKey: 'system', permission: 'admins.manage' },
       { key: 'security', label: 'Security Center', url: '#', parentKey: 'system', badge: SOON, permission: 'security.manage' },
       { key: 'audit-logs', label: 'Audit Logs', url: '#', parentKey: 'system', badge: SOON, permission: 'audit.read' },
-      { key: 'integrations', label: 'Integrations', url: '#', parentKey: 'system', badge: SOON, permission: 'integrations.manage' },
+      { key: 'integrations', label: 'Integrations', url: '/system/integrations', parentKey: 'system', permission: 'integrations.manage' },
       { key: 'branding', label: 'Branding', url: '#', parentKey: 'system', badge: SOON, permission: 'branding.manage' },
       { key: 'settings', label: 'Settings', url: '#', parentKey: 'system', badge: SOON, permission: 'settings.manage' },
       { key: 'maintenance', label: 'Maintenance', url: '#', parentKey: 'system', badge: SOON, permission: 'settings.manage' },
