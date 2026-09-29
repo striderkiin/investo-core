@@ -19,7 +19,7 @@ export const MENU_ITEMS: MenuItemType[] = [
   { key: 'investments', icon: 'iconoir:graph-up', label: 'Investments', url: '/investments', permission: 'investments.read' },
   { key: 'transactions', icon: 'iconoir:list', label: 'Transactions', url: '/transactions', permission: 'transactions.read' },
   { key: 'plans', icon: 'iconoir:page-star', label: 'Investment Plans', url: '/plans', permission: 'investments.manage' },
-  { key: 'treasury', icon: 'iconoir:bank', label: 'Treasury', url: '#', badge: SOON, permission: 'treasury.read' },
+  { key: 'treasury', icon: 'iconoir:bank', label: 'Treasury', url: '/treasury', permission: 'treasury.read' },
   { key: 'referrals', icon: 'iconoir:share-android', label: 'Referrals', url: '/referrals', permission: 'referrals.read' },
 
   { key: 'engage-title', label: 'Support & Engagement', isTitle: true },
@@ -27,7 +27,7 @@ export const MENU_ITEMS: MenuItemType[] = [
   { key: 'contact-messages', icon: 'iconoir:mail', label: 'Contact Messages', url: '/contact-messages', permission: 'support.read' },
   { key: 'notifications', icon: 'iconoir:bell', label: 'Notifications', url: '/notifications', permission: ['notifications.send', 'announcements.manage'] },
   { key: 'social-proof', icon: 'iconoir:megaphone', label: 'Social Proof', url: '#', badge: SOON, permission: 'social_proof.manage' },
-  { key: 'market', icon: 'iconoir:candlestick-chart', label: 'Market Controls', url: '#', badge: SOON, permission: 'market.read' },
+  { key: 'market', icon: 'iconoir:candlestick-chart', label: 'Market Controls', url: '/market', permission: 'market.read' },
 
   { key: 'system-title', label: 'System', isTitle: true },
   {

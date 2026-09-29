@@ -30,6 +30,8 @@ import * as KycPage from '@/app/(admin)/compliance/kyc/page'
 import * as ReferralsPage from '@/app/(admin)/growth/referrals/page'
 import * as AuditLogsPage from '@/app/(admin)/system/audit-logs/page'
 import * as SecurityPage from '@/app/(admin)/system/security/page'
+import * as TreasuryPage from '@/app/(admin)/money/treasury/page'
+import * as MarketPage from '@/app/(admin)/market/page'
 import * as InvoicePage from '@/app/(admin)/apps/invoice/page'
 import * as ProfilePage from '@/app/(admin)/pages/profile/page'
 import * as NotificationsPage from '@/app/(admin)/pages/notifications/page'
@@ -230,6 +232,8 @@ createRoot(document.getElementById('root')!).render(
             <Route path="referrals" element={<Page module={ReferralsPage} />} />
             <Route path="system/audit-logs" element={<Page module={AuditLogsPage} />} />
             <Route path="system/security" element={<Page module={SecurityPage} />} />
+            <Route path="treasury" element={<Page module={TreasuryPage} />} />
+            <Route path="market" element={<Page module={MarketPage} />} />
             <Route path="profile" element={<Page module={ProfilePage} />} />
           </Route>
           <Route
