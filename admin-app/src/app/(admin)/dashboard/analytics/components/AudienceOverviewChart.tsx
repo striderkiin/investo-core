@@ -54,7 +54,7 @@ const AudienceOverviewChart = () => {
         },
       ],
     },
-    colors: ['#22c55e', 'rgba(106, 155, 155, 0.3)'],
+    colors: ['#a8442e', 'rgba(106, 155, 155, 0.3)'],
     dataLabels: {
       enabled: false,
     },

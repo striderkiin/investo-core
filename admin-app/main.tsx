@@ -176,7 +176,7 @@ const RootLayout = () => {
       <div id="splash-screen">
         <Image alt={siteName} height={46} src={logoOnLight} style={{ height: 46, width: 'auto' }} priority />
       </div>
-      <NextTopLoader color="#22c55e" showSpinner={false} />
+      <NextTopLoader color="#a8442e" showSpinner={false} />
       <div id="__next_splash">
         <AppProvidersWrapper>
           <Outlet />

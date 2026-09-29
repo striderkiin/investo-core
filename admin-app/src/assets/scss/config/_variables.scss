@@ -329,7 +329,8 @@ $cyans: (
 // fusv-enable
 
 // scss-docs-start theme-color-variables
-$primary:       $green;
+// Investo brand accent (matches the landing page and client dashboard).
+$primary:       #a8442e;
 $secondary:     $gray-600;
 $success:       $teal;
 $info:          $cyan;

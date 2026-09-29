@@ -75,7 +75,7 @@ export default function RootLayout({ children }: ChildrenType) {
           <Image alt="logo-square" width={46} height={46} src={logoSm} style={{ height: 46, width: 46 }} priority />
           <Image alt="logo-text" width={59} height={24} src={logoDarkFull} style={{ height: 24, width: 59, marginInlineStart: 6 }} priority />
         </div>
-        <NextTopLoader color="#22c55e" showSpinner={false} />
+        <NextTopLoader color="#a8442e" showSpinner={false} />
         <div id="__next_splash">
           <AppProvidersWrapper>{children}</AppProvidersWrapper>
         </div>
