@@ -35,6 +35,9 @@ import * as MarketPage from '@/app/(admin)/market/page'
 import * as SocialProofPage from '@/app/(admin)/engagement/social-proof/page'
 import * as ActivityPage from '@/app/(admin)/system/activity/page'
 import * as MaintenancePage from '@/app/(admin)/system/maintenance/page'
+import * as BrandingPage from '@/app/(admin)/system/branding/page'
+import * as SettingsPage from '@/app/(admin)/system/settings/page'
+import * as SandboxPage from '@/app/(admin)/system/sandbox/page'
 import * as InvoicePage from '@/app/(admin)/apps/invoice/page'
 import * as ProfilePage from '@/app/(admin)/pages/profile/page'
 import * as NotificationsPage from '@/app/(admin)/pages/notifications/page'
@@ -240,6 +243,9 @@ createRoot(document.getElementById('root')!).render(
             <Route path="social-proof" element={<Page module={SocialProofPage} />} />
             <Route path="system/activity" element={<Page module={ActivityPage} />} />
             <Route path="system/maintenance" element={<Page module={MaintenancePage} />} />
+            <Route path="system/branding" element={<Page module={BrandingPage} />} />
+            <Route path="system/settings" element={<Page module={SettingsPage} />} />
+            <Route path="system/sandbox" element={<Page module={SandboxPage} />} />
             <Route path="profile" element={<Page module={ProfilePage} />} />
           </Route>
           <Route

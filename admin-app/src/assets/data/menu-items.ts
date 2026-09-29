@@ -1,9 +1,5 @@
 import type { MenuItemType } from '@/types/menu'
 
-// Sections not yet rebuilt in this panel carry a "soon" badge. Ones with a
-// template page link to it; the rest stay inert until their stage ships.
-const SOON = { text: 'soon', variant: 'secondary' }
-
 export const MENU_ITEMS: MenuItemType[] = [
   { key: 'main', label: 'Main', isTitle: true },
   { key: 'dashboard', icon: 'iconoir:home-simple', label: 'Dashboard', url: '/dashboard' },
@@ -39,10 +35,10 @@ export const MENU_ITEMS: MenuItemType[] = [
       { key: 'security', label: 'Security Center', url: '/system/security', parentKey: 'system', permission: 'security.manage' },
       { key: 'audit-logs', label: 'Audit Logs', url: '/system/audit-logs', parentKey: 'system', permission: 'audit.read' },
       { key: 'integrations', label: 'Integrations', url: '/system/integrations', parentKey: 'system', permission: 'integrations.manage' },
-      { key: 'branding', label: 'Branding', url: '#', parentKey: 'system', badge: SOON, permission: 'branding.manage' },
-      { key: 'settings', label: 'Settings', url: '#', parentKey: 'system', badge: SOON, permission: 'settings.manage' },
+      { key: 'branding', label: 'Branding', url: '/system/branding', parentKey: 'system', permission: ['branding.manage', 'white_label.manage'] },
+      { key: 'settings', label: 'Settings', url: '/system/settings', parentKey: 'system', permission: 'settings.manage' },
       { key: 'maintenance', label: 'Maintenance', url: '/system/maintenance', parentKey: 'system', permission: 'settings.manage' },
-      { key: 'sandbox', label: 'Sandbox Testing', url: '#', parentKey: 'system', badge: SOON, permission: 'integrations.manage' },
+      { key: 'sandbox', label: 'Sandbox Testing', url: '/system/sandbox', parentKey: 'system', permission: 'integrations.manage' },
       { key: 'activity', label: 'Activity Simulation', url: '/system/activity', parentKey: 'system', permission: 'settings.manage' },
     ],
   },
