@@ -4,13 +4,14 @@ import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { Card, CardBody, CardHeader, CardTitle, Col, Row } from 'react-bootstrap'
 import IconifyIcon from '@/components/wrappers/IconifyIcon'
 import { useNotificationContext } from '@/context/useNotificationContext'
-import { formatDateTime, statusLabel, statusVariant } from '@/investo/format'
+import { statusVariant } from '@/investo/format'
 import { sendEmail } from '@/investo/functions'
 import { supabase } from '@/investo/services'
 import { createIntegrationService, type IntegrationConfig } from '../../../../../../src/services/api/integrationService'
 import { createDepositAddressService, type DepositAddress } from '../../../../../../src/services/api/depositAddressService'
 import { APP_ENVIRONMENT } from '../../../../../../src/config/env'
 import { usePermission } from '../../../../../../src/hooks/usePermission'
+import OtherConnections from './OtherConnections'
 
 export const metadata: Metadata = { title: 'Integrations' }
 
@@ -298,26 +299,7 @@ const Integrations = () => {
               </p>
             </CardBody>
           </Card>
-          {others.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle as="h4">Other connections</CardTitle>
-              </CardHeader>
-              <CardBody className="pt-0">
-                <ul className="list-group list-group-flush">
-                  {others.map((i) => (
-                    <li key={i.id} className="list-group-item px-0 d-flex justify-content-between">
-                      <span>
-                        {i.providerName} <small className="text-muted text-capitalize">({i.providerType})</small>
-                        {i.lastTestedAt && <small className="d-block text-muted">Tested {formatDateTime(i.lastTestedAt)}</small>}
-                      </span>
-                      <span className={`badge bg-${statusVariant(i.status)}-subtle text-${statusVariant(i.status)} align-self-center`}>{statusLabel(i.status)}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardBody>
-            </Card>
-          )}
+          <OtherConnections integrations={others} masked={masked} canManage={can('integrations.manage')} onChanged={() => void load()} />
         </Col>
       </Row>
     </>
