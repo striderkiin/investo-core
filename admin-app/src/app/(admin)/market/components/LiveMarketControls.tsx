@@ -3,7 +3,7 @@ import { Card, CardBody, CardHeader, CardTitle, Col, FormCheck, Nav, NavItem, Na
 import FallbackLoading from '@/components/FallbackLoading'
 import { useNotificationContext } from '@/context/useNotificationContext'
 import StatTiles from '@/investo/StatTiles'
-import { formatDateTime, formatMoney, statusLabel } from '@/investo/format'
+import { formatDateTime, formatMoney, formatPrice, statusLabel } from '@/investo/format'
 import { useMarketProvider } from '../../../../../../src/features/market/useMarketProvider'
 import type { MarketCapabilityKey } from '../../../../../../src/types/database'
 import { usePermission } from '../../../../../../src/hooks/usePermission'
@@ -59,9 +59,9 @@ const LiveMarketControls = () => {
       </Nav>
       <StatTiles
         tiles={[
-          { title: 'Price customers see', stat: formatMoney(state.effectivePrice), icon: 'iconoir:eye', variant: 'primary' },
-          { title: 'Live provider price', stat: formatMoney(state.providerPrice), icon: 'iconoir:antenna-signal', variant: 'info' },
-          { title: 'Manual offset', stat: `${offset >= 0 ? '+' : ''}${formatMoney(offset)}`, icon: 'iconoir:data-transfer-both', variant: offset > 0 ? 'success' : offset < 0 ? 'danger' : 'secondary' },
+          { title: 'Price customers see', stat: formatPrice(state.effectivePrice), icon: 'iconoir:eye', variant: 'primary' },
+          { title: 'Live provider price', stat: formatPrice(state.providerPrice), icon: 'iconoir:antenna-signal', variant: 'info' },
+          { title: 'Manual offset', stat: `${offset >= 0 ? '+' : ''}${formatPrice(offset)}`, icon: 'iconoir:data-transfer-both', variant: offset > 0 ? 'success' : offset < 0 ? 'danger' : 'secondary' },
           { title: 'Status', stat: offset !== 0 ? 'Override active' : 'Live price', icon: 'iconoir:activity', variant: offset !== 0 ? 'warning' : 'success' },
         ]}
       />
@@ -94,7 +94,7 @@ const LiveMarketControls = () => {
                 <>
                   <ArrowControl
                     label={`Step ${formatMoney(fixed)}`}
-                    value={formatMoney(state.effectivePrice)}
+                    value={formatPrice(state.effectivePrice)}
                     disabled={!canManage}
                     onUp={() => (state.manualIncreaseEnabled ? void run(() => svc.applyFixedAdjustment(state.assetId, 'increase', fixed)) : blocked('Increases'))}
                     onDown={() => (state.manualDecreaseEnabled ? void run(() => svc.applyFixedAdjustment(state.assetId, 'decrease', fixed)) : blocked('Decreases'))}
@@ -106,7 +106,7 @@ const LiveMarketControls = () => {
                 <>
                   <ArrowControl
                     label={`${percent}% of the price`}
-                    value={formatMoney(state.effectivePrice)}
+                    value={formatPrice(state.effectivePrice)}
                     disabled={!canManage || !state.percentageAdjustmentEnabled}
                     onUp={() => void run(() => svc.applyPercentageAdjustment(state.assetId, 'increase', percent))}
                     onDown={() => void run(() => svc.applyPercentageAdjustment(state.assetId, 'decrease', percent))}
@@ -120,7 +120,7 @@ const LiveMarketControls = () => {
                   onSubmit={(e) => {
                     e.preventDefault()
                     const target = Number(direct)
-                    if (direct !== '' && target >= 0) void run(() => svc.setDirectPrice(state.assetId, target), `Price set to ${formatMoney(target)}.`)
+                    if (direct !== '' && target >= 0) void run(() => svc.setDirectPrice(state.assetId, target), `Price set to ${formatPrice(target)}.`)
                   }}
                 >
                   <div className="flex-grow-1">
@@ -205,7 +205,7 @@ const LiveMarketControls = () => {
                         {h.inputValue !== null ? ` (${h.inputValue})` : ''}
                       </td>
                       <td>
-                        {formatMoney(h.previousEffectivePrice)} to {formatMoney(h.newEffectivePrice)}
+                        {formatPrice(h.previousEffectivePrice)} to {formatPrice(h.newEffectivePrice)}
                       </td>
                       <td>{formatDateTime(h.createdAt)}</td>
                     </tr>

@@ -1,6 +1,7 @@
 // Chart projections an admin prepares for one customer (see migration 0042).
 // Shared by the admin preview and the customer's dashboard so both draw the
 // exact same curve from the same saved settings.
+import { roundPrice } from './price';
 
 export type ProjectionChart = 'market_overview' | 'portfolio_composition' | 'market_widget';
 export type ProjectionMode = 'replace' | 'overlay';
@@ -109,7 +110,7 @@ export function buildProjectionSeries(params: ProjectionParams, start: number, f
     const t = i / steps;
     const trend = ratio ? start * Math.pow(ratio, t) : start + (end - start) * t;
     const value = i === 0 ? start : i === steps ? end : trend * (1 + (b / peak) * amplitude);
-    return { date: new Date(from.getTime() + t * days * dayMs), value: Math.round(value * 100) / 100 };
+    return { date: new Date(from.getTime() + t * days * dayMs), value: roundPrice(value) };
   });
 }
 

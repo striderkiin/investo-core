@@ -7,7 +7,7 @@ import { useNotificationContext } from '@/context/useNotificationContext'
 import { formatDateTime, formatMoney } from '@/investo/format'
 import { investmentService, supabase } from '@/investo/services'
 import { createProjectionService } from '../../../../../../../../../src/services/api/projectionService'
-import { EXTERNAL_MARKETS } from '../../../../../../../../../src/services/market/externalMarketService'
+import { createCustomerMarketService, marketLabel } from '../../../../../../../../../src/services/market/customerMarketService'
 import {
   buildProjectionSeries,
   newProjectionSeed,
@@ -22,8 +22,21 @@ import { usePermission } from '../../../../../../../../../src/hooks/usePermissio
 
 const projectionService = createProjectionService(supabase)
 
-const ASSETS = [{ id: 'platform', label: 'Platform Index' }, ...EXTERNAL_MARKETS]
-const assetLabel = (id?: string) => ASSETS.find((a) => a.id === (id || 'platform'))?.label ?? id
+const customerMarketService = createCustomerMarketService(supabase)
+
+type AssetOption = { id: string; label: string }
+const PLATFORM: AssetOption = { id: 'platform', label: 'Platform Index' }
+// The markets customers can pick (Market Controls > Live markets), loaded once.
+let assetOptions: AssetOption[] = [PLATFORM]
+const loadAssetOptions = () =>
+  customerMarketService
+    .list()
+    .then((list) => {
+      assetOptions = [PLATFORM, ...list.map((m) => ({ id: m.key, label: marketLabel(m) }))]
+      return assetOptions
+    })
+    .catch(() => assetOptions)
+const assetLabel = (id?: string) => assetOptions.find((a) => a.id === (id || 'platform'))?.label ?? id
 
 // A plan's full-term return, used to pre-fill the target when a plan is picked.
 const planReturnPct = (plan: InvestmentPlan) => {
@@ -64,6 +77,11 @@ const ProjectionEditor = ({ chart, existing, plans, onClose, onSave }: EditorPro
   const [note, setNote] = useState(initial?.note ?? '')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [assets, setAssets] = useState<AssetOption[]>(assetOptions)
+
+  useEffect(() => {
+    void loadAssetOptions().then(setAssets)
+  }, [])
 
   const pickPlan = (id: string) => {
     setPlanId(id)
@@ -160,7 +178,7 @@ const ProjectionEditor = ({ chart, existing, plans, onClose, onSave }: EditorPro
                     Market
                   </label>
                   <select id="proj-asset" className="form-select" value={asset} onChange={(e) => setAsset(e.target.value)}>
-                    {ASSETS.map((a) => (
+                    {assets.map((a) => (
                       <option key={a.id} value={a.id}>
                         {a.label}
                       </option>
@@ -275,8 +293,11 @@ const Projections = ({ customerId }: { customerId: string }) => {
       .catch(() => setProjections([]))
   }, [customerId])
 
+  const [, setMarketsLoaded] = useState(false)
+
   useEffect(() => {
     load()
+    void loadAssetOptions().then(() => setMarketsLoaded(true))
     investmentService
       .listPlans()
       .then(setPlans)

@@ -1,9 +1,10 @@
 import { requireClientSession } from './shell';
 import { createFinancialService } from '../../src/services/api/financialService';
 import { createMarketService } from '../../src/services/market/marketService';
-import { createExternalMarketService, EXTERNAL_MARKETS } from '../../src/services/market/externalMarketService';
+import { createCustomerMarketService, marketLabel, type CustomerMarket } from '../../src/services/market/customerMarketService';
 import { createInvestmentService } from '../../src/services/api/investmentService';
 import type { Investment, InvestmentPlan } from '../../src/types/database';
+import { formatUsdPrice, roundPrice } from '../../src/shared/price';
 import { buildProjectionSeries, type CustomerProjection } from '../../src/shared/projection';
 import { loadProjection, markProjection, projectionAsset, withProjection } from './projectionChart';
 
@@ -11,7 +12,7 @@ declare const ApexCharts: new (el: Element, options: Record<string, unknown>) =>
 
 const financialService = createFinancialService();
 const marketService = createMarketService();
-const externalMarketService = createExternalMarketService();
+const customerMarketService = createCustomerMarketService();
 const investmentService = createInvestmentService();
 
 // Stable per-plan colors (not array-position-based) so a given plan is
@@ -33,9 +34,8 @@ function colorForPlan(name: string, fallbackIndex: number): string {
   return PLAN_COLORS[name] ?? FALLBACK_SHADES[fallbackIndex % FALLBACK_SHADES.length];
 }
 
-function formatCurrency(value: number): string {
-  return `$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-}
+// Cents for normal prices, significant digits for sub-dollar coins.
+const formatCurrency = formatUsdPrice;
 
 function setText(id: string, text: string): void {
   const el = document.getElementById(id);
@@ -104,7 +104,7 @@ function renderMarketChart(
         ? [trendColor, '#a8442e']
         : [projected.end >= (projected.series[0].data[0] ?? 0) ? '#2BC155' : '#FD7972']
       : [trendColor],
-    series: projected ? projected.series : [{ name: '$', data: history.map((point) => Number(point.value.toFixed(2))) }],
+    series: projected ? projected.series : [{ name: '$', data: history.map((point) => roundPrice(point.value)) }],
     fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.3, opacityTo: 0.05, stops: [0, 90, 100] } },
     stroke: { curve: 'smooth', width: 2, dashArray: projected ? projected.dashArray : 0 },
     legend: { show: false },
@@ -148,37 +148,34 @@ async function loadPlatformIndex(projection: CustomerProjection | null): Promise
   }
 }
 
-// CoinGecko's public API needs no key for this volume — real crypto majors
-// directly, and gold via Pax Gold (a gold-backed token) rather than a
-// separate paid commodities API.
-async function loadExternalMarket(assetId: string, projection: CustomerProjection | null): Promise<void> {
-  try {
-    const [quotes, week, month, year] = await Promise.all([
-      externalMarketService.getQuotes([assetId]),
-      externalMarketService.getHistory(assetId, 7),
-      externalMarketService.getHistory(assetId, 30),
-      externalMarketService.getHistory(assetId, 365),
-    ]);
+// The markets an admin has switched on (Market Controls > Live markets), with
+// their live price plus any admin override, or their simulated price.
+let markets: CustomerMarket[] = [];
 
-    const quote = quotes[assetId];
-    const change = quote?.change24h ?? 0;
-    setText('marketPriceValue', quote ? formatCurrency(quote.priceUsd) : '--');
-    setText('marketChangeValue', quote ? `${change >= 0 ? '+' : ''}${change.toFixed(2)}%` : '--');
-
-    const toChartPoints = (points: { timestamp: number; price: number }[]): ChartPoint[] =>
-      points.map((p) => ({ value: p.price, recordedAt: new Date(p.timestamp).toISOString() }));
-
-    const empty = 'No data for this period yet.';
-    renderMarketChart('#candlestick-1', toChartPoints(week), change, 'time', empty, projection);
-    renderMarketChart('#candlestick-4', toChartPoints(month), change, 'date', empty, projection);
-    renderMarketChart('#candlestick-5', toChartPoints(year), change, 'date', empty, projection);
-  } catch {
+async function loadExternalMarket(assetKey: string, projection: CustomerProjection | null): Promise<void> {
+  const market = markets.find((m) => m.key === assetKey);
+  const unavailable = (message: string) => {
     setText('marketPriceValue', '--');
     setText('marketChangeValue', '--');
-    const unavailable = 'Live market data is temporarily unavailable. Please try again shortly.';
-    for (const selector of ['#candlestick-1', '#candlestick-4', '#candlestick-5']) {
-      renderMarketChart(selector, [], 0, 'date', unavailable);
-    }
+    for (const selector of ['#candlestick-1', '#candlestick-4', '#candlestick-5']) renderMarketChart(selector, [], 0, 'date', message);
+  };
+  if (!market) return unavailable('This market is no longer available.');
+  try {
+    const [week, month, year] = await Promise.all([
+      customerMarketService.history(market, 7),
+      customerMarketService.history(market, 30),
+      customerMarketService.history(market, 365),
+    ]);
+    const change = await customerMarketService.change24h(market, week).catch(() => 0);
+    setText('marketPriceValue', formatCurrency(market.price));
+    setText('marketChangeValue', `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`);
+
+    const empty = 'No data for this period yet.';
+    renderMarketChart('#candlestick-1', week, change, 'time', empty, projection);
+    renderMarketChart('#candlestick-4', month, change, 'date', empty, projection);
+    renderMarketChart('#candlestick-5', year, change, 'date', empty, projection);
+  } catch {
+    unavailable('Live market data is temporarily unavailable. Please try again shortly.');
   }
 }
 
@@ -197,24 +194,24 @@ function loadMarketPanels(assetId: string): void {
 // markup and are already wired to show/hide each other on click (see
 // main.js's generic .widget-menu-tab handler) — they just never had real,
 // differently-scoped data behind them, and the chart only ever showed
-// Investo's own synthetic "Platform Index". The asset dropdown adds real
-// external markets (crypto majors + gold via a gold-backed token) alongside
-// it, defaulting to Platform Index so nothing changes unless picked.
-function wireMarketAssetSelect(): void {
+// Investo's own synthetic "Platform Index". The asset dropdown adds the
+// markets an admin has switched on, defaulting to Platform Index so nothing
+// changes unless picked.
+async function wireMarketAssetSelect(): Promise<void> {
   const select = document.getElementById('marketAssetSelect') as HTMLSelectElement | null;
   if (!select) return;
-  for (const market of EXTERNAL_MARKETS) {
+  markets = await customerMarketService.list().catch(() => []);
+  for (const market of markets) {
     const option = document.createElement('option');
-    option.value = market.id;
-    option.textContent = market.label;
+    option.value = market.key;
+    option.textContent = marketLabel(market);
     select.appendChild(option);
   }
   select.addEventListener('change', () => loadMarketPanels(select.value));
 }
 
 async function renderMarketOverview(userId: string): Promise<void> {
-  wireMarketAssetSelect();
-  marketProjection = await loadProjection(userId, 'market_overview');
+  [, marketProjection] = await Promise.all([wireMarketAssetSelect(), loadProjection(userId, 'market_overview')]);
   const asset = marketProjection ? projectionAsset(marketProjection) : 'platform';
   const select = document.getElementById('marketAssetSelect') as HTMLSelectElement | null;
   if (select && Array.from(select.options).some((o) => o.value === asset)) select.value = asset;

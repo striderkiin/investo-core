@@ -1,19 +1,5 @@
-export interface ExternalMarket {
-  id: string;
-  label: string;
-}
-
-// Curated to what CoinGecko's free public API can answer reliably without a
-// key: crypto majors directly, and "gold" via a gold-backed token (Pax Gold,
-// 1 PAXG == 1 troy oz, audited reserves) rather than a separate commodities
-// API — this is the free way to get a real, non-fiat, non-crypto-native
-// market series without a second provider/API key.
-export const EXTERNAL_MARKETS: ExternalMarket[] = [
-  { id: 'bitcoin', label: 'Bitcoin (BTC)' },
-  { id: 'ethereum', label: 'Ethereum (ETH)' },
-  { id: 'pax-gold', label: 'Gold (PAXG)' },
-];
-
+// Which coins customers see is chosen by admins (market_assets, see
+// customerMarketService.ts); this only fetches CoinGecko data for them.
 const BASE_URL = 'https://api.coingecko.com/api/v3';
 
 export interface ExternalMarketQuote {

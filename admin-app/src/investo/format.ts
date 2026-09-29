@@ -3,6 +3,9 @@ const usdCompact = new Intl.NumberFormat('en-US', { style: 'currency', currency:
 
 export const formatMoney = (value: number) => usd.format(value)
 
+/** Market prices: cents for normal prices, significant digits for sub-dollar coins (e.g. $0.00001234). */
+export { formatUsdPrice as formatPrice } from '../../../src/shared/price'
+
 /** $5K style labels for chart axes. */
 export const formatMoneyAxis = (value: number) => usdCompact.format(value)
 

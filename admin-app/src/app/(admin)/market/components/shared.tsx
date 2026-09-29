@@ -1,7 +1,8 @@
 import type { ApexOptions } from 'apexcharts'
 import ReactApexChart from 'react-apexcharts'
 import IconifyIcon from '@/components/wrappers/IconifyIcon'
-import { formatMoney } from '@/investo/format'
+import { formatPrice } from '@/investo/format'
+import { roundPrice } from '../../../../../../src/shared/price'
 
 // Area chart of a price series, styled like the dashboard charts.
 export const PriceChart = ({ points, height = 260 }: { points: { value: number; recordedAt: string }[]; height?: number }) => {
@@ -14,10 +15,10 @@ export const PriceChart = ({ points, height = 260 }: { points: { value: number; 
     colors: [rising ? '#22c5ad' : '#ef4d56'],
     fill: { type: 'gradient', gradient: { opacityFrom: 0.3, opacityTo: 0.05 } },
     xaxis: { categories: points.map((p) => new Date(p.recordedAt).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })), labels: { show: false }, tooltip: { enabled: false } },
-    yaxis: { labels: { formatter: (v: number) => formatMoney(v) } },
-    tooltip: { y: { formatter: (v: number) => formatMoney(v) } },
+    yaxis: { labels: { formatter: (v: number) => formatPrice(v) } },
+    tooltip: { y: { formatter: (v: number) => formatPrice(v) } },
   }
-  return <ReactApexChart type="area" height={height} options={options} series={[{ name: 'Price', data: points.map((p) => Number(p.value.toFixed(2))) }]} />
+  return <ReactApexChart type="area" height={height} options={options} series={[{ name: 'Price', data: points.map((p) => roundPrice(p.value)) }]} />
 }
 
 // Large down/up arrows either side of a value.

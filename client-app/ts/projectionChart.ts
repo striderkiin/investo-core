@@ -1,5 +1,6 @@
 import { createProjectionService } from '../../src/services/api/projectionService';
 import { buildProjectionSeries, PROJECTION_LABEL, type CustomerProjection, type ProjectionChart } from '../../src/shared/projection';
+import { roundPrice } from '../../src/shared/price';
 
 const projectionService = createProjectionService();
 
@@ -39,7 +40,7 @@ export function withProjection(real: ChartPoint[], projection: CustomerProjectio
     const future = path.slice(1);
     return {
       series: [
-        { name: '$', data: [...real.map((p) => Number(p.value.toFixed(2))), ...future.map(() => null)] },
+        { name: '$', data: [...real.map((p) => roundPrice(p.value)), ...future.map(() => null)] },
         { name: PROJECTION_LABEL, data: [...real.slice(0, -1).map(() => null), lastReal, ...future.map((p) => p.value)] },
       ],
       dates: [...real.map((p) => new Date(p.recordedAt)), ...future.map((p) => p.date)],

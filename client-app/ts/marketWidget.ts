@@ -1,21 +1,21 @@
 import { createMarketService } from '../../src/services/market/marketService';
-import { createExternalMarketService, EXTERNAL_MARKETS } from '../../src/services/market/externalMarketService';
+import { createCustomerMarketService, marketLabel, type CustomerMarket } from '../../src/services/market/customerMarketService';
 import type { CustomerProjection } from '../../src/shared/projection';
+import { formatUsdPrice, roundPrice } from '../../src/shared/price';
 import { loadProjection, markProjection, projectionAsset, withProjection } from './projectionChart';
 
 declare const ApexCharts: new (el: Element, options: Record<string, unknown>) => { render: () => void };
 
 const marketService = createMarketService();
-const externalMarketService = createExternalMarketService();
+const customerMarketService = createCustomerMarketService();
 
 interface ChartPoint {
   value: number;
   recordedAt: string;
 }
 
-function formatCurrency(value: number): string {
-  return `$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-}
+// Cents for normal prices, significant digits for sub-dollar coins.
+const formatCurrency = formatUsdPrice;
 
 function setText(id: string, text: string): void {
   const el = document.getElementById(id);
@@ -52,7 +52,7 @@ function renderChart(
         ? [trendColor, '#a8442e']
         : [projected.end >= (projected.series[0].data[0] ?? 0) ? '#2BC155' : '#FD7972']
       : [trendColor],
-    series: projected ? projected.series : [{ name: '$', data: history.map((point) => Number(point.value.toFixed(2))) }],
+    series: projected ? projected.series : [{ name: '$', data: history.map((point) => roundPrice(point.value)) }],
     // Omit the key entirely for line charts rather than setting it to
     // undefined — ApexCharts' option merge treats a present-but-undefined
     // key differently from an absent one and silently fails to render.
@@ -71,7 +71,7 @@ function renderChart(
 export interface MarketWidgetOptions {
   /** CSS selector for the single chart container this widget renders into. */
   chartSelector: string;
-  /** id of the <select> populated with EXTERNAL_MARKETS options (in addition to the "platform" option already in the markup). */
+  /** id of the <select> populated with the admin-enabled markets (in addition to the "platform" option already in the markup). */
   selectId: string;
   /** id of an element to write the current price into, if the markup has one. */
   priceElId?: string;
@@ -111,15 +111,17 @@ export function mountMarketWidget(options: MarketWidgetOptions): void {
     renderChart(chartSelector, history, change, chartType, height, 'No market data yet.', active);
   }
 
-  async function loadExternal(assetId: string): Promise<void> {
+  let markets: CustomerMarket[] = [];
+
+  async function loadExternal(assetKey: string): Promise<void> {
     try {
-      const [quotes, history] = await Promise.all([externalMarketService.getQuotes([assetId]), externalMarketService.getHistory(assetId, 30)]);
-      const quote = quotes[assetId];
-      const change = quote?.change24h ?? 0;
-      if (priceElId) setText(priceElId, quote ? formatCurrency(quote.priceUsd) : '--');
-      if (changeElId) setText(changeElId, quote ? `${change >= 0 ? '+' : ''}${change.toFixed(2)}%` : '--');
+      const market = markets.find((m) => m.key === assetKey);
+      if (!market) throw new Error('market not available');
+      const points: ChartPoint[] = await customerMarketService.history(market, 30);
+      const change = await customerMarketService.change24h(market).catch(() => 0);
+      if (priceElId) setText(priceElId, formatCurrency(market.price));
+      if (changeElId) setText(changeElId, `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`);
       updateChangeStyle(change);
-      const points: ChartPoint[] = history.map((point) => ({ value: point.price, recordedAt: new Date(point.timestamp).toISOString() }));
       renderChart(chartSelector, points, change, chartType, height, 'No data for this period yet.', active);
     } catch {
       if (priceElId) setText(priceElId, '--');
@@ -136,18 +138,17 @@ export function mountMarketWidget(options: MarketWidgetOptions): void {
     void (assetId === 'platform' ? loadPlatform() : loadExternal(assetId));
   }
 
-  if (select) {
-    for (const market of EXTERNAL_MARKETS) {
-      const option = document.createElement('option');
-      option.value = market.id;
-      option.textContent = market.label;
-      select.appendChild(option);
+  void Promise.all([customerMarketService.list().catch(() => []), userId ? loadProjection(userId, 'market_widget') : Promise.resolve(null)]).then(([list, found]) => {
+    markets = list;
+    if (select) {
+      for (const market of markets) {
+        const option = document.createElement('option');
+        option.value = market.key;
+        option.textContent = marketLabel(market);
+        select.appendChild(option);
+      }
+      select.addEventListener('change', () => load(select.value));
     }
-    select.addEventListener('change', () => load(select.value));
-  }
-
-  if (!userId) return load('platform');
-  void loadProjection(userId, 'market_widget').then((found) => {
     projection = found;
     const asset = found ? projectionAsset(found) : 'platform';
     if (select && Array.from(select.options).some((o) => o.value === asset)) select.value = asset;
