@@ -20,7 +20,7 @@ const announcementService = createAnnouncementService();
 const TYPES: AnnouncementType[] = ['maintenance_notice', 'promotion', 'system_update', 'important_notice'];
 const AUDIENCES: AnnouncementAudience[] = ['everyone', 'clients', 'admins', 'specific_role'];
 const DELIVERIES: AnnouncementDelivery[] = ['banner', 'popup', 'notification', 'email'];
-const ROLES: RoleName[] = ['super_admin', 'finance_admin', 'support_admin', 'operations_admin', 'client'];
+const ROLES: RoleName[] = ['super_admin', 'finance_admin', 'support_admin', 'operations_admin', 'demo_admin', 'client'];
 
 export function AnnouncementsPage() {
   const { profile } = useAuth();

@@ -11,13 +11,14 @@ import { Modal } from '../../../components/modals/Modal';
 
 const userService = createUserService();
 
-const ADMIN_ROLES: RoleName[] = ['super_admin', 'finance_admin', 'support_admin', 'operations_admin'];
+const ADMIN_ROLES: RoleName[] = ['super_admin', 'finance_admin', 'support_admin', 'operations_admin', 'demo_admin'];
 
 const ROLE_VARIANT: Record<RoleName, string> = {
   super_admin: 'danger',
   finance_admin: 'primary',
   support_admin: 'info',
   operations_admin: 'success',
+  demo_admin: 'warning',
   client: 'secondary',
 };
 

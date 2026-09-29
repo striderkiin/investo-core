@@ -29,6 +29,25 @@ describe('role permissions', () => {
     expect(roleHasPermission('operations_admin', 'users.adjust_balance')).toBe(false);
   });
 
+  it('keeps demo_admin away from keys, admins, security, settings and branding', () => {
+    expect(roleHasPermission('demo_admin', 'withdrawals.approve')).toBe(true);
+    expect(roleHasPermission('demo_admin', 'market.manage')).toBe(true);
+    for (const permission of [
+      'integrations.manage',
+      'integrations.read_secrets',
+      'admins.manage',
+      'roles.manage',
+      'security.manage',
+      'settings.manage',
+      'environment.manage',
+      'branding.manage',
+      'white_label.manage',
+      'treasury.manage',
+    ] as const) {
+      expect(roleHasPermission('demo_admin', permission)).toBe(false);
+    }
+  });
+
   it('grants client no admin permissions at all', () => {
     expect(roleHasPermission('client', 'users.read')).toBe(false);
     expect(roleHasPermission('client', 'market.read')).toBe(false);

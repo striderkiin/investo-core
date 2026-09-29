@@ -1,4 +1,4 @@
-export type RoleName = 'super_admin' | 'finance_admin' | 'support_admin' | 'operations_admin' | 'client';
+export type RoleName = 'super_admin' | 'finance_admin' | 'support_admin' | 'operations_admin' | 'demo_admin' | 'client';
 
 export type Permission =
   | 'users.read'
@@ -81,6 +81,32 @@ export const ROLE_PERMISSIONS: Record<RoleName, Permission[]> = {
   ],
   support_admin: ['users.read', 'transactions.read', 'support.read', 'support.manage', 'notifications.send'],
   operations_admin: ['announcements.manage', 'investments.read', 'investments.manage', 'branding.manage', 'market.read', 'social_proof.manage'],
+  // Shareable demo login: everything day-to-day, nothing that controls the
+  // platform itself (keys, admins, security, settings, branding, treasury).
+  demo_admin: [
+    'users.read',
+    'users.write',
+    'users.adjust_balance',
+    'users.manage_status',
+    'deposits.read',
+    'deposits.manage',
+    'withdrawals.read',
+    'withdrawals.approve',
+    'transactions.read',
+    'treasury.read',
+    'investments.read',
+    'investments.manage',
+    'market.read',
+    'market.manage',
+    'referrals.read',
+    'support.read',
+    'support.manage',
+    'notifications.send',
+    'announcements.manage',
+    'social_proof.manage',
+    'compliance.manage',
+    'audit.read',
+  ],
   client: [],
 };
 
