@@ -32,6 +32,9 @@ import * as AuditLogsPage from '@/app/(admin)/system/audit-logs/page'
 import * as SecurityPage from '@/app/(admin)/system/security/page'
 import * as TreasuryPage from '@/app/(admin)/money/treasury/page'
 import * as MarketPage from '@/app/(admin)/market/page'
+import * as SocialProofPage from '@/app/(admin)/engagement/social-proof/page'
+import * as ActivityPage from '@/app/(admin)/system/activity/page'
+import * as MaintenancePage from '@/app/(admin)/system/maintenance/page'
 import * as InvoicePage from '@/app/(admin)/apps/invoice/page'
 import * as ProfilePage from '@/app/(admin)/pages/profile/page'
 import * as NotificationsPage from '@/app/(admin)/pages/notifications/page'
@@ -234,6 +237,9 @@ createRoot(document.getElementById('root')!).render(
             <Route path="system/security" element={<Page module={SecurityPage} />} />
             <Route path="treasury" element={<Page module={TreasuryPage} />} />
             <Route path="market" element={<Page module={MarketPage} />} />
+            <Route path="social-proof" element={<Page module={SocialProofPage} />} />
+            <Route path="system/activity" element={<Page module={ActivityPage} />} />
+            <Route path="system/maintenance" element={<Page module={MaintenancePage} />} />
             <Route path="profile" element={<Page module={ProfilePage} />} />
           </Route>
           <Route

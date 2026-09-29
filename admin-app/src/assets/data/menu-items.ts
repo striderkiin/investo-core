@@ -26,7 +26,7 @@ export const MENU_ITEMS: MenuItemType[] = [
   { key: 'support', icon: 'iconoir:chat-bubble', label: 'Support Chat', url: '/support', permission: 'support.read' },
   { key: 'contact-messages', icon: 'iconoir:mail', label: 'Contact Messages', url: '/contact-messages', permission: 'support.read' },
   { key: 'notifications', icon: 'iconoir:bell', label: 'Notifications', url: '/notifications', permission: ['notifications.send', 'announcements.manage'] },
-  { key: 'social-proof', icon: 'iconoir:megaphone', label: 'Social Proof', url: '#', badge: SOON, permission: 'social_proof.manage' },
+  { key: 'social-proof', icon: 'iconoir:megaphone', label: 'Social Proof', url: '/social-proof', permission: 'social_proof.manage' },
   { key: 'market', icon: 'iconoir:candlestick-chart', label: 'Market Controls', url: '/market', permission: 'market.read' },
 
   { key: 'system-title', label: 'System', isTitle: true },
@@ -41,9 +41,9 @@ export const MENU_ITEMS: MenuItemType[] = [
       { key: 'integrations', label: 'Integrations', url: '/system/integrations', parentKey: 'system', permission: 'integrations.manage' },
       { key: 'branding', label: 'Branding', url: '#', parentKey: 'system', badge: SOON, permission: 'branding.manage' },
       { key: 'settings', label: 'Settings', url: '#', parentKey: 'system', badge: SOON, permission: 'settings.manage' },
-      { key: 'maintenance', label: 'Maintenance', url: '#', parentKey: 'system', badge: SOON, permission: 'settings.manage' },
+      { key: 'maintenance', label: 'Maintenance', url: '/system/maintenance', parentKey: 'system', permission: 'settings.manage' },
       { key: 'sandbox', label: 'Sandbox Testing', url: '#', parentKey: 'system', badge: SOON, permission: 'integrations.manage' },
-      { key: 'activity', label: 'Activity Simulation', url: '#', parentKey: 'system', badge: SOON, permission: 'settings.manage' },
+      { key: 'activity', label: 'Activity Simulation', url: '/system/activity', parentKey: 'system', permission: 'settings.manage' },
     ],
   },
 ]
