@@ -1,6 +1,6 @@
-import { StrictMode, cloneElement, isValidElement, useEffect, useState, type ComponentType, type ReactElement, type ReactNode } from 'react'
+import { Component, StrictMode, cloneElement, isValidElement, useEffect, useState, type ComponentType, type ReactElement, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Navigate, Outlet, Route, Routes, useParams, useSearchParams } from 'react-router-dom'
+import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation, useParams, useSearchParams } from 'react-router-dom'
 
 import Image from 'next/image'
 import NextTopLoader from 'nextjs-toploader'
@@ -207,6 +207,48 @@ const LEGACY_REDIRECTS: Record<string, string> = {
   settings: '/system/settings',
 }
 
+// A page that throws while rendering shows its error here, inside the normal
+// layout, instead of blanking the whole panel. Keyed by path, so moving to
+// another page clears it.
+class PageErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
+  state = { error: null as Error | null }
+  static getDerivedStateFromError(error: Error) {
+    return { error }
+  }
+  componentDidCatch(error: Error) {
+    console.error('Admin page crashed:', error)
+  }
+  render() {
+    const { error } = this.state
+    if (!error) return this.props.children
+    return (
+      <div className="card">
+        <div className="card-body">
+          <h4 className="mb-2">This page hit an error</h4>
+          <p className="text-muted mb-2">The rest of the panel still works. If this keeps happening, send a screenshot of this box.</p>
+          <pre className="bg-light p-2 rounded fs-12 text-danger" style={{ whiteSpace: 'pre-wrap' }}>
+            {error.name}: {error.message}
+            {'\n'}
+            {(error.stack ?? '').split('\n').slice(1, 6).join('\n')}
+          </pre>
+          <button type="button" className="btn btn-primary btn-sm" onClick={() => window.location.reload()}>
+            Reload
+          </button>
+        </div>
+      </div>
+    )
+  }
+}
+
+const GuardedOutlet = () => {
+  const { pathname } = useLocation()
+  return (
+    <PageErrorBoundary key={pathname}>
+      <Outlet />
+    </PageErrorBoundary>
+  )
+}
+
 const RootLayout = () => {
   const { logoOnLight, mark, siteName } = useAdminBranding()
   useRemoveSplashOnContent()
@@ -219,7 +261,9 @@ const RootLayout = () => {
       <NextTopLoader color="#a8442e" showSpinner={false} />
       <div id="__next_splash">
         <AppProvidersWrapper>
-          <Outlet />
+          <PageErrorBoundary>
+            <Outlet />
+          </PageErrorBoundary>
         </AppProvidersWrapper>
       </div>
     </>
@@ -238,7 +282,7 @@ createRoot(document.getElementById('root')!).render(
           <Route
             element={
               <AdminLayout>
-                <Outlet />
+                <GuardedOutlet />
               </AdminLayout>
             }
           >
