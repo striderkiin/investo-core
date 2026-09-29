@@ -290,6 +290,7 @@ async function main() {
     changeClassBase: 'f12-bold',
     chartType: 'line',
     height: 300,
+    userId: profile.id,
   });
   await Promise.all([renderHoldings(profile.id), renderActivity(profile.id)]);
 }

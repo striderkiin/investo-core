@@ -49,6 +49,7 @@ async function main() {
     priceElId: 'walletMarketPrice',
     changeElId: 'walletMarketChange',
     changeClassBase: 'f12-bold',
+    userId: profile.id,
   });
   await Promise.all([renderBalances(profile.id), renderWalletActivity(profile.id)]);
 }

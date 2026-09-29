@@ -4,6 +4,8 @@ import { createMarketService } from '../../src/services/market/marketService';
 import { createExternalMarketService, EXTERNAL_MARKETS } from '../../src/services/market/externalMarketService';
 import { createInvestmentService } from '../../src/services/api/investmentService';
 import type { Investment, InvestmentPlan } from '../../src/types/database';
+import { buildProjectionSeries, type CustomerProjection } from '../../src/shared/projection';
+import { loadProjection, markProjection, projectionAsset, withProjection } from './projectionChart';
 
 declare const ApexCharts: new (el: Element, options: Record<string, unknown>) => { render: () => void };
 
@@ -71,36 +73,55 @@ interface ChartPoint {
   recordedAt: string;
 }
 
-function renderMarketChart(selector: string, history: ChartPoint[], change: number, dateFormat: 'time' | 'date', emptyMessage: string): void {
+function renderMarketChart(
+  selector: string,
+  history: ChartPoint[],
+  change: number,
+  dateFormat: 'time' | 'date',
+  emptyMessage: string,
+  projection: CustomerProjection | null = null
+): void {
   const container = document.querySelector(selector);
   if (!container) return;
+  container.innerHTML = '';
 
-  if (history.length === 0) {
+  if (history.length === 0 && !projection) {
     container.innerHTML = `<p class="f14-regular text-Gray text-center pt-4">${emptyMessage}</p>`;
     return;
   }
 
+  const trendColor = change >= 0 ? '#2BC155' : '#FD7972';
+  const projected = projection ? withProjection(history, projection) : null;
+  const dates = projected ? projected.dates : history.map((point) => new Date(point.recordedAt));
+  // A projection runs over days, so its labels are dates even on the Week tab.
+  const format = projected ? 'date' : dateFormat;
+
   new ApexCharts(container, {
     chart: { height: 337, type: 'area', toolbar: { show: false }, zoom: { enabled: false } },
     dataLabels: { enabled: false },
-    colors: [change >= 0 ? '#2BC155' : '#FD7972'],
-    series: [{ name: '$', data: history.map((point) => Number(point.value.toFixed(2))) }],
+    colors: projected
+      ? projected.series.length > 1
+        ? [trendColor, '#a8442e']
+        : [projected.end >= (projected.series[0].data[0] ?? 0) ? '#2BC155' : '#FD7972']
+      : [trendColor],
+    series: projected ? projected.series : [{ name: '$', data: history.map((point) => Number(point.value.toFixed(2))) }],
     fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.3, opacityTo: 0.05, stops: [0, 90, 100] } },
-    stroke: { curve: 'smooth', width: 2 },
+    stroke: { curve: 'smooth', width: 2, dashArray: projected ? projected.dashArray : 0 },
+    legend: { show: false },
     yaxis: { show: false },
     xaxis: {
       labels: { show: false },
-      categories: history.map((point) =>
-        dateFormat === 'time'
-          ? new Date(point.recordedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-          : new Date(point.recordedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })
+      categories: dates.map((date) =>
+        format === 'time'
+          ? date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          : date.toLocaleDateString([], { month: 'short', day: 'numeric' })
       ),
     },
     tooltip: { y: { formatter: (val: number) => formatCurrency(val) } },
   }).render();
 }
 
-async function loadPlatformIndex(): Promise<void> {
+async function loadPlatformIndex(projection: CustomerProjection | null): Promise<void> {
   try {
     const [settings, week, month, year] = await Promise.all([
       marketService.getCurrent(),
@@ -114,9 +135,9 @@ async function loadPlatformIndex(): Promise<void> {
     setText('marketChangeValue', `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`);
 
     const empty = 'No market data for this period yet.';
-    renderMarketChart('#candlestick-1', week, change, 'time', empty);
-    renderMarketChart('#candlestick-4', month, change, 'date', empty);
-    renderMarketChart('#candlestick-5', year, change, 'date', empty);
+    renderMarketChart('#candlestick-1', week, change, 'time', empty, projection);
+    renderMarketChart('#candlestick-4', month, change, 'date', empty, projection);
+    renderMarketChart('#candlestick-5', year, change, 'date', empty, projection);
   } catch {
     setText('marketPriceValue', '--');
     setText('marketChangeValue', '--');
@@ -130,7 +151,7 @@ async function loadPlatformIndex(): Promise<void> {
 // CoinGecko's public API needs no key for this volume — real crypto majors
 // directly, and gold via Pax Gold (a gold-backed token) rather than a
 // separate paid commodities API.
-async function loadExternalMarket(assetId: string): Promise<void> {
+async function loadExternalMarket(assetId: string, projection: CustomerProjection | null): Promise<void> {
   try {
     const [quotes, week, month, year] = await Promise.all([
       externalMarketService.getQuotes([assetId]),
@@ -148,9 +169,9 @@ async function loadExternalMarket(assetId: string): Promise<void> {
       points.map((p) => ({ value: p.price, recordedAt: new Date(p.timestamp).toISOString() }));
 
     const empty = 'No data for this period yet.';
-    renderMarketChart('#candlestick-1', toChartPoints(week), change, 'time', empty);
-    renderMarketChart('#candlestick-4', toChartPoints(month), change, 'date', empty);
-    renderMarketChart('#candlestick-5', toChartPoints(year), change, 'date', empty);
+    renderMarketChart('#candlestick-1', toChartPoints(week), change, 'time', empty, projection);
+    renderMarketChart('#candlestick-4', toChartPoints(month), change, 'date', empty, projection);
+    renderMarketChart('#candlestick-5', toChartPoints(year), change, 'date', empty, projection);
   } catch {
     setText('marketPriceValue', '--');
     setText('marketChangeValue', '--');
@@ -161,8 +182,15 @@ async function loadExternalMarket(assetId: string): Promise<void> {
   }
 }
 
+// Set when an admin has switched on a Market Overview projection for this
+// customer; it shows only while its asset is the one selected.
+let marketProjection: CustomerProjection | null = null;
+
 function loadMarketPanels(assetId: string): void {
-  void (assetId === 'platform' ? loadPlatformIndex() : loadExternalMarket(assetId));
+  const projection = marketProjection && projectionAsset(marketProjection) === assetId ? marketProjection : null;
+  const box = document.getElementById('marketAssetSelect')?.closest('.wg-box') ?? null;
+  markProjection('market-overview', box?.querySelector('.label-01') ?? null, box?.querySelector('.widget-content-tab') ?? null, projection);
+  void (assetId === 'platform' ? loadPlatformIndex(projection) : loadExternalMarket(assetId, projection));
 }
 
 // The Week/Month/Year tabs (#candlestick-1/4/5) already exist in the Critso
@@ -184,21 +212,73 @@ function wireMarketAssetSelect(): void {
   select.addEventListener('change', () => loadMarketPanels(select.value));
 }
 
-async function renderMarketOverview(): Promise<void> {
+async function renderMarketOverview(userId: string): Promise<void> {
   wireMarketAssetSelect();
-  await loadPlatformIndex();
+  marketProjection = await loadProjection(userId, 'market_overview');
+  const asset = marketProjection ? projectionAsset(marketProjection) : 'platform';
+  const select = document.getElementById('marketAssetSelect') as HTMLSelectElement | null;
+  if (select && Array.from(select.options).some((o) => o.value === asset)) select.value = asset;
+  loadMarketPanels(select?.value ?? 'platform');
+}
+
+// An admin-prepared projection replaces the donut with the projected growth
+// of the chosen amount in the chosen plan, labeled as a projection.
+function renderPortfolioProjection(container: Element | null, projection: CustomerProjection, plans: InvestmentPlan[]): void {
+  const planName = plans.find((p) => p.id === projection.params.planId)?.name ?? 'Projected plan';
+  for (let i = 0; i < 5; i++) {
+    const slot = document.getElementById(`compositionSlot${i}`);
+    if (slot) slot.style.display = i === 0 ? '' : 'none';
+  }
+  setText('compositionLabel0', planName);
+  const swatch = document.getElementById('compositionSlot0')?.querySelector<HTMLElement>('.tf-checkbox-wrapp div');
+  if (swatch) {
+    swatch.style.backgroundColor = '#ffffff';
+    swatch.style.borderColor = '#ffffff';
+  }
+  const box = container?.closest('.wg-box') ?? null;
+  markProjection('portfolio', box?.querySelector('.label-01') ?? null, container, projection, true);
+  if (!container) return;
+
+  const path = buildProjectionSeries(projection.params, projection.params.amount ?? 0);
+  container.innerHTML = '';
+  new ApexCharts(container, {
+    chart: { height: 260, type: 'area', toolbar: { show: false }, zoom: { enabled: false } },
+    dataLabels: { enabled: false },
+    colors: ['#ffffff'],
+    series: [{ name: planName, data: path.map((p) => p.value) }],
+    fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.35, opacityTo: 0.02, stops: [0, 90, 100] } },
+    stroke: { curve: 'smooth', width: 2 },
+    grid: { borderColor: 'rgba(255,255,255,.15)' },
+    yaxis: { labels: { style: { colors: '#ffffff' }, formatter: (val: number) => formatCurrency(val) } },
+    xaxis: {
+      categories: path.map((p) => p.date.toLocaleDateString([], { month: 'short', day: 'numeric' })),
+      labels: { show: false },
+      axisBorder: { show: false },
+      axisTicks: { show: false },
+    },
+    tooltip: { y: { formatter: (val: number) => formatCurrency(val) } },
+  }).render();
 }
 
 async function renderPortfolioComposition(userId: string): Promise<void> {
   const container = document.querySelector('#line-chart-twoline');
   let investments: Investment[];
   let plans: InvestmentPlan[];
+  let projection: CustomerProjection | null;
   try {
-    [investments, plans] = await Promise.all([investmentService.listMyInvestments(userId), investmentService.listPlans()]);
+    [investments, plans, projection] = await Promise.all([
+      investmentService.listMyInvestments(userId),
+      investmentService.listPlans(),
+      loadProjection(userId, 'portfolio_composition'),
+    ]);
   } catch (err) {
     if (container) {
       container.innerHTML = `<p class="f14-regular text-White text-center pt-4">${err instanceof Error ? err.message : 'Unable to load portfolio composition.'}</p>`;
     }
+    return;
+  }
+  if (projection) {
+    renderPortfolioProjection(container, projection, plans);
     return;
   }
   const planName = new Map<string, string>(plans.map((p: InvestmentPlan) => [p.id, p.name]));
@@ -270,7 +350,7 @@ async function renderPortfolioComposition(userId: string): Promise<void> {
 
 async function main() {
   const profile = await requireClientSession();
-  await Promise.all([renderStatTiles(profile.id), renderMarketOverview(), renderPortfolioComposition(profile.id)]);
+  await Promise.all([renderStatTiles(profile.id), renderMarketOverview(profile.id), renderPortfolioComposition(profile.id)]);
 }
 
 void main();

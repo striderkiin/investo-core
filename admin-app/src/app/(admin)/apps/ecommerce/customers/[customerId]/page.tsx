@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import CustomerCard from './components/CustomerCard'
 import Orders from './components/Orders'
 import Stats from './components/Stats'
+import Projections from './components/Projections'
 import FallbackLoading from '@/components/FallbackLoading'
 import NotFound from '@/app/not-found'
 import { useCustomer } from './useCustomer'
@@ -41,6 +42,11 @@ const CustomerDetails = ({ params }: ParamsCustomerId) => {
       <Row>
         <Col lg={12}>
           <Orders detail={detail} />
+        </Col>
+      </Row>
+      <Row>
+        <Col lg={12}>
+          <Projections customerId={detail.profile.id} />
         </Col>
       </Row>
     </>
