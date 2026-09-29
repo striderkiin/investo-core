@@ -11,7 +11,7 @@ export const MENU_ITEMS: MenuItemType[] = [
   { key: 'customers-title', label: 'Customers', isTitle: true },
   { key: 'customers', icon: 'iconoir:group', label: 'Customers', url: '/customers', permission: 'users.read' },
   { key: 'statements', icon: 'iconoir:page', label: 'Statements', url: '/statement', permission: 'users.read' },
-  { key: 'kyc', icon: 'iconoir:user-badge-check', label: 'KYC Reviews', url: '#', badge: SOON, permission: 'compliance.manage' },
+  { key: 'kyc', icon: 'iconoir:user-badge-check', label: 'KYC Reviews', url: '/kyc', permission: 'compliance.manage' },
 
   { key: 'money-title', label: 'Money', isTitle: true },
   { key: 'deposits', icon: 'iconoir:download-circle', label: 'Deposits', url: '/deposits', permission: 'deposits.read' },
@@ -20,7 +20,7 @@ export const MENU_ITEMS: MenuItemType[] = [
   { key: 'transactions', icon: 'iconoir:list', label: 'Transactions', url: '/transactions', permission: 'transactions.read' },
   { key: 'plans', icon: 'iconoir:page-star', label: 'Investment Plans', url: '/plans', permission: 'investments.manage' },
   { key: 'treasury', icon: 'iconoir:bank', label: 'Treasury', url: '#', badge: SOON, permission: 'treasury.read' },
-  { key: 'referrals', icon: 'iconoir:share-android', label: 'Referrals', url: '#', badge: SOON, permission: 'referrals.read' },
+  { key: 'referrals', icon: 'iconoir:share-android', label: 'Referrals', url: '/referrals', permission: 'referrals.read' },
 
   { key: 'engage-title', label: 'Support & Engagement', isTitle: true },
   { key: 'support', icon: 'iconoir:chat-bubble', label: 'Support Chat', url: '/support', permission: 'support.read' },
@@ -36,8 +36,8 @@ export const MENU_ITEMS: MenuItemType[] = [
     label: 'System',
     children: [
       { key: 'admins', label: 'Admins', url: '/system/admins', parentKey: 'system', permission: 'admins.manage' },
-      { key: 'security', label: 'Security Center', url: '#', parentKey: 'system', badge: SOON, permission: 'security.manage' },
-      { key: 'audit-logs', label: 'Audit Logs', url: '#', parentKey: 'system', badge: SOON, permission: 'audit.read' },
+      { key: 'security', label: 'Security Center', url: '/system/security', parentKey: 'system', permission: 'security.manage' },
+      { key: 'audit-logs', label: 'Audit Logs', url: '/system/audit-logs', parentKey: 'system', permission: 'audit.read' },
       { key: 'integrations', label: 'Integrations', url: '/system/integrations', parentKey: 'system', permission: 'integrations.manage' },
       { key: 'branding', label: 'Branding', url: '#', parentKey: 'system', badge: SOON, permission: 'branding.manage' },
       { key: 'settings', label: 'Settings', url: '#', parentKey: 'system', badge: SOON, permission: 'settings.manage' },

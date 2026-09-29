@@ -26,6 +26,10 @@ import * as TransactionsPage from '@/app/(admin)/apps/transactions/page'
 import * as AdminsPage from '@/app/(admin)/system/admins/page'
 import * as IntegrationsPage from '@/app/(admin)/system/integrations/page'
 import * as ContactMessagesPage from '@/app/(admin)/apps/contact-messages/page'
+import * as KycPage from '@/app/(admin)/compliance/kyc/page'
+import * as ReferralsPage from '@/app/(admin)/growth/referrals/page'
+import * as AuditLogsPage from '@/app/(admin)/system/audit-logs/page'
+import * as SecurityPage from '@/app/(admin)/system/security/page'
 import * as InvoicePage from '@/app/(admin)/apps/invoice/page'
 import * as ProfilePage from '@/app/(admin)/pages/profile/page'
 import * as NotificationsPage from '@/app/(admin)/pages/notifications/page'
@@ -222,6 +226,10 @@ createRoot(document.getElementById('root')!).render(
             <Route path="support" element={<Page module={ChatPage} />} />
             <Route path="notifications" element={<Page module={NotificationsPage} />} />
             <Route path="contact-messages" element={<Page module={ContactMessagesPage} />} />
+            <Route path="kyc" element={<Page module={KycPage} />} />
+            <Route path="referrals" element={<Page module={ReferralsPage} />} />
+            <Route path="system/audit-logs" element={<Page module={AuditLogsPage} />} />
+            <Route path="system/security" element={<Page module={SecurityPage} />} />
             <Route path="profile" element={<Page module={ProfilePage} />} />
           </Route>
           <Route
