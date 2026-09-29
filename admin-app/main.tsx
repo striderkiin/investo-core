@@ -19,6 +19,10 @@ import * as CustomersPage from '@/app/(admin)/apps/ecommerce/customers/page'
 import * as CustomerDetailsPage from '@/app/(admin)/apps/ecommerce/customers/[customerId]/page'
 import * as OrdersPage from '@/app/(admin)/apps/ecommerce/orders/page'
 import * as OrderDetailsPage from '@/app/(admin)/apps/ecommerce/orders/[orderId]/page'
+import * as WithdrawalsPage from '@/app/(admin)/apps/ecommerce/withdrawals/page'
+import * as WithdrawalDetailsPage from '@/app/(admin)/apps/ecommerce/withdrawals/[withdrawalId]/page'
+import * as InvestmentsPage from '@/app/(admin)/apps/investments/page'
+import * as TransactionsPage from '@/app/(admin)/apps/transactions/page'
 import * as InvoicePage from '@/app/(admin)/apps/invoice/page'
 import * as ProfilePage from '@/app/(admin)/pages/profile/page'
 import * as NotificationsPage from '@/app/(admin)/pages/notifications/page'
@@ -204,6 +208,10 @@ createRoot(document.getElementById('root')!).render(
             <Route path="customers/:customerId" element={<Page module={CustomerDetailsPage} />} />
             <Route path="deposits" element={<Page module={OrdersPage} />} />
             <Route path="deposits/:orderId" element={<Page module={OrderDetailsPage} />} />
+            <Route path="withdrawals" element={<Page module={WithdrawalsPage} />} />
+            <Route path="withdrawals/:withdrawalId" element={<Page module={WithdrawalDetailsPage} />} />
+            <Route path="investments" element={<Page module={InvestmentsPage} />} />
+            <Route path="transactions" element={<Page module={TransactionsPage} />} />
             <Route path="statement" element={<Page module={InvoicePage} />} />
             <Route path="plans" element={<Page module={PricingPage} />} />
             <Route path="support" element={<Page module={ChatPage} />} />

@@ -13,10 +13,11 @@ export const MENU_ITEMS: MenuItemType[] = [
   { key: 'kyc', icon: 'iconoir:user-badge-check', label: 'KYC Reviews', url: '#', badge: SOON, permission: 'compliance.manage' },
 
   { key: 'money-title', label: 'Money', isTitle: true },
-  { key: 'deposits', icon: 'iconoir:download-circle', label: 'Deposits', url: '/deposits', badge: SOON, permission: 'deposits.read' },
-  { key: 'withdrawals', icon: 'iconoir:upload-square', label: 'Withdrawals', url: '#', badge: SOON, permission: 'withdrawals.read' },
-  { key: 'investments', icon: 'iconoir:graph-up', label: 'Investments', url: '#', badge: SOON, permission: 'investments.read' },
-  { key: 'plans', icon: 'iconoir:page-star', label: 'Investment Plans', url: '/plans', badge: SOON, permission: 'investments.manage' },
+  { key: 'deposits', icon: 'iconoir:download-circle', label: 'Deposits', url: '/deposits', permission: 'deposits.read' },
+  { key: 'withdrawals', icon: 'iconoir:upload-square', label: 'Withdrawals', url: '/withdrawals', permission: 'withdrawals.read' },
+  { key: 'investments', icon: 'iconoir:graph-up', label: 'Investments', url: '/investments', permission: 'investments.read' },
+  { key: 'transactions', icon: 'iconoir:list', label: 'Transactions', url: '/transactions', permission: 'transactions.read' },
+  { key: 'plans', icon: 'iconoir:page-star', label: 'Investment Plans', url: '/plans', permission: 'investments.manage' },
   { key: 'treasury', icon: 'iconoir:bank', label: 'Treasury', url: '#', badge: SOON, permission: 'treasury.read' },
   { key: 'referrals', icon: 'iconoir:share-android', label: 'Referrals', url: '#', badge: SOON, permission: 'referrals.read' },
 

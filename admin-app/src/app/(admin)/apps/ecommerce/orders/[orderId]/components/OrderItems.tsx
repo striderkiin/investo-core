@@ -1,57 +1,70 @@
 import IconifyIcon from '@/components/wrappers/IconifyIcon'
-import { currency } from '@/context/constants'
-import { getAllOrderItems } from '@/helpers/data'
-import type { ProductType } from '@/types/data'
-import Image from 'next/image'
 import { Card, CardBody, CardHeader, CardTitle, Col, Row } from 'react-bootstrap'
+import { formatDateTime, formatMoney } from '@/investo/format'
+import { explorerUrl, MONEY, type MoneyRecord } from '@/investo/money'
 
-const OrderItems = async ({ order }: { order: ProductType }) => {
-  const orderItems = await getAllOrderItems()
+const copy = (text: string) => void navigator.clipboard?.writeText(text)
+
+const CopyValue = ({ value }: { value: string | null }) =>
+  value ? (
+    <span className="d-inline-flex align-items-center gap-1 text-break">
+      <code>{value}</code>
+      <button type="button" className="btn btn-link p-0 text-muted" onClick={() => copy(value)} aria-label="Copy">
+        <IconifyIcon icon="iconoir:copy" />
+      </button>
+    </span>
+  ) : (
+    <span className="text-muted">-</span>
+  )
+
+const OrderItems = ({ order }: { order: MoneyRecord }) => {
+  const explorer = explorerUrl(order.network, order.txHash)
+  const rows: { label: string; value: React.ReactNode }[] = [
+    { label: 'Coin', value: `${order.currency}${order.network ? ` on ${order.network}` : ''}` },
+    { label: order.kind === 'deposit' ? 'Paid to wallet' : 'Pay out to wallet', value: <CopyValue value={order.address} /> },
+    {
+      label: 'Transaction hash',
+      value: order.txHash ? (
+        <span className="d-inline-flex align-items-center gap-2 flex-wrap">
+          <CopyValue value={order.txHash} />
+          {explorer && (
+            <a href={explorer} target="_blank" rel="noopener noreferrer" className="text-primary">
+              View on explorer <IconifyIcon icon="iconoir:open-new-window" />
+            </a>
+          )}
+        </span>
+      ) : (
+        <span className="text-muted">Not recorded yet</span>
+      ),
+    },
+  ]
+  if (order.kind === 'deposit') rows.push({ label: 'Payment provider', value: order.provider ? `${order.provider}${order.reference ? ` · ${order.reference}` : ''}` : '-' })
+
   return (
     <Card>
       <CardHeader>
         <Row className="align-items-center">
           <Col>
-            <CardTitle as="h4">Orders #{order.id}</CardTitle>
-            <p className="mb-0 text-muted mt-1">15 March 2024 at 09:45 am from draft orders</p>
+            <CardTitle as="h4">
+              {MONEY[order.kind].singular} #{order.id.slice(0, 8).toUpperCase()}
+            </CardTitle>
+            <p className="mb-0 text-muted mt-1">Requested {formatDateTime(order.createdAt)}</p>
           </Col>
           <Col xs="auto">
-            <button className="btn btn-primary">
-              <IconifyIcon icon="fa6-solid:plus" className="me-1" /> Add Item
-            </button>
+            <h3 className="mb-0 fw-bold">{formatMoney(order.amount)}</h3>
           </Col>
         </Row>
       </CardHeader>
       <CardBody className="pt-0">
         <div className="table-responsive">
           <table className="table mb-0">
-            <thead className="table-light">
-              <tr>
-                <th>Item</th>
-                <th className="text-end">Price</th>
-                <th className="text-end">Quantity</th>
-                <th className="text-end">Total</th>
-              </tr>
-            </thead>
             <tbody>
-              {orderItems.map((order, idx) => (
-                <tr key={idx}>
-                  <td>
-                    {order.product && <Image src={order.product?.image} alt="product" height={40} />}
-                    <p className="d-inline-block align-middle mb-0">
-                      <span className="d-block align-middle mb-0 product-name text-body">{order.product?.name}</span>
-                      <span className="text-muted font-13">{order.product?.description}</span>
-                    </p>
-                  </td>
-                  <td className="text-end">
-                    {currency}
-                    {order.product?.sellPrice}
-                  </td>
-                  <td className="text-end">{order.quantity}</td>
-                  <td className="text-end">
-                    {currency}
-                    {order.total}
-                  </td>
+              {rows.map((row) => (
+                <tr key={row.label}>
+                  <th className="text-muted fw-medium" style={{ width: 200 }}>
+                    {row.label}
+                  </th>
+                  <td>{row.value}</td>
                 </tr>
               ))}
             </tbody>

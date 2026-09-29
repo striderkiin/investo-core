@@ -1,12 +1,8 @@
-import { getOrderById } from '@/helpers/data'
+'use client'
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import React from 'react'
-import { Card, CardHeader, CardTitle, Col, Row } from 'react-bootstrap'
-import OrderItems from './components/OrderItems'
-import OrderSummary from './components/OrderSummary'
-import DeliveryDetail from './components/DeliveryDetail'
-import OrderInformation from './components/OrderInformation'
+import MoneyDetail from './components/MoneyDetail'
+
+export const metadata: Metadata = { title: 'Deposit' }
 
 type ParamsOrderId = {
   params: {
@@ -14,26 +10,6 @@ type ParamsOrderId = {
   }
 }
 
-export const generateMetadata = async ({ params }: ParamsOrderId): Promise<Metadata> => {
-  const order = await getOrderById(params.orderId)
-  return { title: order?.id ?? 'Order Details' }
-}
-
-const OrderDetails = async ({ params }: ParamsOrderId) => {
-  const order = await getOrderById(params.orderId)
-  if (!order) notFound()
-  return (
-    <Row>
-      <Col lg={8}>
-        <OrderItems order={order} />
-        <DeliveryDetail />
-      </Col>
-      <Col lg={4}>
-        <OrderSummary />
-        <OrderInformation />
-      </Col>
-    </Row>
-  )
-}
+const OrderDetails = ({ params }: ParamsOrderId) => <MoneyDetail kind="deposit" id={params.orderId} />
 
 export default OrderDetails
