@@ -25,6 +25,7 @@ import * as InvestmentsPage from '@/app/(admin)/apps/investments/page'
 import * as TransactionsPage from '@/app/(admin)/apps/transactions/page'
 import * as AdminsPage from '@/app/(admin)/system/admins/page'
 import * as IntegrationsPage from '@/app/(admin)/system/integrations/page'
+import * as ContactMessagesPage from '@/app/(admin)/apps/contact-messages/page'
 import * as InvoicePage from '@/app/(admin)/apps/invoice/page'
 import * as ProfilePage from '@/app/(admin)/pages/profile/page'
 import * as NotificationsPage from '@/app/(admin)/pages/notifications/page'
@@ -220,6 +221,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="plans" element={<Page module={PricingPage} />} />
             <Route path="support" element={<Page module={ChatPage} />} />
             <Route path="notifications" element={<Page module={NotificationsPage} />} />
+            <Route path="contact-messages" element={<Page module={ContactMessagesPage} />} />
             <Route path="profile" element={<Page module={ProfilePage} />} />
           </Route>
           <Route

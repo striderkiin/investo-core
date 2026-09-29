@@ -23,9 +23,9 @@ export const MENU_ITEMS: MenuItemType[] = [
   { key: 'referrals', icon: 'iconoir:share-android', label: 'Referrals', url: '#', badge: SOON, permission: 'referrals.read' },
 
   { key: 'engage-title', label: 'Support & Engagement', isTitle: true },
-  { key: 'support', icon: 'iconoir:chat-bubble', label: 'Support Chat', url: '/support', badge: SOON, permission: 'support.read' },
-  { key: 'contact-messages', icon: 'iconoir:mail', label: 'Contact Messages', url: '#', badge: SOON, permission: 'support.read' },
-  { key: 'notifications', icon: 'iconoir:bell', label: 'Notifications', url: '/notifications', badge: SOON, permission: 'announcements.manage' },
+  { key: 'support', icon: 'iconoir:chat-bubble', label: 'Support Chat', url: '/support', permission: 'support.read' },
+  { key: 'contact-messages', icon: 'iconoir:mail', label: 'Contact Messages', url: '/contact-messages', permission: 'support.read' },
+  { key: 'notifications', icon: 'iconoir:bell', label: 'Notifications', url: '/notifications', permission: ['notifications.send', 'announcements.manage'] },
   { key: 'social-proof', icon: 'iconoir:megaphone', label: 'Social Proof', url: '#', badge: SOON, permission: 'social_proof.manage' },
   { key: 'market', icon: 'iconoir:candlestick-chart', label: 'Market Controls', url: '#', badge: SOON, permission: 'market.read' },
 

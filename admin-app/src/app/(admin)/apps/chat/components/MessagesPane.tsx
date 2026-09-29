@@ -1,15 +1,18 @@
 import { Col, Row, TabPane } from 'react-bootstrap'
 
 import ChatItem from './ChatItem'
-import type { UserType } from '@/types/data'
+import type { TicketWithCustomer } from '../useSupportTickets'
 
-const MessagesPane = ({ chats }: { chats: UserType[] }) => {
+type Props = { eventKey: string; chats: TicketWithCustomer[]; activeId: string | null; onSelect: (id: string) => void; empty: string }
+
+const MessagesPane = ({ eventKey, chats, activeId, onSelect, empty }: Props) => {
   return (
-    <TabPane eventKey="Messages" className="fade" role="tabpanel">
+    <TabPane eventKey={eventKey} className="fade" role="tabpanel">
       <Row>
         <Col>
+          {chats.length === 0 && <p className="text-muted text-center py-4 mb-0">{empty}</p>}
           {chats.map((chat) => (
-            <ChatItem key={chat.id} {...chat} />
+            <ChatItem key={chat.id} ticket={chat} active={chat.id === activeId} onSelect={onSelect} />
           ))}
         </Col>
       </Row>

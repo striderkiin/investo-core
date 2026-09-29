@@ -1,32 +1,38 @@
 'use client'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Nav, NavItem, NavLink, TabContainer, TabContent } from 'react-bootstrap'
 
 import IconifyIcon from '@/components/wrappers/IconifyIcon'
 import SimplebarReactClient from '@/components/wrappers/SimplebarReactClient'
-import ActiveUsersPane from './ActiveUsersPane'
 import MessagesPane from './MessagesPane'
-import { users } from '@/assets/data/other'
+import { OPEN_STATUSES, type TicketWithCustomer } from '../useSupportTickets'
 
-const ChatListPanel = () => {
-  const [chats, setChats] = useState(users)
+type Props = { tickets: TicketWithCustomer[]; activeId: string | null; onSelect: (id: string) => void }
 
-  const search = (text: string) => {
-    setChats(text ? users.filter((u) => u.name.toLowerCase().indexOf(text.toLowerCase()) >= 0) : users)
-  }
+// Left column: conversations needing a reply first, then everything.
+const ChatListPanel = ({ tickets, activeId, onSelect }: Props) => {
+  const [search, setSearch] = useState('')
+
+  const filtered = useMemo(() => {
+    const term = search.trim().toLowerCase()
+    return term
+      ? tickets.filter((t) => [t.customer?.name, t.customer?.email, t.subject, t.lastMessage].some((v) => v?.toLowerCase().includes(term)))
+      : tickets
+  }, [tickets, search])
+  const open = filtered.filter((t) => OPEN_STATUSES.includes(t.status))
 
   return (
     <div className="chat-box-left">
-      <TabContainer mountOnEnter defaultActiveKey="Messages">
+      <TabContainer mountOnEnter defaultActiveKey="Open">
         <Nav justify variant="tabs">
           <NavItem role="presentation">
-            <NavLink as="span" className="py-2" eventKey="Messages" role="button">
-              Messages
+            <NavLink as="span" className="py-2" eventKey="Open" role="button">
+              Open ({open.length})
             </NavLink>
           </NavItem>
           <NavItem role="presentation">
-            <NavLink as="span" className="py-2" eventKey="Active" role="button">
-              Active
+            <NavLink as="span" className="py-2" eventKey="All" role="button">
+              All
             </NavLink>
           </NavItem>
         </Nav>
@@ -40,9 +46,10 @@ const ChatListPanel = () => {
               </div>
               <input
                 type="search"
-                placeholder="Searching.."
-                onChange={(e) => search(e.target.value)}
-                aria-describedby="button-addon2"
+                placeholder="Search customer or subject"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                aria-label="Search conversations"
                 className="form-control border-0 bg-light"
               />
             </div>
@@ -50,9 +57,8 @@ const ChatListPanel = () => {
         </div>
         <SimplebarReactClient className="chat-body-left px-3">
           <TabContent>
-            <MessagesPane chats={chats} />
-
-            <ActiveUsersPane chats={chats} />
+            <MessagesPane eventKey="Open" chats={open} activeId={activeId} onSelect={onSelect} empty="No open conversations." />
+            <MessagesPane eventKey="All" chats={filtered} activeId={activeId} onSelect={onSelect} empty="No conversations yet." />
           </TabContent>
         </SimplebarReactClient>
       </TabContainer>

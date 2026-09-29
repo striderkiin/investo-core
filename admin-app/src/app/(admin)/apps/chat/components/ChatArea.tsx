@@ -1,184 +1,194 @@
 'use client'
-import { yupResolver } from '@hookform/resolvers/yup'
 import clsx from 'clsx'
-import Image from 'next/image'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
-import { useForm } from 'react-hook-form'
-import * as yup from 'yup'
+import Link from 'next/link'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle, OverlayTrigger, Tooltip } from 'react-bootstrap'
 
-import { messages } from '@/assets/data/apps'
-import TextFormInput from '@/components/form/TextFormInput'
 import IconifyIcon from '@/components/wrappers/IconifyIcon'
 import SimplebarReactClient from '@/components/wrappers/SimplebarReactClient'
-import { useChatContext } from '@/context/useChatContext'
-import type { ChatMessageType, UserType } from '@/types/data'
-import { addOrSubtractMinutesFromDate, timeSince } from '@/utils/date'
+import { useNotificationContext } from '@/context/useNotificationContext'
+import UserAvatar from '@/investo/UserAvatar'
+import { statusLabel, statusVariant, timeAgo } from '@/investo/format'
+import { supportService, useTicketMessages, type TicketWithCustomer } from '../useSupportTickets'
+import type { SupportMessage, SupportTicketStatus } from '../../../../../../../src/types/database'
+import { useAuth } from '../../../../../../../src/hooks/useAuth'
+import { usePermission } from '../../../../../../../src/hooks/usePermission'
 
-import avatar1 from '@/assets/images/users/avatar-1.jpg'
-import avatar10 from '@/assets/images/users/avatar-10.jpg'
+const STATUSES: SupportTicketStatus[] = ['open', 'in_progress', 'waiting', 'resolved', 'closed']
 
-const AlwaysScrollToBottom = () => {
+const AlwaysScrollToBottom = ({ count }: { count: number }) => {
   const elementRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (elementRef?.current?.scrollIntoView) elementRef.current.scrollIntoView({ behavior: 'smooth' })
-  })
+  }, [count])
   return <div ref={elementRef} />
 }
 
-const UserMessage = ({ message, toUser }: { message: ChatMessageType; toUser: UserType }) => {
-  const received = message.from.id === toUser.id
+const UserMessage = ({ message, ticket, supportName }: { message: SupportMessage; ticket: TicketWithCustomer; supportName: string }) => {
+  // Support replies on the right, the customer on the left.
+  const fromSupport = message.isAdmin
+  const name = fromSupport ? supportName : (ticket.customer?.name ?? 'Customer')
   return (
-    <div className={clsx('d-flex', { 'flex-row-reverse': received })}>
-      <Image src={message.from.avatar} alt="user-avatar" className="rounded-circle thumb-md" />
-      <div className={clsx('chat-box w-100', received ? 'me-1 reverse' : 'ms-1')}>
+    <div className={clsx('d-flex', { 'flex-row-reverse': fromSupport })}>
+      {fromSupport ? (
+        <span className="rounded-circle thumb-md bg-primary text-white d-inline-flex align-items-center justify-content-center flex-shrink-0">
+          <IconifyIcon icon="iconoir:headset-help" />
+        </span>
+      ) : (
+        <UserAvatar photoUrl={ticket.customer?.avatarUrl} avatarKey={ticket.customer?.avatarKey} name={name} className="thumb-md flex-shrink-0" />
+      )}
+      <div className={clsx('chat-box w-100', fromSupport ? 'me-1 reverse' : 'ms-1')}>
         <div className="user-chat">
-          <p>{message.message}</p>
+          <p style={{ whiteSpace: 'pre-wrap' }}>{message.message}</p>
         </div>
-        <div className="chat-time">{timeSince(new Date(message.sentOn))}</div>
+        <div className="chat-time">
+          {name} · {timeAgo(message.createdAt)}
+        </div>
       </div>
     </div>
   )
 }
 
-const ChatArea = () => {
-  const { activeChat } = useChatContext()
-  const [userMessages, setUserMessages] = useState<ChatMessageType[]>([])
+type Props = { ticket: TicketWithCustomer | null; onChanged: () => void }
 
-  const messageSchema = yup.object({
-    newMessage: yup.string().required('Please enter message'),
-  })
+const ChatArea = ({ ticket, onChanged }: Props) => {
+  const { profile } = useAuth()
+  const { can } = usePermission()
+  const canReply = can('support.manage')
+  const { showNotification } = useNotificationContext()
+  const { messages, append } = useTicketMessages(ticket?.id ?? null)
+  const [draft, setDraft] = useState('')
+  const [sending, setSending] = useState(false)
 
-  const { reset, handleSubmit, control } = useForm({
-    resolver: yupResolver(messageSchema),
-  })
+  if (!ticket) {
+    return (
+      <div className="chat-box-right">
+        <div className="d-flex h-100 align-items-center justify-content-center text-muted p-5 text-center">
+          Choose a conversation on the left to read and reply.
+        </div>
+      </div>
+    )
+  }
 
-  const [toUser] = useState<UserType>({
-    id: '103',
-    name: 'Gilbert Chicoine',
-    avatar: avatar10,
-    handle: '@gilbert',
-    role: 'User',
-    source: 'Direct',
-    status: 'Active',
-    email: 'jamesbridge@teleworm.us',
-    lastMessage: 'Hey! Okay, thank you for letting me know. See you!',
-    lastActivity: addOrSubtractMinutesFromDate(1),
-    phoneNo: '456 9595 9594',
-    activityStatus: 'typing',
-  })
+  const name = ticket.customer?.name ?? 'Unknown customer'
+  const variant = statusVariant(ticket.status)
 
-  const getMessagesForUser = useCallback(() => {
-    if (activeChat) {
-      setUserMessages(
-        messages.filter((m) => (m.to.id === toUser.id && m.from.id === activeChat.id) || (toUser.id === m.from.id && m.to.id === activeChat.id)),
-      )
-    }
-  }, [activeChat, toUser])
-
-  useEffect(() => {
-    getMessagesForUser()
-  }, [activeChat])
-
-  const sendChatMessage = (values: { newMessage?: string }) => {
-    if (activeChat) {
-      const newUserMessages = [...userMessages]
-      newUserMessages.push({
-        id: (userMessages.length + 1).toString(),
-        from: toUser,
-        to: activeChat,
-        message: values.newMessage ?? '',
-        sentOn: addOrSubtractMinutesFromDate(0.1),
-      })
-      setTimeout(() => {
-        const otherNewMessages = [...newUserMessages]
-        otherNewMessages.push({
-          id: (userMessages.length + 1).toString(),
-          from: activeChat,
-          to: toUser,
-          message: values.newMessage ?? '',
-          sentOn: addOrSubtractMinutesFromDate(0.1),
-        })
-        setUserMessages(otherNewMessages)
-      }, 1000)
-      setUserMessages(newUserMessages)
-      reset()
+  const send = async (event: FormEvent) => {
+    event.preventDefault()
+    if (!profile || !draft.trim()) return
+    setSending(true)
+    try {
+      const message = await supportService.sendMessage(ticket.id, profile.id, draft.trim(), true)
+      append(message)
+      setDraft('')
+      // Replying moves a new ticket to "in progress" so the queue shows it's handled.
+      if (ticket.status === 'open') await supportService.updateStatus(ticket.id, 'in_progress')
+      onChanged()
+    } catch (err) {
+      showNotification({ message: err instanceof Error ? err.message : 'The message was not sent.', variant: 'danger' })
+    } finally {
+      setSending(false)
     }
   }
 
-  if (activeChat) {
-    const { name, lastActivity } = activeChat
+  const setStatus = async (status: SupportTicketStatus) => {
+    try {
+      await supportService.updateStatus(ticket.id, status)
+      showNotification({ message: `Conversation marked ${statusLabel(status).toLowerCase()}.`, variant: 'success' })
+      onChanged()
+    } catch (err) {
+      showNotification({ message: err instanceof Error ? err.message : 'Could not change the status.', variant: 'danger' })
+    }
+  }
 
-    return (
-      <div className="chat-box-right">
-        <div className="p-3 d-flex justify-content-between align-items-center card-bg rounded">
-          <div role="button" className="d-flex align-self-center">
-            <div className="flex-shrink-0">
-              <Image src={activeChat.avatar ?? avatar1} alt="user" className="rounded-circle thumb-lg" />
-            </div>
-            <div className="flex-grow-1 ms-2 align-self-center">
-              <div>
-                <h6 className="my-0 fw-medium text-dark fs-14">{name}</h6>
-                <p className="text-muted mb-0">Last seen: {timeSince(new Date(lastActivity))}</p>
-              </div>
-            </div>
+  const assignToMe = async () => {
+    if (!profile) return
+    try {
+      await supportService.assign(ticket.id, profile.id)
+      showNotification({ message: 'Assigned to you.', variant: 'success' })
+      onChanged()
+    } catch (err) {
+      showNotification({ message: err instanceof Error ? err.message : 'Could not assign.', variant: 'danger' })
+    }
+  }
+
+  return (
+    <div className="chat-box-right">
+      <div className="p-3 d-flex justify-content-between align-items-center card-bg rounded gap-2">
+        <Link href={`/customers/${ticket.userId}`} className="d-flex align-self-center text-body text-truncate">
+          <div className="flex-shrink-0">
+            <UserAvatar photoUrl={ticket.customer?.avatarUrl} avatarKey={ticket.customer?.avatarKey} name={name} className="thumb-lg" />
           </div>
-          <div className="d-none d-sm-inline-block align-self-center mb-1">
-            <OverlayTrigger placement="top" overlay={<Tooltip className="tooltip-primary">Call</Tooltip>}>
-              <span role="button" className="fs-22 me-2 text-muted">
-                <IconifyIcon icon="iconoir:phone" />
-              </span>
-            </OverlayTrigger>
-            <OverlayTrigger placement="top" overlay={<Tooltip className="tooltip-primary">Video call</Tooltip>}>
-              <span role="button" className="fs-22 me-2 text-muted">
-                <IconifyIcon icon="iconoir:video-camera" />
-              </span>
-            </OverlayTrigger>
-            <OverlayTrigger placement="top" overlay={<Tooltip className="tooltip-primary">Delete</Tooltip>}>
-              <span role="button" className="fs-22 me-2 text-muted">
-                <IconifyIcon icon="iconoir:trash" />
-              </span>
-            </OverlayTrigger>
-            <span role="button" className="fs-22 text-muted">
-              <IconifyIcon icon="iconoir:menu-scale" />
-            </span>
+          <div className="flex-grow-1 ms-2 align-self-center text-truncate">
+            <h6 className="my-0 fw-medium text-dark fs-14">{name}</h6>
+            <p className="text-muted mb-0 text-truncate">
+              {ticket.subject} · <span className="text-capitalize">{ticket.category}</span>
+            </p>
           </div>
+        </Link>
+        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+          <span className={`badge bg-${variant}-subtle text-${variant}`}>{statusLabel(ticket.status)}</span>
+          {canReply && (
+            <>
+              {ticket.assignedTo !== profile?.id && (
+                <OverlayTrigger placement="top" overlay={<Tooltip className="tooltip-primary">Assign to me</Tooltip>}>
+                  <span role="button" className="fs-22 text-muted" onClick={() => void assignToMe()}>
+                    <IconifyIcon icon="iconoir:user-plus" />
+                  </span>
+                </OverlayTrigger>
+              )}
+              <Dropdown align="end">
+                <DropdownToggle variant="light" size="sm">
+                  Status
+                </DropdownToggle>
+                <DropdownMenu>
+                  {STATUSES.filter((s) => s !== ticket.status).map((s) => (
+                    <DropdownItem key={s} onClick={() => void setStatus(s)}>
+                      Mark {statusLabel(s).toLowerCase()}
+                    </DropdownItem>
+                  ))}
+                </DropdownMenu>
+              </Dropdown>
+            </>
+          )}
         </div>
-        <SimplebarReactClient className="chat-body">
-          <div className="chat-detail">
-            {userMessages.map((message) => {
-              return <UserMessage key={message.id} message={message} toUser={toUser} />
-            })}
-
-            <AlwaysScrollToBottom />
-          </div>
-        </SimplebarReactClient>
-        <div className="chat-footer">
-          <form className="d-flex" onSubmit={handleSubmit(sendChatMessage)}>
-            <TextFormInput containerClassName="w-100" name="newMessage" control={control} placeholder="Type something here..." noValidate />
+      </div>
+      <SimplebarReactClient className="chat-body">
+        <div className="chat-detail">
+          {!messages && <p className="text-muted text-center py-4">Loading…</p>}
+          {messages?.length === 0 && <p className="text-muted text-center py-4">No messages yet.</p>}
+          {messages?.map((message) => (
+            <UserMessage key={message.id} message={message} ticket={ticket} supportName="Support" />
+          ))}
+          <AlwaysScrollToBottom count={messages?.length ?? 0} />
+        </div>
+      </SimplebarReactClient>
+      <div className="chat-footer">
+        {canReply ? (
+          <form className="d-flex" onSubmit={send}>
+            <div className="w-100">
+              <input
+                className="form-control"
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                placeholder={['resolved', 'closed'].includes(ticket.status) ? 'Reply to reopen the conversation…' : 'Type a reply…'}
+                aria-label="Reply"
+              />
+            </div>
             <div className="text-end">
               <div className="chat-features icons-center flex-nowrap">
-                <div className="d-none d-sm-inline-flex ">
-                  <span role="button">
-                    <IconifyIcon icon="iconoir:camera" />
-                  </span>
-                  <span role="button">
-                    <IconifyIcon icon="iconoir:attachment" />
-                  </span>
-                  <span role="button">
-                    <IconifyIcon icon="iconoir:microphone" />
-                  </span>
-                </div>
-                <button type="submit" role="button" className="btn p-0 text-primary">
+                <button type="submit" className="btn p-0 text-primary" disabled={sending || !draft.trim()} aria-label="Send">
                   <IconifyIcon icon="iconoir:send-solid" />
                 </button>
               </div>
             </div>
           </form>
-        </div>
+        ) : (
+          <p className="text-muted mb-0">Your role can read conversations but not reply.</p>
+        )}
       </div>
-    )
-  }
+    </div>
+  )
 }
 
 export default ChatArea

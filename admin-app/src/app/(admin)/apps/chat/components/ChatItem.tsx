@@ -1,35 +1,33 @@
 import clsx from 'clsx'
-import Image from 'next/image'
 
-import IconifyIcon from '@/components/wrappers/IconifyIcon'
-import type { UserType } from '@/types/data'
-import { timeSince } from '@/utils/date'
-import { useChatContext } from '@/context/useChatContext'
+import UserAvatar from '@/investo/UserAvatar'
+import { statusLabel, statusVariant, timeAgo } from '@/investo/format'
+import type { TicketWithCustomer } from '../useSupportTickets'
 
-const ChatItem = ({ id, avatar, activityStatus, lastActivity, lastMessage, name, unreadCount }: UserType) => {
-  const { changeActiveChat } = useChatContext()
+type Props = { ticket: TicketWithCustomer; active: boolean; onSelect: (id: string) => void }
+
+const ChatItem = ({ ticket, active, onSelect }: Props) => {
+  const name = ticket.customer?.name ?? 'Unknown customer'
+  const variant = statusVariant(ticket.status)
   return (
-    <div onClick={() => changeActiveChat(id)} className="p-2 border-dashed border-theme-color rounded mb-2">
+    <div
+      onClick={() => onSelect(ticket.id)}
+      className={clsx('p-2 border-dashed rounded mb-2', active ? 'border-primary bg-primary-subtle' : 'border-theme-color')}>
       <div role="button">
         <div className="d-flex align-items-start">
           <div className="position-relative">
-            <Image src={avatar} alt="avatar" className="thumb-lg rounded-circle" />
-            <span className="position-absolute bottom-0 end-0">
-              <IconifyIcon
-                icon="fa6-solid:circle"
-                className={clsx('fs-10 border-2 border-theme-color', activityStatus !== 'offline' ? 'text-success' : 'text-secondary')}
-              />
-            </span>
+            <UserAvatar photoUrl={ticket.customer?.avatarUrl} avatarKey={ticket.customer?.avatarKey} name={name} className="thumb-lg" />
           </div>
           <div className="flex-grow-1 ms-2 text-truncate align-self-center">
-            <h6 className="my-0 fw-medium text-dark fs-14">
+            <h6 className="my-0 fw-medium text-dark fs-14 text-truncate">
               {name}
-              <small className="float-end text-muted fs-11">{timeSince(new Date(lastActivity))}</small>
+              <small className="float-end text-muted fs-11">{timeAgo(ticket.updatedAt)}</small>
             </h6>
-            <p className="text-muted mb-0">
-              {activityStatus === 'typing' ? <span className="text-primary">Typing...</span> : lastMessage}
-              {unreadCount && <span className="badge float-end rounded text-white bg-success ">{unreadCount}</span>}
+            <p className="text-muted mb-0 text-truncate">
+              <span className="text-body">{ticket.subject}</span>
+              <span className={`badge float-end rounded bg-${variant}-subtle text-${variant}`}>{statusLabel(ticket.status)}</span>
             </p>
+            {ticket.lastMessage && <p className="text-muted mb-0 fs-12 text-truncate">{ticket.lastMessage}</p>}
           </div>
         </div>
       </div>

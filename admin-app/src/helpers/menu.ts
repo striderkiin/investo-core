@@ -5,7 +5,8 @@ import type { Permission } from '../../../src/types/roles'
 // Filters out items the signed-in admin's role can't use, then any section
 // title left with nothing under it.
 export const getMenuItems = (can: (permission: Permission) => boolean = () => true): MenuItemType[] => {
-  const isVisible = (item: MenuItemType) => !item.permission || can(item.permission)
+  const isVisible = (item: MenuItemType) =>
+    !item.permission || (Array.isArray(item.permission) ? item.permission.some((p) => can(p)) : can(item.permission))
   const visible = MENU_ITEMS.flatMap((item): MenuItemType[] => {
     if (!isVisible(item)) return []
     if (!item.children) return [item]
