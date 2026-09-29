@@ -82,6 +82,17 @@
                                     </div>
                                     <button class="tf-button style-1 label-01 w-100" type="submit" id="signInSubmit">Sign In</button>
                                 </form>
+                                <form class="form-login flex flex-column gap24" id="signInCodeForm" accept-charset="utf-8" novalidate style="display:none;">
+                                    <div class="f14-regular">Two-factor authentication is on for this account. Enter the 6-digit code from your authenticator app.</div>
+                                    <fieldset class="code">
+                                        <div class="f14-regular mb-6">Authentication code</div>
+                                        <input class="flex-grow" type="text" id="signInCode" placeholder="123456" name="code" tabindex="0" aria-required="true" required inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}">
+                                    </fieldset>
+                                    <button class="tf-button style-1 label-01 w-100" type="submit" id="signInCodeSubmit">Verify</button>
+                                    <div class="f14-regular text-end">
+                                        <a href="#" class="f14-bold" id="signInCodeCancel">Use a different account</a>
+                                    </div>
+                                </form>
                                 <div class="f14-regular">
                                     Don&rsquo;t have an account?
                                     <a href="sign-up.html" class="f14-bold">Sign Up</a>

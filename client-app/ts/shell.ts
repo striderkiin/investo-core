@@ -8,6 +8,7 @@ import { renderAvatar } from './avatarRender';
 import { mountDemoTicker } from './demoTicker';
 import { mountSocialProofPopup } from './socialProofPopup';
 import { applyMaintenanceGuard } from './maintenanceGuard';
+import { needsMfaCode } from './mfa';
 
 const authService = createAuthService();
 const notificationService = createNotificationService();
@@ -33,6 +34,12 @@ export async function requireClientSession(): Promise<Profile> {
   if (!session) {
     window.location.replace('/client-app/sign-in.html');
     throw new Error('Not authenticated');
+  }
+
+  // Password-only session on an account with 2FA on: finish the code step first.
+  if (await needsMfaCode()) {
+    window.location.replace('/client-app/sign-in.html');
+    throw new Error('Two-factor code required');
   }
 
   const profile = await authService.getCurrentProfile();
