@@ -95,7 +95,7 @@ const KycReviews = () => {
         </>
       ),
     },
-    { header: 'Country', cell: ({ row: { original } }) => (original.country.length === 2 ? countryName(original.country) : original.country) },
+    { header: 'Country', cell: ({ row: { original } }) => (original.country ? countryName(original.country) : '-') },
     {
       header: 'Documents',
       cell: ({ row: { original } }) => (
@@ -158,7 +158,7 @@ const KycReviews = () => {
           { key: 'rejected', label: 'Rejected', match: (r) => r.status === 'rejected' },
           { key: 'all', label: 'All', match: () => true },
         ]}
-        searchText={(r) => [r.legalFullName, r.customer?.name, r.customer?.email, r.country]}
+        searchText={(r) => [r.legalFullName, r.customer?.name, r.customer?.email, r.country ? countryName(r.country) : null]}
         searchPlaceholder="Search name, email or country"
       />
       {reviewing && (
@@ -168,7 +168,7 @@ const KycReviews = () => {
           </ModalHeader>
           <ModalBody>
             <p className="mb-2">
-              {countryName(reviewing.country)} · born {formatDate(reviewing.dateOfBirth)}
+              {reviewing.country ? countryName(reviewing.country) : 'Country not given'} · born {formatDate(reviewing.dateOfBirth)}
             </p>
             <div className="d-flex gap-2 mb-3">
               <button type="button" className="btn btn-sm btn-light" onClick={() => void openDocument(reviewing.idDocumentPath)}>

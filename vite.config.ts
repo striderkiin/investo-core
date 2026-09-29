@@ -45,13 +45,13 @@ const adminAppStaticImages = (): Plugin => ({
   },
 });
 
-// Client-side routes under /admin-app/ (e.g. /admin-app/dashboard/analytics)
-// must load admin-app/index.html, not the SPA's root index.html that Vite's
-// default HTML fallback would serve.
+// Client-side routes of the admin panel, under /admin/ (and the older
+// /admin-app/ alias), must load admin-app/index.html, not the SPA's root
+// index.html that Vite's default HTML fallback would serve.
 const adminAppHistoryFallback = (): Plugin => {
   const rewrite: Connect.NextHandleFunction = (req, _res, next) => {
     const pathname = req.url?.split('?')[0] ?? '';
-    if (pathname.startsWith('/admin-app/') && !path.extname(pathname) && req.headers.accept?.includes('text/html')) {
+    if (/^\/admin(-app)?(\/|$)/.test(pathname) && !path.extname(pathname) && req.headers.accept?.includes('text/html')) {
       req.url = '/admin-app/index.html';
     }
     next();

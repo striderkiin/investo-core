@@ -77,7 +77,7 @@ const Admins = () => {
       const { data, error } = await supabase.rpc('create_admin_invite', { p_email: email.trim(), p_role: role })
       if (error) throw error
       const row = (Array.isArray(data) ? data[0] : data) as { invite_id: string; token: string }
-      const link = `${window.location.origin}/admin-app/auth/register?token=${row.token}`
+      const link = `${window.location.origin}/admin/auth/register?token=${row.token}`
       let emailed = false
       let emailError: string | null = null
       try {

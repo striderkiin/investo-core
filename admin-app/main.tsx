@@ -186,6 +186,27 @@ const useBrandFavicon = (href: string) => {
   }, [href])
 }
 
+// The panel lives at /admin; /admin-app is the address it launched under
+// and stays working so older links and bookmarks still open it.
+const BASENAME = /^\/admin-app(\/|$)/.test(window.location.pathname) ? '/admin-app' : '/admin'
+
+// Paths from the previous admin panel that moved in this one.
+const LEGACY_REDIRECTS: Record<string, string> = {
+  financial: '/treasury',
+  users: '/customers',
+  announcements: '/notifications',
+  maintenance: '/system/maintenance',
+  activity: '/system/activity',
+  'white-label': '/system/branding',
+  branding: '/system/branding',
+  integrations: '/system/integrations',
+  'sandbox-testing': '/system/sandbox',
+  security: '/system/security',
+  admins: '/system/admins',
+  'audit-logs': '/system/audit-logs',
+  settings: '/system/settings',
+}
+
 const RootLayout = () => {
   const { logoOnLight, mark, siteName } = useAdminBranding()
   useRemoveSplashOnContent()
@@ -207,10 +228,13 @@ const RootLayout = () => {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter basename="/admin-app">
+    <BrowserRouter basename={BASENAME}>
       <Routes>
         <Route element={<RootLayout />}>
           <Route index element={<Navigate to="/dashboard" replace />} />
+          {Object.entries(LEGACY_REDIRECTS).map(([from, to]) => (
+            <Route key={from} path={from} element={<Navigate to={to} replace />} />
+          ))}
           <Route
             element={
               <AdminLayout>

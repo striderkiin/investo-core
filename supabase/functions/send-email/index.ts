@@ -122,7 +122,7 @@ ${lines}</table>`,
     const origin = (req.headers.get('origin') ?? '').replace(/\/+$/, '');
     build = (s) => {
       const base = s.siteUrl || origin;
-      const link = `${base}/admin-app/auth/register?token=${encodeURIComponent(body.token!)}`;
+      const link = `${base}/admin/auth/register?token=${encodeURIComponent(body.token!)}`;
       return layout(
         s,
         `Join the ${s.siteName} admin team`,
