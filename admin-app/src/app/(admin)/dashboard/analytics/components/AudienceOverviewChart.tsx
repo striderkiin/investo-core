@@ -1,10 +1,17 @@
 'use client'
 import IconifyIcon from '@/components/wrappers/IconifyIcon'
 import type { ApexOptions } from 'apexcharts'
+import { useState } from 'react'
 import ReactApexChart from 'react-apexcharts'
 import { Card, CardBody, CardHeader, CardTitle, Col, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row } from 'react-bootstrap'
+import { formatMoney, formatMoneyAxis } from '@/investo/format'
+import { bucketByRange, RANGE_LABELS, sumAmount, type ChartRange, type DashboardData } from '../useDashboardData'
 
-const AudienceOverviewChart = () => {
+const AudienceOverviewChart = ({ data }: { data: DashboardData }) => {
+  const [range, setRange] = useState<ChartRange>('12m')
+  const deposits = bucketByRange(data.deposits, range)
+  const withdrawals = bucketByRange(data.withdrawals, range)
+
   const audienceChartOpts: ApexOptions = {
     chart: {
       height: 280,
@@ -21,39 +28,6 @@ const AudienceOverviewChart = () => {
         opacity: 0.35,
       },
     },
-    annotations: {
-      xaxis: [
-        {
-          x: 312,
-          strokeDashArray: 4,
-          borderWidth: 1,
-          borderColor: 'var(--bs-secondary)',
-        },
-      ],
-      points: [
-        {
-          x: 312,
-          y: 52,
-          marker: {
-            size: 6,
-            fillColor: 'var(--bs-primary)',
-            strokeColor: 'var(--bs-card-bg)',
-            strokeWidth: 4,
-            radius: 5,
-          },
-          label: {
-            borderWidth: 1,
-            offsetY: -110,
-            text: '50k',
-            style: {
-              background: 'var(--bs-primary)',
-              fontSize: '14px',
-              fontWeight: '600',
-            },
-          },
-        },
-      ],
-    },
     colors: ['#a8442e', 'rgba(106, 155, 155, 0.3)'],
     dataLabels: {
       enabled: false,
@@ -67,23 +41,30 @@ const AudienceOverviewChart = () => {
     },
     series: [
       {
-        name: 'Income',
-        data: [31, 40, 28, 51, 31, 40, 28, 51, 31, 40, 28, 51],
+        name: 'Deposits',
+        data: deposits.map((b) => b.total),
       },
       {
-        name: 'Expenses',
-        data: [0, 30, 10, 40, 30, 60, 50, 80, 70, 100, 90, 130],
+        name: 'Withdrawals',
+        data: withdrawals.map((b) => b.total),
       },
     ],
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-
+    labels: deposits.map((b) => b.label),
+    xaxis: {
+      tickAmount: range === '30d' ? 10 : undefined,
+    },
     yaxis: {
       labels: {
         offsetX: -12,
         offsetY: 0,
         formatter: function (value) {
-          return '$' + value
+          return formatMoneyAxis(value)
         },
+      },
+    },
+    tooltip: {
+      y: {
+        formatter: (value) => formatMoney(value),
       },
     },
     grid: {
@@ -100,7 +81,9 @@ const AudienceOverviewChart = () => {
       },
     },
     legend: {
-      show: false,
+      show: true,
+      position: 'top',
+      horizontalAlign: 'right',
     },
 
     fill: {
@@ -121,27 +104,32 @@ const AudienceOverviewChart = () => {
       <CardHeader>
         <Row className="align-items-center">
           <Col>
-            <CardTitle as="h4">Audience Overview</CardTitle>
+            <CardTitle as="h4">Deposits vs Withdrawals</CardTitle>
+            <p className="text-muted mb-0 fs-12">
+              Completed in this period: {formatMoney(sumAmount(deposits.map((b) => ({ amount: b.total }))))} in,{' '}
+              {formatMoney(sumAmount(withdrawals.map((b) => ({ amount: b.total }))))} out
+            </p>
           </Col>
           <Col xs="auto">
             <Dropdown>
               <DropdownToggle className="btn bt btn-light icons-center">
                 <i className="icofont-calendar fs-5 me-1" />
-                This Year
+                {RANGE_LABELS[range]}
                 <IconifyIcon icon="la:angle-down" className="ms-1" />
               </DropdownToggle>
               <DropdownMenu align={'end'}>
-                <DropdownItem href="#">Today</DropdownItem>
-                <DropdownItem href="#">Last Week</DropdownItem>
-                <DropdownItem href="#">Last Month</DropdownItem>
-                <DropdownItem href="#">This Year</DropdownItem>
+                {(Object.keys(RANGE_LABELS) as ChartRange[]).map((key) => (
+                  <DropdownItem key={key} active={key === range} onClick={() => setRange(key)}>
+                    {RANGE_LABELS[key]}
+                  </DropdownItem>
+                ))}
               </DropdownMenu>
             </Dropdown>
           </Col>
         </Row>
       </CardHeader>
       <CardBody className="pt-0">
-        <ReactApexChart height={280} series={audienceChartOpts.series} options={audienceChartOpts} type="area" />
+        <ReactApexChart key={range} height={280} series={audienceChartOpts.series} options={audienceChartOpts} type="area" />
       </CardBody>
     </Card>
   )

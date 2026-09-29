@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 type BaseVectorMapProps = {
 	width?: string
@@ -16,18 +16,22 @@ const BaseVectorMap = ({
 }: BaseVectorMapProps) => {
 	const selectorId = type + new Date().getTime()
 	const ref = useRef<HTMLDivElement | null>(null)
-	const [map, setMap] = useState()
 
+	// One map per mount. StrictMode runs effects twice, so the first map is
+	// destroyed on cleanup instead of a second one being stacked beneath it.
 	useEffect(() => {
-		if (!map && ref.current) {
-			const map = new (window as any)['jsVectorMap']({
-				selector: ref.current,
-				map: type,
-				...options,
-			})
-			setMap(map)
+		if (!ref.current) return
+		const map = new (window as any)['jsVectorMap']({
+			selector: ref.current,
+			map: type,
+			...options,
+		})
+		const container = ref.current
+		return () => {
+			map?.destroy?.()
+			container.innerHTML = ''
 		}
-	}, [selectorId, map, options, type, ref])
+	}, [options, type])
 
 	return (
 		<div
