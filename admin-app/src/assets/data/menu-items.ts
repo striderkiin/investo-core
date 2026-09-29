@@ -9,7 +9,7 @@ export const MENU_ITEMS: MenuItemType[] = [
   { key: 'dashboard', icon: 'iconoir:home-simple', label: 'Dashboard', url: '/dashboard' },
 
   { key: 'customers-title', label: 'Customers', isTitle: true },
-  { key: 'customers', icon: 'iconoir:group', label: 'Customers', url: '/customers', badge: SOON, permission: 'users.read' },
+  { key: 'customers', icon: 'iconoir:group', label: 'Customers', url: '/customers', permission: 'users.read' },
   { key: 'kyc', icon: 'iconoir:user-badge-check', label: 'KYC Reviews', url: '#', badge: SOON, permission: 'compliance.manage' },
 
   { key: 'money-title', label: 'Money', isTitle: true },

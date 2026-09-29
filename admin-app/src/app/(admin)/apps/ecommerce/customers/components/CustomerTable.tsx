@@ -1,99 +1,88 @@
 'use client'
 import ReactTable from '@/components/Table'
 import IconifyIcon from '@/components/wrappers/IconifyIcon'
-import { currency } from '@/context/constants'
-import type { CustomerType } from '@/types/data'
-import { getCustomerStatusVariant } from '@/utils/variants-icons'
 import type { ColumnDef } from '@tanstack/react-table'
-import Image from 'next/image'
 import Link from 'next/link'
-import React from 'react'
-import { FormCheck } from 'react-bootstrap'
+import UserAvatar from '@/investo/UserAvatar'
+import { accountStatus } from '@/investo/customers'
+import { countryName, formatDate, formatMoney } from '@/investo/format'
+import type { Profile } from '../../../../../../../../src/types/database'
 
-const columns: ColumnDef<CustomerType>[] = [
+const columns: ColumnDef<Profile>[] = [
   {
-    id: 'select',
-    header: () => <FormCheck id="customer-checkbox" />,
-    cell: ({
-      row: {
-        original: { id },
-      },
-    }) => (
-      <div style={{ width: 16 }}>
-        <FormCheck id={`checkbox-${id}`} />
-      </div>
-    ),
-  },
-  {
-    id: '2',
+    id: 'customer',
     header: () => <div className="ps-0">Customer</div>,
     cell: ({
       row: {
-        original: { name, avatar, id },
+        original: { fullName, email, avatarUrl, avatarKey, id },
       },
     }) => (
-      <Link href={`/customers/${id}`} className="ps-0 text-body">
-        <Image src={avatar} alt="avatar" className="thumb-md d-inline rounded-circle me-1" />
+      <Link href={`/customers/${id}`} className="ps-0 text-body d-flex align-items-center">
+        <UserAvatar photoUrl={avatarUrl} avatarKey={avatarKey} name={fullName || email} className="thumb-md me-2" />
         <p className="d-inline-block align-middle mb-0">
-          <span className="font-13 fw-medium">{name}</span>
+          <span className="font-13 fw-medium d-block">{fullName || 'No name'}</span>
+          <span className="text-muted fs-12">{email}</span>
         </p>
       </Link>
     ),
   },
   {
-    header: 'Email',
-    accessorKey: 'email',
+    header: 'Country',
+    cell: ({
+      row: {
+        original: { country },
+      },
+    }) => (country ? countryName(country) : <span className="text-muted">-</span>),
   },
   {
     header: 'Status',
     cell: ({
       row: {
-        original: { status },
+        original: { accountStatus: status },
       },
-    }) => <span className={`badge  bg-${getCustomerStatusVariant(status)}-subtle text-${getCustomerStatusVariant(status)}`}>{status}</span>,
+    }) => {
+      const { label, variant } = accountStatus(status)
+      return <span className={`badge bg-${variant}-subtle text-${variant}`}>{label}</span>
+    },
   },
   {
-    header: 'Order',
-    accessorKey: 'order',
+    header: 'Balance',
+    cell: ({ row: { original } }) => formatMoney(original.totalBalance),
   },
   {
-    header: 'Spend',
+    header: 'Invested',
+    cell: ({ row: { original } }) => formatMoney(original.investedBalance),
+  },
+  {
+    header: 'Joined',
+    cell: ({ row: { original } }) => formatDate(original.createdAt),
+  },
+  {
+    id: 'action',
+    header: () => <div className="text-end">Action</div>,
     cell: ({
       row: {
-        original: { spend },
+        original: { id },
       },
     }) => (
-      <>
-        {currency}
-        {spend}
-      </>
-    ),
-  },
-  {
-    id: '3',
-    header: () => <div className="text-end">Action</div>,
-    cell: () => (
       <div className="text-end">
-        <span role="button">
-          <IconifyIcon icon="la:pen" className="text-secondary fs-18" />
-        </span>
-        <span role="button">
-          <IconifyIcon icon="la:trash-alt" className="text-secondary fs-18" />
-        </span>
+        <Link href={`/customers/${id}`} aria-label="Open customer">
+          <IconifyIcon icon="la:eye" className="text-secondary fs-18" />
+        </Link>
       </div>
     ),
   },
 ]
 
-const CustomerTable = ({ customers }: { customers: CustomerType[] }) => {
-  const pageSizeList = [2, 5, 10, 20, 50]
+const CustomerTable = ({ customers }: { customers: Profile[] }) => {
+  const pageSizeList = [10, 20, 50, 100]
   return (
-    <ReactTable<CustomerType>
+    <ReactTable<Profile>
       columns={columns}
       data={customers}
       rowsPerPageList={pageSizeList}
-      pageSize={10}
-      tableClass="mb-0 checkbox-all text-nowrap"
+      pageSize={20}
+      tableClass="mb-0 text-nowrap"
       theadClass="table-light"
       showPagination
     />

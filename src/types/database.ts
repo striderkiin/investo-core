@@ -19,6 +19,8 @@ export interface Profile {
   investedBalance: number;
   referralCode: string;
   referredBy: string | null;
+  /** ISO 3166-1 alpha-2 code picked at sign-up; null for accounts created before it was asked. */
+  country: string | null;
   createdAt: string;
   updatedAt: string;
   /** Per-user opt-out of appearing in the client-facing "Recent Activity" popups — defaults to true (matches the platform's existing behavior for every user before this preference existed). */

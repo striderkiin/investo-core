@@ -1,66 +1,155 @@
-import IconifyIcon from '@/components/wrappers/IconifyIcon'
-import { currency } from '@/context/constants'
-import { getAllProducts } from '@/helpers/data'
-import { getProductStatusIcon, getProductStatusVariant } from '@/utils/variants-icons'
-import Link from 'next/link'
-import { Button, Card, CardBody, CardHeader, CardTitle, Col, Row } from 'react-bootstrap'
+import { useState } from 'react'
+import { Card, CardBody, CardHeader, CardTitle, Col, Nav, NavItem, NavLink, Row } from 'react-bootstrap'
+import { formatDate, formatDateTime, formatMoney, statusLabel, statusVariant } from '@/investo/format'
+import type { CustomerDetail, MovementRow } from '../useCustomer'
 
-const Orders = async () => {
-  const orders = await getAllProducts()
+type Tab = 'ledger' | 'deposits' | 'withdrawals' | 'investments'
+
+const Badge = ({ status }: { status: string }) => (
+  <span className={`badge bg-${statusVariant(status)}-subtle text-${statusVariant(status)}`}>{statusLabel(status)}</span>
+)
+
+const Empty = ({ columns, text }: { columns: number; text: string }) => (
+  <tr>
+    <td colSpan={columns} className="text-center text-muted py-4">
+      {text}
+    </td>
+  </tr>
+)
+
+const shortAddress = (address: string | null) => (address && address.length > 18 ? `${address.slice(0, 8)}…${address.slice(-6)}` : (address ?? '-'))
+
+const MovementTable = ({ rows, addressLabel, empty }: { rows: MovementRow[]; addressLabel: string; empty: string }) => (
+  <table className="table mb-0">
+    <thead className="table-light">
+      <tr>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Network</th>
+        <th>{addressLabel}</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.length === 0 && <Empty columns={5} text={empty} />}
+      {rows.map((row) => (
+        <tr key={row.id}>
+          <td>{formatDateTime(row.createdAt)}</td>
+          <td>
+            {formatMoney(row.amount)} <small className="text-muted">{row.currency}</small>
+          </td>
+          <td>{row.network ?? '-'}</td>
+          <td>
+            <code title={row.address ?? undefined}>{shortAddress(row.address)}</code>
+          </td>
+          <td>
+            <Badge status={row.status} />
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+)
+
+// Customer activity, one tab per record type.
+const Orders = ({ detail }: { detail: CustomerDetail }) => {
+  const [tab, setTab] = useState<Tab>('ledger')
+  const tabs: { key: Tab; label: string; count: number }[] = [
+    { key: 'ledger', label: 'Transactions', count: detail.ledger.length },
+    { key: 'deposits', label: 'Deposits', count: detail.deposits.length },
+    { key: 'withdrawals', label: 'Withdrawals', count: detail.withdrawals.length },
+    { key: 'investments', label: 'Investments', count: detail.investments.length },
+  ]
+
   return (
     <Card>
       <CardHeader>
         <Row className="align-items-center">
           <Col>
-            <CardTitle as="h4">Orders</CardTitle>
+            <CardTitle as="h4">Activity</CardTitle>
           </Col>
           <Col xs="auto">
-            <Button variant="primary">
-              <IconifyIcon icon="fa6-solid:eye" className="me-1" /> View All
-            </Button>
+            <Nav variant="pills" className="nav-pills-sm" activeKey={tab} onSelect={(key) => key && setTab(key as Tab)}>
+              {tabs.map((t) => (
+                <NavItem key={t.key}>
+                  <NavLink eventKey={t.key} className="py-1 px-2">
+                    {t.label} <span className="badge bg-light text-dark ms-1">{t.count}</span>
+                  </NavLink>
+                </NavItem>
+              ))}
+            </Nav>
           </Col>
         </Row>
       </CardHeader>
       <CardBody className="pt-0">
         <div className="table-responsive">
-          <table className="table mb-0">
-            <thead className="table-light">
-              <tr>
-                <th>ID</th>
-                <th>Product</th>
-                <th>Date</th>
-                <th>Payment</th>
-                <th>Status</th>
-                <th>Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.slice(0, 5).map((order, idx) => (
-                <tr key={idx}>
-                  <td>
-                    <Link href="/deposits">#{order.id}</Link>
-                  </td>
-                  <td>
-                    <p className="d-inline-block align-middle mb-0">
-                      <span className="d-block align-middle mb-0 product-name text-body">{order.name}</span>
-                      <span className="text-muted font-13">{order.description}</span>
-                    </p>
-                  </td>
-                  <td>{order.createdAt.toLocaleDateString()}</td>
-                  <td>UPI</td>
-                  <td>
-                    <span className={`badge bg-${getProductStatusVariant(order.status)}-subtle text-${getProductStatusVariant(order.status)}`}>
-                      <IconifyIcon icon={getProductStatusIcon(order.status)} className="fas fa-check me-1" /> {order.status}
-                    </span>
-                  </td>
-                  <td>
-                    {currency}
-                    {order.price}
-                  </td>
+          {tab === 'ledger' && (
+            <table className="table mb-0">
+              <thead className="table-light">
+                <tr>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Description</th>
+                  <th>Amount</th>
+                  <th>Balance After</th>
+                  <th>Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {detail.ledger.length === 0 && <Empty columns={6} text="No transactions yet." />}
+                {detail.ledger.map((tx) => (
+                  <tr key={tx.id}>
+                    <td>{formatDateTime(tx.createdAt)}</td>
+                    <td className="text-capitalize">{tx.type}</td>
+                    <td className="text-muted">{tx.description ?? '-'}</td>
+                    <td className={tx.amount >= 0 ? 'text-success' : 'text-danger'}>
+                      {tx.amount >= 0 ? '+' : '-'}
+                      {formatMoney(Math.abs(tx.amount))}
+                    </td>
+                    <td>{formatMoney(tx.balanceAfter)}</td>
+                    <td>
+                      <Badge status={tx.status} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+          {tab === 'deposits' && <MovementTable rows={detail.deposits} addressLabel="Paid To" empty="No deposits yet." />}
+          {tab === 'withdrawals' && <MovementTable rows={detail.withdrawals} addressLabel="Sent To" empty="No withdrawals yet." />}
+          {tab === 'investments' && (
+            <table className="table mb-0">
+              <thead className="table-light">
+                <tr>
+                  <th>Plan</th>
+                  <th>Amount</th>
+                  <th>Rate</th>
+                  <th>Earned</th>
+                  <th>Started</th>
+                  <th>Ends</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {detail.investments.length === 0 && <Empty columns={7} text="No investments yet." />}
+                {detail.investments.map((inv) => (
+                  <tr key={inv.id}>
+                    <td>{inv.planName}</td>
+                    <td>{formatMoney(inv.amount)}</td>
+                    <td>
+                      {inv.rate}% <small className="text-muted">{inv.rateType}</small>
+                    </td>
+                    <td className="text-success">{formatMoney(inv.earnings)}</td>
+                    <td>{inv.startedAt ? formatDate(inv.startedAt) : '-'}</td>
+                    <td>{inv.endsAt ? formatDate(inv.endsAt) : '-'}</td>
+                    <td>
+                      <Badge status={inv.status} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </CardBody>
     </Card>

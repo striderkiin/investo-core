@@ -54,6 +54,7 @@ const adminProfile: Profile = {
   socialProofOptIn: true,
   socialProofNickname: null,
   socialProofDisplayMode: null,
+  country: null,
 };
 
 function renderWithAuth() {

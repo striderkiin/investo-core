@@ -67,6 +67,7 @@ export interface ProfileRow {
   invested_balance: number;
   referral_code: string;
   referred_by: string | null;
+  country?: string | null;
   created_at: string;
   updated_at: string;
   social_proof_opt_in: boolean;
@@ -89,6 +90,7 @@ export function mapProfileRow(row: ProfileRow): Profile {
     investedBalance: Number(row.invested_balance),
     referralCode: row.referral_code,
     referredBy: row.referred_by,
+    country: row.country ?? null,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     socialProofOptIn: row.social_proof_opt_in,

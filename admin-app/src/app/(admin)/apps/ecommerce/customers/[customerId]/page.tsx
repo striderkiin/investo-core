@@ -1,10 +1,15 @@
-import { getCustomersById } from '@/helpers/data'
-import { notFound } from 'next/navigation'
+'use client'
 import { Col, Row } from 'react-bootstrap'
+import { useEffect } from 'react'
 import CustomerCard from './components/CustomerCard'
 import Orders from './components/Orders'
 import Stats from './components/Stats'
+import FallbackLoading from '@/components/FallbackLoading'
+import NotFound from '@/app/not-found'
+import { useCustomer } from './useCustomer'
 import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Customer' }
 
 type ParamsCustomerId = {
   params: {
@@ -12,27 +17,30 @@ type ParamsCustomerId = {
   }
 }
 
-export const generateMetadata = async ({ params }: ParamsCustomerId): Promise<Metadata> => {
-  const order = await getCustomersById(params.customerId)
-  return { title: order?.id ?? 'Customer Details' }
-}
+const CustomerDetails = ({ params }: ParamsCustomerId) => {
+  const { detail, refresh } = useCustomer(params.customerId)
+  const name = detail ? detail.profile.fullName || detail.profile.email : null
 
-const CustomerDetails = async ({ params }: ParamsCustomerId) => {
-  const customer = await getCustomersById(params.customerId)
-  if (!customer) notFound()
+  useEffect(() => {
+    if (name) document.title = `${name} | Investo Admin`
+  }, [name])
+
+  if (detail === undefined) return <FallbackLoading />
+  if (detail === null) return <NotFound />
+
   return (
     <>
       <Row>
         <Col md={12} lg={5}>
-          <CustomerCard customer={customer} />
+          <CustomerCard detail={detail} onChanged={() => void refresh()} />
         </Col>
         <Col md={12} lg={7}>
-          <Stats />
+          <Stats detail={detail} />
         </Col>
       </Row>
       <Row>
         <Col lg={12}>
-          <Orders />
+          <Orders detail={detail} />
         </Col>
       </Row>
     </>

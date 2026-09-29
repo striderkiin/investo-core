@@ -1,6 +1,7 @@
 import { createAuthService } from '../../src/services/auth/authService';
 import { isSupabaseConfigured } from '../../src/services/supabase/client';
 import { isAdminRole } from '../../src/types/roles';
+import { countryOptions, isCountryCode } from '../../src/shared/countries';
 
 const authService = createAuthService();
 
@@ -35,6 +36,14 @@ function prefillReferralCode(): void {
   if (input) input.value = ref;
 }
 
+function fillCountries(): void {
+  const select = document.getElementById('signUpCountry') as HTMLSelectElement | null;
+  if (!select) return;
+  for (const { code, name } of countryOptions()) {
+    select.add(new Option(name, code));
+  }
+}
+
 function showSuccess(email: string): void {
   const inner = document.getElementById('signUpInner');
   const success = document.getElementById('signUpSuccess');
@@ -62,9 +71,14 @@ function wireForm(): void {
     const password = (document.getElementById('signUpPassword') as HTMLInputElement | null)?.value ?? '';
     const confirmPassword = (document.getElementById('signUpConfirmPassword') as HTMLInputElement | null)?.value ?? '';
     const referralCode = (document.getElementById('signUpReferral') as HTMLInputElement | null)?.value.trim() || undefined;
+    const country = (document.getElementById('signUpCountry') as HTMLSelectElement | null)?.value ?? '';
 
     if (!fullName || !email || !password) {
       showError('Fill in your name, email, and password.');
+      return;
+    }
+    if (!isCountryCode(country)) {
+      showError('Select your country.');
       return;
     }
     if (password !== confirmPassword) {
@@ -82,7 +96,7 @@ function wireForm(): void {
     }
 
     void authService
-      .register({ email, password, fullName, referralCode })
+      .register({ email, password, fullName, referralCode, country })
       .then(() => {
         showSuccess(email);
       })
@@ -100,6 +114,7 @@ async function main(): Promise<void> {
   const redirected = await redirectSignedInUser();
   if (redirected) return;
   prefillReferralCode();
+  fillCountries();
   wireForm();
 }
 

@@ -8,6 +8,8 @@ export interface RegisterInput {
   password: string;
   fullName: string;
   referralCode?: string;
+  /** ISO 3166-1 alpha-2 code; the sign-up trigger copies it onto the profile. */
+  country?: string;
 }
 
 export interface LoginInput {
@@ -22,12 +24,12 @@ export interface AuthResult {
 
 export function createAuthService(client: SupabaseClient = getSupabaseClient()) {
   return {
-    async register({ email, password, fullName, referralCode }: RegisterInput): Promise<AuthResult> {
+    async register({ email, password, fullName, referralCode, country }: RegisterInput): Promise<AuthResult> {
       const { data, error } = await client.auth.signUp({
         email,
         password,
         options: {
-          data: { full_name: fullName, referral_code: referralCode ?? null },
+          data: { full_name: fullName, referral_code: referralCode ?? null, country: country ?? null },
         },
       });
       if (error) throw error;

@@ -23,3 +23,23 @@
   font-size: 11px;
   color: #9ca3af;
 }
+/* Country picker on sign-up, styled like the template's text inputs. */
+.form-login fieldset.country select {
+  width: 100%;
+  padding: 13.5px 36px 13.5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  background-color: var(--White);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23161326' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  border: 0;
+  border-radius: 8px;
+  color: var(--Black);
+  outline: 0;
+  appearance: none;
+}
+.form-login fieldset.country select:invalid {
+  color: var(--GrayDark, #8c8c8c);
+}
