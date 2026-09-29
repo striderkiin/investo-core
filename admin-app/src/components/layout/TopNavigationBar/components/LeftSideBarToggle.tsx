@@ -1,5 +1,6 @@
 'use client'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
+import { usePathname } from 'next/navigation'
 
 import IconifyIcon from '@/components/wrappers/IconifyIcon'
 import { useLayoutContext } from '@/context/useLayoutContext'
@@ -16,6 +17,17 @@ const LeftSideBarToggle = () => {
     if (width <= 1440 && size === 'default') changeMenuSize('collapsed')
     else if (width > 1440) changeMenuSize('default')
   }, [width])
+
+  // On phones and tablets the open menu overlays the page, so close it once a
+  // menu link has taken you somewhere.
+  const pathname = usePathname()
+  const lastPath = useRef(pathname)
+  useEffect(() => {
+    if (pathname === lastPath.current) return
+    lastPath.current = pathname
+    if (width <= 1440 && size === 'default') changeMenuSize('collapsed')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname])
 
   return (
     <li>

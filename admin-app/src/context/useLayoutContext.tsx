@@ -28,7 +28,9 @@ const LayoutProvider = ({ children }: ChildrenType) => {
     theme: queryParams['layout_theme'] ? (queryParams['layout_theme'] as ThemeType) : getPreferredTheme(),
     menu: {
       theme: queryParams['menu_theme'] ? (queryParams['menu_theme'] as MenuType['theme']) : 'light',
-      size: queryParams['menu_size'] ? (queryParams['menu_size'] as MenuType['size']) : 'default',
+      // Start closed below 1440px (where the open menu overlays the page), so a
+      // first visit on a phone isn't covered by the menu's backdrop.
+      size: queryParams['menu_size'] ? (queryParams['menu_size'] as MenuType['size']) : window.innerWidth <= 1440 ? 'collapsed' : 'default',
     },
   }
 
