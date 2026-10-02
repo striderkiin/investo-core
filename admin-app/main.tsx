@@ -38,6 +38,7 @@ import * as MaintenancePage from '@/app/(admin)/system/maintenance/page'
 import * as BrandingPage from '@/app/(admin)/system/branding/page'
 import * as SettingsPage from '@/app/(admin)/system/settings/page'
 import * as SandboxPage from '@/app/(admin)/system/sandbox/page'
+import * as SetupPage from '@/app/(admin)/system/setup/page'
 import * as InvoicePage from '@/app/(admin)/apps/invoice/page'
 import * as ProfilePage from '@/app/(admin)/pages/profile/page'
 import * as NotificationsPage from '@/app/(admin)/pages/notifications/page'
@@ -314,6 +315,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="system/branding" element={<Page module={BrandingPage} />} />
             <Route path="system/settings" element={<Page module={SettingsPage} />} />
             <Route path="system/sandbox" element={<Page module={SandboxPage} />} />
+            <Route path="system/setup" element={<Page module={SetupPage} />} />
             <Route path="profile" element={<Page module={ProfilePage} />} />
           </Route>
           <Route

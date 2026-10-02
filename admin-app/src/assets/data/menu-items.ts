@@ -31,6 +31,7 @@ export const MENU_ITEMS: MenuItemType[] = [
     icon: 'iconoir:settings',
     label: 'System',
     children: [
+      { key: 'setup', label: 'Setup Checklist', url: '/system/setup', parentKey: 'system', permission: 'settings.manage' },
       { key: 'admins', label: 'Admins', url: '/system/admins', parentKey: 'system', permission: 'admins.manage' },
       { key: 'security', label: 'Security Center', url: '/system/security', parentKey: 'system', permission: 'security.manage' },
       { key: 'audit-logs', label: 'Audit Logs', url: '/system/audit-logs', parentKey: 'system', permission: 'audit.read' },

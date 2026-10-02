@@ -93,28 +93,7 @@ $$ language plpgsql security definer set search_path = public;
 revoke all on function market_provider_sync_price(uuid, numeric) from public, anon, authenticated;
 grant execute on function market_provider_sync_price(uuid, numeric) to service_role;
 
--- Heartbeat for the market-price-sync Edge Function, same pg_cron +
--- pg_net pattern Supabase's own docs use for cron-triggered functions.
--- Every 5 minutes is comfortably inside CoinGecko's free-tier rate limit
--- for a single server-side caller (unlike the client-side Market Overview
--- widget, which calls CoinGecko directly per visitor). The bearer token
--- here is the project's anon key — not a secret, it already ships in the
--- deployed client bundle; the Edge Function does its actual privileged
--- writes with its own service-role key from its runtime environment, not
--- from anything the caller supplies.
+-- The 5-minute heartbeat that calls the market-price-sync Edge Function is
+-- scheduled in migration 0044, which reads this project's URL and anon key
+-- from Supabase Vault so the same migrations work on any project.
 create extension if not exists pg_net with schema extensions;
-
-select cron.schedule(
-  'market-price-sync',
-  '*/5 * * * *',
-  $$
-  select net.http_post(
-    url := 'https://vjmeictnpkgbztnawjun.supabase.co/functions/v1/market-price-sync',
-    headers := jsonb_build_object(
-      'Content-Type', 'application/json',
-      'Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqbWVpY3RucGtnYnp0bmF3anVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4MjY3ODksImV4cCI6MjEwNDQwMjc4OX0.sCdO1c5Q8XqGPCJjIYHERZ_7uMDWS37xso2U8CjykLs'
-    ),
-    body := '{}'::jsonb
-  );
-  $$
-);
