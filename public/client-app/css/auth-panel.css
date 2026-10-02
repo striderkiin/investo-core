@@ -19,10 +19,6 @@
   text-align: center;
   max-width: 440px;
 }
-.sign-in-box .right.auth-art .auth-art-credit {
-  font-size: 11px;
-  color: #9ca3af;
-}
 /* Country picker on sign-up, styled like the template's text inputs. */
 .form-login fieldset.country select {
   width: 100%;
