@@ -3,15 +3,17 @@ import { createInvestmentService } from '../../src/services/api/investmentServic
 import type { Investment, InvestmentPlan, InvestmentStatus } from '../../src/types/database';
 import { formatCurrency } from './format';
 import { loadSection } from './pageState';
+import { getSupabaseClient } from '../../src/services/supabase/client';
 
 const investmentService = createInvestmentService();
+const supabase = getSupabaseClient();
 const PAGE_SIZE = 20;
 
 const STATUS_LABEL: Record<InvestmentStatus, string> = {
   active: 'ACTIVE',
   completed: 'COMPLETED',
   paused: 'PAUSED',
-  cancelled: 'CANCELLED',
+  cancelled: 'ENDED EARLY',
 };
 
 const STATUS_CLASS: Record<InvestmentStatus, string> = {
@@ -25,6 +27,94 @@ let currentUserId = '';
 let currentPage = 0;
 let hasMorePages = true;
 let planNameById = new Map<string, string>();
+// Per investment: earnings already moved to the balance. Per plan: the minimum to move earnings.
+let claimedById = new Map<string, number>();
+let minWithdrawalByPlan = new Map<string, number>();
+
+async function loadEarningsInfo(): Promise<void> {
+  const [{ data: invs }, { data: plans }] = await Promise.all([
+    supabase.from('investments').select('id, claimed_earnings').eq('user_id', currentUserId),
+    supabase.from('investment_plans').select('id, min_withdrawal'),
+  ]);
+  claimedById = new Map((invs ?? []).map((r: { id: string; claimed_earnings: number }) => [r.id, Number(r.claimed_earnings ?? 0)]));
+  minWithdrawalByPlan = new Map((plans ?? []).map((r: { id: string; min_withdrawal: number }) => [r.id, Number(r.min_withdrawal ?? 0)]));
+}
+
+/** Earnings figure plus, for active plans, the "Move to balance" and "End plan early" controls. */
+function earningsCell(inv: Investment): string {
+  const total = `<div class="f12-medium">${formatCurrency(inv.currentEarnings)}</div>`;
+  if (inv.status !== 'active') return total;
+  const claimed = claimedById.get(inv.id) ?? 0;
+  const ready = Math.max(inv.currentEarnings - claimed, 0);
+  const min = minWithdrawalByPlan.get(inv.planId) ?? 0;
+  const canMove = ready > 0 && ready >= min;
+  return `${total}
+    <div class="f12-regular text-GrayDark" style="margin-top:4px;">Not yet moved: ${formatCurrency(ready)}${claimed > 0 ? ` · Moved: ${formatCurrency(claimed)}` : ''}</div>
+    <div class="flex gap8" style="margin-top:6px;flex-wrap:wrap;">
+      <button type="button" class="tf-button f12-bold" style="padding:4px 10px;" data-action="claim" data-id="${inv.id}" ${canMove ? '' : 'disabled'}
+        title="${canMove ? 'Move these earnings to your available balance' : `Available once earnings reach ${formatCurrency(min)}`}">Move to balance</button>
+      <button type="button" class="tf-button f12-bold bg-Gainsboro" style="padding:4px 10px;" data-action="exit" data-id="${inv.id}">End plan early</button>
+    </div>
+    ${canMove ? '' : `<div class="f12-regular text-GrayDark" style="margin-top:4px;">You can move earnings once they reach ${formatCurrency(min)}.</div>`}`;
+}
+
+type ExitPreview = { principal: number; earned: number; claimed: number; days: number; duration: number; halfway_at: string; past_halfway: boolean; earnings_kept: number; payout: number };
+
+function exitMessage(p: ExitPreview): string {
+  const lines = [
+    `End this plan now? Day ${p.days} of ${p.duration}.`,
+    '',
+    p.past_halfway
+      ? `You are past the halfway point, so you keep half of your earnings: ${formatCurrency(Number(p.earnings_kept))} of ${formatCurrency(Number(p.earned))}.`
+      : `You are before the halfway point (${new Date(p.halfway_at).toLocaleDateString()}), so you get your investment back with no earnings.`,
+  ];
+  if (Number(p.claimed) > Number(p.earnings_kept)) {
+    lines.push(`You already moved ${formatCurrency(Number(p.claimed))} of earnings to your balance, so the difference is taken from your investment.`);
+  }
+  lines.push('', `${formatCurrency(Number(p.payout))} will be added to your available balance. This cannot be undone.`);
+  return lines.join('\n');
+}
+
+async function reloadInvestments(): Promise<void> {
+  await loadEarningsInfo();
+  const page = await investmentService.listMyInvestments(currentUserId, 0, Math.max(currentPage, 1) * PAGE_SIZE);
+  loadedInvestments = page;
+  renderRows(loadedInvestments);
+}
+
+function wireActions(): void {
+  document.addEventListener('click', (event) => {
+    const button = (event.target as HTMLElement).closest('button[data-action]') as HTMLButtonElement | null;
+    if (!button || button.disabled) return;
+    const id = button.dataset.id ?? '';
+    if (button.dataset.action === 'claim') {
+      button.disabled = true;
+      void supabase.rpc('claim_investment_earnings', { p_investment_id: id }).then(async ({ data, error }) => {
+        if (error) {
+          window.alert(error.message);
+          button.disabled = false;
+          return;
+        }
+        window.alert(`${formatCurrency(Number(data))} was moved to your available balance.`);
+        await reloadInvestments();
+      });
+    } else if (button.dataset.action === 'exit') {
+      void supabase.rpc('preview_early_exit', { p_investment_id: id }).then(async ({ data, error }) => {
+        if (error) return window.alert(error.message);
+        if (!window.confirm(exitMessage(data as ExitPreview))) return;
+        button.disabled = true;
+        const result = await supabase.rpc('exit_investment_early', { p_investment_id: id });
+        if (result.error) {
+          window.alert(result.error.message);
+          button.disabled = false;
+          return;
+        }
+        window.alert(`Plan ended. ${formatCurrency(Number((result.data as ExitPreview).payout))} was added to your available balance.`);
+        await reloadInvestments();
+      });
+    }
+  });
+}
 
 function renderRows(investments: Investment[]): void {
   const tbody = document.getElementById('investmentRows');
@@ -65,7 +155,7 @@ function renderRows(investments: Investment[]): void {
             </div>
           </td>
           <td>
-            <div class="f12-medium" data-title="Earnings : ">${formatCurrency(inv.currentEarnings)}</div>
+            <div data-title="Earnings : ">${earningsCell(inv)}</div>
           </td>
         </tr>`;
     })
@@ -102,7 +192,7 @@ function renderRows(investments: Investment[]): void {
           </div>
           <div class="ic-tx-card-row">
             <span class="ic-tx-card-label">Earnings</span>
-            <span class="ic-tx-card-value">${formatCurrency(inv.currentEarnings)}</span>
+            <span class="ic-tx-card-value" style="text-align:right;">${earningsCell(inv)}</span>
           </div>
         </div>`;
     })
@@ -145,6 +235,7 @@ async function main() {
   const profile = await requireClientSession();
   currentUserId = profile.id;
   wireLoadMore();
+  wireActions();
 
   const tbody = document.getElementById('investmentRows');
   if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="f14-regular text-Gray text-center py-4">Loading…</td></tr>';
@@ -152,6 +243,7 @@ async function main() {
   await loadSection(document.getElementById('investmentMobileList'), async () => {
     const plans = await investmentService.listPlans();
     planNameById = new Map<string, string>(plans.map((p: InvestmentPlan) => [p.id, p.name]));
+    await loadEarningsInfo();
 
     currentPage = 0;
     const page = await investmentService.listMyInvestments(currentUserId, 0, PAGE_SIZE);

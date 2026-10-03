@@ -194,7 +194,7 @@ function wireInvestModal(userId: string): void {
     form.reset();
     amountInput.value = String(activePlan.minAmount);
     planNameEl.textContent = activePlan.name;
-    planDetailEl.textContent = `${activePlan.rate}% ${activePlan.rateType} · ${activePlan.durationDays} days · ${formatCurrency(activePlan.minAmount)} to ${formatCurrency(activePlan.maxAmount)}`;
+    planDetailEl.textContent = `${activePlan.rate}% ${activePlan.rateType} · ${activePlan.durationDays} days · ${formatCurrency(activePlan.minAmount)} to ${formatCurrency(activePlan.maxAmount)} · Earnings can be moved to your balance from ${formatCurrency(activePlan.minWithdrawal)}. You can end the plan early: before the halfway point you get your investment back with no earnings, after it you keep half of your earnings.`;
     modal.show();
   });
 

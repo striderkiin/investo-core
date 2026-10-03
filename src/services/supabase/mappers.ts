@@ -108,6 +108,7 @@ export interface InvestmentPlanRow {
   rate: number;
   rate_type: InvestmentPlanRateType;
   duration_days: number;
+  min_withdrawal?: number | null;
   status: InvestmentPlanStatus;
   created_at: string;
   updated_at: string;
@@ -123,6 +124,7 @@ export function mapInvestmentPlanRow(row: InvestmentPlanRow): InvestmentPlan {
     rate: Number(row.rate),
     rateType: row.rate_type,
     durationDays: row.duration_days,
+    minWithdrawal: Number(row.min_withdrawal ?? 50),
     status: row.status,
     createdAt: row.created_at,
     updatedAt: row.updated_at,

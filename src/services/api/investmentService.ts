@@ -31,6 +31,7 @@ export function createInvestmentService(client: SupabaseClient = getSupabaseClie
       rate: number;
       rateType: InvestmentPlan['rateType'];
       durationDays: number;
+      minWithdrawal?: number;
     }): Promise<InvestmentPlan> {
       const { data, error } = await client
         .from('investment_plans')
@@ -42,6 +43,7 @@ export function createInvestmentService(client: SupabaseClient = getSupabaseClie
           rate: input.rate,
           rate_type: input.rateType,
           duration_days: input.durationDays,
+          ...(input.minWithdrawal !== undefined ? { min_withdrawal: input.minWithdrawal } : {}),
         })
         .select('*')
         .single();
@@ -59,6 +61,7 @@ export function createInvestmentService(client: SupabaseClient = getSupabaseClie
         rate: number;
         rateType: InvestmentPlan['rateType'];
         durationDays: number;
+        minWithdrawal: number;
         status: InvestmentPlan['status'];
       }>
     ): Promise<InvestmentPlan> {
@@ -70,6 +73,7 @@ export function createInvestmentService(client: SupabaseClient = getSupabaseClie
       if (updates.rate !== undefined) payload.rate = updates.rate;
       if (updates.rateType !== undefined) payload.rate_type = updates.rateType;
       if (updates.durationDays !== undefined) payload.duration_days = updates.durationDays;
+      if (updates.minWithdrawal !== undefined) payload.min_withdrawal = updates.minWithdrawal;
       if (updates.status !== undefined) payload.status = updates.status;
 
       const { data, error } = await client.from('investment_plans').update(payload).eq('id', planId).select('*').single();

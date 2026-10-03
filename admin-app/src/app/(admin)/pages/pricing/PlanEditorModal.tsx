@@ -10,6 +10,7 @@ export type PlanInput = {
   rate: number
   rateType: InvestmentPlanRateType
   durationDays: number
+  minWithdrawal: number
 }
 
 type Props = { plan: InvestmentPlan | null; show: boolean; onClose: () => void; onSave: (input: PlanInput) => Promise<void> }
@@ -23,6 +24,7 @@ const PlanEditorModal = ({ plan, show, onClose, onSave }: Props) => {
     rate: String(plan?.rate ?? '1'),
     rateType: plan?.rateType ?? ('daily' as InvestmentPlanRateType),
     durationDays: String(plan?.durationDays ?? '30'),
+    minWithdrawal: String(plan?.minWithdrawal ?? '50'),
   })
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -38,11 +40,13 @@ const PlanEditorModal = ({ plan, show, onClose, onSave }: Props) => {
       rate: Number(form.rate),
       rateType: form.rateType,
       durationDays: Number(form.durationDays),
+      minWithdrawal: Number(form.minWithdrawal),
     }
     if (!input.name) return setError('Give the plan a name.')
     if (!(input.minAmount > 0) || !(input.maxAmount >= input.minAmount)) return setError('Minimum must be above zero and the maximum at least the minimum.')
     if (!(input.rate > 0)) return setError('The rate must be above zero.')
     if (!Number.isInteger(input.durationDays) || input.durationDays < 1) return setError('Duration must be a whole number of days.')
+    if (!(input.minWithdrawal >= 0)) return setError('The minimum withdrawal cannot be negative.')
     setError(null)
     setSaving(true)
     try {
@@ -112,6 +116,15 @@ const PlanEditorModal = ({ plan, show, onClose, onSave }: Props) => {
               </label>
               <input id="plan-duration" type="number" min={1} className="form-control" value={form.durationDays} onChange={set('durationDays')} />
             </div>
+          </div>
+          <div className="mt-3">
+            <label htmlFor="plan-min-withdrawal" className="form-label">
+              Minimum withdrawal ($)
+            </label>
+            <input id="plan-min-withdrawal" type="number" min={0} className="form-control" value={form.minWithdrawal} onChange={set('minWithdrawal')} />
+            <small className="text-muted">
+              Customers can move earnings to their balance once they reach this amount. A customer with several plans can withdraw from the lowest minimum among them.
+            </small>
           </div>
         </ModalBody>
         <ModalFooter>

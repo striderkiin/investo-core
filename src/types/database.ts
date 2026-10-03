@@ -43,6 +43,8 @@ export interface InvestmentPlan {
   rate: number;
   rateType: InvestmentPlanRateType;
   durationDays: number;
+  /** Earnings can be moved to the balance, and withdrawn, from this amount. */
+  minWithdrawal: number;
   status: InvestmentPlanStatus;
   createdAt: string;
   updatedAt: string;

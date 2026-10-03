@@ -1,6 +1,7 @@
 import { requireClientSession } from './shell';
 import { createWithdrawalService } from '../../src/services/api/withdrawalService';
 import { formatCurrency } from './format';
+import { getSupabaseClient } from '../../src/services/supabase/client';
 import type { Profile } from '../../src/types/database';
 
 const withdrawalService = createWithdrawalService();
@@ -108,10 +109,30 @@ function wireForm(profile: Profile): void {
   });
 }
 
+type WithdrawalRules = { minimum: number; maximum: number; kyc_verified: boolean; kyc_limit: number; kyc_remaining: number | null };
+
+/** Shows this customer's limits: the minimum (lowest of their active plans) and, without verification, what is left of the limit. */
+async function showRules(): Promise<void> {
+  const box = document.getElementById('withdrawRules');
+  if (!box) return;
+  const { data, error } = await getSupabaseClient().rpc('my_withdrawal_rules');
+  if (error || !data) return;
+  const rules = data as WithdrawalRules;
+  const lines = [`Minimum withdrawal: ${formatCurrency(Number(rules.minimum))}.`];
+  if (!rules.kyc_verified) {
+    lines.push(
+      `Without identity verification you can withdraw up to ${formatCurrency(Number(rules.kyc_limit))} in total. You have ${formatCurrency(Number(rules.kyc_remaining ?? 0))} left. <a href="settings.html">Verify your identity</a> to withdraw more.`,
+    );
+  }
+  box.innerHTML = lines.join('<br>');
+  box.style.display = '';
+}
+
 async function main() {
   const profile = await requireClientSession();
   populateNetworks();
   wireForm(profile);
+  void showRules();
 }
 
 void main();
