@@ -41,3 +41,16 @@
   100% {
     -webkit-transform: rotate(360deg);
             transform: rotate(360deg); } }
+
+// Mobile Safari: 100vh includes the area behind the bottom address bar, which
+// hid the last menu items (System). dvh is the visible height.
+@supports (height: 100dvh) {
+  .startbar .startbar-menu {
+    height: 100dvh;
+
+    .startbar-collapse {
+      height: calc(100dvh - #{$topbar-height});
+      overscroll-behavior: contain;
+    }
+  }
+}

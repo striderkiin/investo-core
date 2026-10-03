@@ -32,18 +32,20 @@ Deno.serve(async (req) => {
     if (allowed !== true) return json({ error: 'Not allowed.' }, 403);
     try {
       const settings = await loadPayram(db, false);
-      // A made-up reference: a working key gets "not found", a wrong key gets 401/403.
-      const res = await payramRequest(settings, '/api/v1/payment/reference/connection-test');
-      const keyRejected = res.status === 401 || res.status === 403;
+      // An empty "create payment" request: PayRam refuses it without creating
+      // anything. A wrong key gets 401, a working key gets a validation error.
+      const res = await payramRequest(settings, '/api/v1/payment', { method: 'POST', body: '{}' });
+      const reply = res.text.replace(/\s+/g, ' ').slice(0, 200);
+      const keyRejected = res.status === 401;
       if (!keyRejected && res.data === null) {
-        return json({ ok: false, message: `The address answered (HTTP ${res.status}), but not like the PayRam API. Check the server address.` });
+        return json({ ok: false, message: `The address answered (HTTP ${res.status}), but not like the PayRam API. Check the server address. Reply: ${reply}` });
       }
       await db
         .from('integration_configs')
         .update({ status: keyRejected ? 'error' : 'connected', last_tested_at: new Date().toISOString() })
         .eq('id', settings.integrationId);
-      if (keyRejected) return json({ ok: false, message: 'PayRam answered, but it rejected the API key. Copy the key again from PayRam.' });
-      return json({ ok: true, message: `PayRam answered (HTTP ${res.status}) and accepted the API key.` });
+      if (keyRejected) return json({ ok: false, message: `PayRam rejected the API key (HTTP 401). Copy the key again from PayRam. Reply: ${reply}` });
+      return json({ ok: true, message: `PayRam answered and accepted the API key (HTTP ${res.status}). Reply: ${reply}` });
     } catch (err) {
       const message = err instanceof PayramNotConfigured ? err.message : `Could not reach the PayRam server: ${err instanceof Error ? err.message : String(err)}`;
       return json({ ok: false, message });
