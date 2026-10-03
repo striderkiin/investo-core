@@ -5,7 +5,7 @@ import { Card, CardBody, CardHeader, CardTitle, Col, Row } from 'react-bootstrap
 import IconifyIcon from '@/components/wrappers/IconifyIcon'
 import { useNotificationContext } from '@/context/useNotificationContext'
 import { statusVariant } from '@/investo/format'
-import { sendEmail } from '@/investo/functions'
+import { invokeFunction, sendEmail } from '@/investo/functions'
 import { supabase } from '@/investo/services'
 import { createIntegrationService, type IntegrationConfig } from '../../../../../../src/services/api/integrationService'
 import { createDepositAddressService, type DepositAddress } from '../../../../../../src/services/api/depositAddressService'
@@ -168,9 +168,141 @@ const EmailCard = ({ integration, masked, onChanged }: { integration: (Integrati
   )
 }
 
+type PayramConfig = { base_url?: string }
+
+const WEBHOOK_URL = `${import.meta.env.VITE_SUPABASE_URL ?? ''}/functions/v1/payram-webhook`
+
+const PayramCard = ({ integration, masked, onChanged }: { integration: (IntegrationConfig & { config: PayramConfig }) | null; masked: string | null; onChanged: () => void }) => {
+  const { showNotification } = useNotificationContext()
+  const [baseUrl, setBaseUrl] = useState(integration?.config.base_url ?? '')
+  const [apiKey, setApiKey] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null)
+  const connected = integration?.status === 'connected'
+
+  const save = async (event: FormEvent) => {
+    event.preventDefault()
+    const url = baseUrl.trim().replace(/\/+$/, '')
+    if (!/^https?:\/\/\S+$/.test(url)) return showNotification({ message: 'Enter the PayRam server address, starting with http:// or https://.', variant: 'danger' })
+    if (!integration && !apiKey.trim()) return showNotification({ message: 'Paste the API key from your PayRam project.', variant: 'danger' })
+    setBusy(true)
+    try {
+      const row = integration ?? (await integrationService.createIntegration('payment', 'PayRam', APP_ENVIRONMENT))
+      const { error } = await supabase.from('integration_configs').update({ config: { base_url: url } }).eq('id', row.id)
+      if (error) throw error
+      if (apiKey.trim()) await integrationService.saveCredential(row.id, apiKey.trim(), '')
+      setApiKey('')
+      setBaseUrl(url)
+      showNotification({ message: 'PayRam settings saved. Click Check connection to test them.', variant: 'success' })
+      onChanged()
+    } catch (err) {
+      showNotification({ message: err instanceof Error ? err.message : 'Could not save.', variant: 'danger' })
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const check = async () => {
+    setBusy(true)
+    setResult(null)
+    try {
+      setResult(await invokeFunction<{ ok: boolean; message: string }>('payram-checkout', { action: 'test' }))
+      onChanged()
+    } catch (err) {
+      setResult({ ok: false, message: err instanceof Error ? err.message : 'The check failed.' })
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const disconnect = async () => {
+    if (!integration || !window.confirm('Disconnect PayRam? The saved API key is deleted. Customers then pay to your wallet addresses instead.')) return
+    try {
+      await integrationService.disconnect(integration.id)
+      showNotification({ message: 'PayRam disconnected.', variant: 'success' })
+      onChanged()
+    } catch (err) {
+      showNotification({ message: err instanceof Error ? err.message : 'Could not disconnect.', variant: 'danger' })
+    }
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <Row className="align-items-center">
+          <Col>
+            <CardTitle as="h4">
+              <IconifyIcon icon="iconoir:coins" className="me-1" /> Crypto payments (PayRam)
+            </CardTitle>
+            <p className="text-muted mb-0 fs-12">
+              Customers pay on your PayRam checkout page and choose the coin there. Deposits are confirmed and credited automatically.
+            </p>
+          </Col>
+          <Col xs="auto">
+            <span className={`badge bg-${statusVariant(connected ? 'completed' : 'pending')}-subtle text-${statusVariant(connected ? 'completed' : 'pending')}`}>
+              {connected ? 'Connected' : integration ? 'Not working' : 'Not set up'}
+            </span>
+          </Col>
+        </Row>
+      </CardHeader>
+      <CardBody className="pt-0">
+        <form onSubmit={save}>
+          <div className="mb-3">
+            <label htmlFor="payram-url" className="form-label">
+              PayRam server address
+            </label>
+            <input id="payram-url" className="form-control" value={baseUrl} onChange={(e) => setBaseUrl(e.target.value)} placeholder="https://pay.yourdomain.com" />
+            <small className="text-muted">The address you open the PayRam dashboard with, without /login.</small>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="payram-key" className="form-label">
+              Project API key
+            </label>
+            <input
+              id="payram-key"
+              type="password"
+              autoComplete="off"
+              className="form-control"
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+              placeholder={integration ? `Saved${masked ? ` (${masked})` : ''}. Paste a new key to replace it.` : 'Paste the key from PayRam'}
+            />
+            <small className="text-muted">In PayRam: Settings, Projects, your project, API Keys. It is stored on the server and never shown again.</small>
+          </div>
+          <div className="d-flex flex-wrap gap-2">
+            <button type="submit" className="btn btn-primary" disabled={busy}>
+              Save
+            </button>
+            {integration && (
+              <button type="button" className="btn btn-light" disabled={busy} onClick={() => void check()}>
+                Check connection
+              </button>
+            )}
+            {integration && (
+              <button type="button" className="btn btn-outline-danger ms-auto" onClick={() => void disconnect()}>
+                Disconnect
+              </button>
+            )}
+          </div>
+          {result && <div className={`alert alert-${result.ok ? 'success' : 'warning'} mt-3 mb-0 fs-13`}>{result.message}</div>}
+        </form>
+        <hr className="hr-dashed" />
+        <p className="fw-semibold mb-1">One-time step so payments confirm automatically</p>
+        <ol className="text-muted fs-13 mb-0 ps-3">
+          <li>In PayRam, open Settings, then Projects, then your project, then the Webhook tab, and click +.</li>
+          <li>
+            Paste this URL: <code className="user-select-all">{WEBHOOK_URL}</code>
+          </li>
+          <li>Save it. PayRam now tells this site when each payment arrives.</li>
+        </ol>
+      </CardBody>
+    </Card>
+  )
+}
+
 const DepositAddresses = () => {
   const { showNotification } = useNotificationContext()
-  const [provider, setProvider] = useState('demo')
+  const [provider, setProvider] = useState(APP_ENVIRONMENT === 'production' ? 'live' : 'demo')
   const [addresses, setAddresses] = useState<DepositAddress[] | null>(null)
 
   useEffect(() => {
@@ -201,12 +333,13 @@ const DepositAddresses = () => {
               <IconifyIcon icon="iconoir:wallet" className="me-1" /> Wallet addresses for manual deposits
             </CardTitle>
             <p className="text-muted mb-0 fs-12">
-              Customers are shown these addresses when they deposit. Check payments on the blockchain and confirm them under Deposits. When a
-              payment provider is connected, each deposit gets its own address instead.
+              Customers are shown these addresses when they deposit. Check payments on the blockchain and confirm them under Deposits. When PayRam is
+              connected, customers pay through PayRam instead.
             </p>
           </Col>
           <Col xs="auto">
             <select className="form-select form-select-sm" value={provider} onChange={(e) => setProvider(e.target.value)} aria-label="Deposit mode">
+              <option value="live">Live</option>
               <option value="demo">Demo</option>
               <option value="sandbox">Sandbox</option>
             </select>
@@ -270,7 +403,9 @@ const Integrations = () => {
 
   if (!integrations) return null
   const email = integrations.find((i) => i.providerType === 'email') ?? null
-  const others = integrations.filter((i) => i.providerType !== 'email')
+  const isPayram = (i: IntegrationConfig) => i.providerType === 'payment' && i.providerName.toLowerCase() === 'payram'
+  const payram = integrations.find(isPayram) ?? null
+  const others = integrations.filter((i) => i.providerType !== 'email' && !isPayram(i))
 
   return (
     <>
@@ -285,21 +420,9 @@ const Integrations = () => {
           <EmailCard key={email?.id ?? 'new'} integration={email} masked={email ? (masked[email.id] ?? null) : null} onChanged={() => void load()} />
         </Col>
         <Col xl={5}>
+          <PayramCard key={payram?.id ?? 'new'} integration={payram} masked={payram ? (masked[payram.id] ?? null) : null} onChanged={() => void load()} />
           <DepositAddresses />
-          <Card>
-            <CardHeader>
-              <CardTitle as="h4">
-                <IconifyIcon icon="iconoir:coins" className="me-1" /> Crypto payment providers
-              </CardTitle>
-            </CardHeader>
-            <CardBody className="pt-0">
-              <p className="text-muted mb-0">
-                NOWPayments and CoinPayments (automatic wallet address per deposit, automatic confirmations) are set up here once their accounts are
-                ready.
-              </p>
-            </CardBody>
-          </Card>
-          <OtherConnections integrations={others} masked={masked} canManage={can('integrations.manage')} onChanged={() => void load()} />
+          <OtherConnections integrations={others} masked={masked} hidePayment={!!payram} canManage={can('integrations.manage')} onChanged={() => void load()} />
         </Col>
       </Row>
     </>

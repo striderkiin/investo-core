@@ -11,6 +11,8 @@ export interface DepositSession {
   deposit: Deposit;
   address: string | null;
   qrCodeData: string | null;
+  /** Hosted checkout page (PayRam). When set, the customer pays there instead of to an address. */
+  checkoutUrl?: string | null;
 }
 
 export interface WithdrawalRequestInput {

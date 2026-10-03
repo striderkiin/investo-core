@@ -3,7 +3,7 @@ import { getSupabaseClient } from '../supabase/client';
 import { mapDepositRow } from '../supabase/mappers';
 import type { DepositRow } from '../supabase/mappers';
 import type { Deposit, DepositStatus } from '../../types/database';
-import { getPaymentProvider } from '../payments/paymentProviderFactory';
+import { getActiveGateway, resolveDepositProvider } from '../payments/paymentProviderFactory';
 import type { DepositSession } from '../payments/PaymentProvider';
 
 export interface CreateDepositRequest {
@@ -16,13 +16,19 @@ export interface CreateDepositRequest {
 export function createDepositService(client: SupabaseClient = getSupabaseClient()) {
   return {
     async createDeposit(request: CreateDepositRequest): Promise<DepositSession> {
-      const provider = getPaymentProvider();
+      const provider = await resolveDepositProvider(client);
       return provider.createDeposit(request);
     },
 
+    /** 'payram' when deposits go through a PayRam checkout page, else null (pay to an address). */
+    activeGateway(): Promise<'payram' | null> {
+      return getActiveGateway(client);
+    },
+
     async getStatus(depositId: string): Promise<DepositStatus> {
-      const provider = getPaymentProvider();
-      return provider.getDepositStatus(depositId);
+      const { data, error } = await client.from('deposits').select('status').eq('id', depositId).single();
+      if (error) throw error;
+      return data.status as DepositStatus;
     },
 
     async listMine(userId: string): Promise<Deposit[]> {

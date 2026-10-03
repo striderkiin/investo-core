@@ -12,11 +12,11 @@ const integrationService = createIntegrationService(supabase)
 const CATALOG = PROVIDER_CATALOG.filter((p) => p.type !== 'email')
 const typeLabel = (type: string) => CATALOG.find((p) => p.type === type)?.label ?? type
 
-type Props = { integrations: IntegrationConfig[]; masked: Record<string, string>; canManage: boolean; onChanged: () => void }
+type Props = { integrations: IntegrationConfig[]; masked: Record<string, string>; canManage: boolean; onChanged: () => void; hidePayment?: boolean }
 
 // Payment (incl. sandbox), SMS, KYC, analytics and monitoring providers: the
 // old Integrations Center's generic configure / test / disconnect flow.
-const OtherConnections = ({ integrations, masked, canManage, onChanged }: Props) => {
+const OtherConnections = ({ integrations, masked, canManage, onChanged, hidePayment = false }: Props) => {
   const { showNotification } = useNotificationContext()
   const [configuring, setConfiguring] = useState<{ type: string; existing: IntegrationConfig | null } | null>(null)
   const [form, setForm] = useState({ name: '', apiKey: '', apiSecret: '', webhookSecret: '' })
@@ -74,7 +74,8 @@ const OtherConnections = ({ integrations, masked, canManage, onChanged }: Props)
     }
   }
 
-  const unused = CATALOG.filter((p) => !integrations.some((i) => i.providerType === p.type))
+  // PayRam has its own card and takes the payment slot, so no second payment provider can be added here.
+  const unused = CATALOG.filter((p) => !(hidePayment && p.type === 'payment') && !integrations.some((i) => i.providerType === p.type))
 
   return (
     <Card>

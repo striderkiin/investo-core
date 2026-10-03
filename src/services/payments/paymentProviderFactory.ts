@@ -1,16 +1,18 @@
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { APP_ENVIRONMENT } from '../../config/env';
+import { getSupabaseClient } from '../supabase/client';
 import { createDemoPaymentProvider } from './DemoPaymentProvider';
+import { createManualPaymentProvider } from './ManualPaymentProvider';
+import { createPayramPaymentProvider } from './PayramPaymentProvider';
 import { createSandboxPaymentProvider } from './SandboxPaymentProvider';
 import type { PaymentProvider } from './PaymentProvider';
 
 let cachedProvider: PaymentProvider | null = null;
 
 /**
- * Resolves the active PaymentProvider for the current environment. Demo and
- * Sandbox are both implemented; Production requires a real payment gateway
- * account and its credentials configured through the Integrations Center —
- * nothing above this factory (UI, depositService, withdrawalService) needs
- * to change once that lands.
+ * The provider for the current environment when no automatic gateway is
+ * connected: Demo and Sandbox simulate payments; Production uses the admin's
+ * own wallet addresses with manual confirmation.
  */
 export function getPaymentProvider(): PaymentProvider {
   if (cachedProvider) return cachedProvider;
@@ -24,6 +26,19 @@ export function getPaymentProvider(): PaymentProvider {
       cachedProvider = createSandboxPaymentProvider();
       return cachedProvider;
     case 'production':
-      throw new Error('Production payment provider is not configured yet. Connect a real provider in the Integrations Center.');
+      cachedProvider = createManualPaymentProvider();
+      return cachedProvider;
   }
+}
+
+/** 'payram' when an admin has connected PayRam under Integrations, otherwise null. */
+export async function getActiveGateway(client: SupabaseClient = getSupabaseClient()): Promise<'payram' | null> {
+  const { data, error } = await client.rpc('active_payment_provider');
+  if (error) return null;
+  return data === 'payram' ? 'payram' : null;
+}
+
+/** The provider a new deposit should use: PayRam when connected, else the environment default. */
+export async function resolveDepositProvider(client: SupabaseClient = getSupabaseClient()): Promise<PaymentProvider> {
+  return (await getActiveGateway(client)) === 'payram' ? createPayramPaymentProvider(client) : getPaymentProvider();
 }

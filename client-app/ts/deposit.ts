@@ -15,6 +15,16 @@ const POLL_INTERVAL_MS = 3000;
 const TERMINAL_STATUSES: DepositStatus[] = ['completed', 'failed', 'rejected'];
 
 let pollHandle: ReturnType<typeof setInterval> | null = null;
+let gateway: 'payram' | null = null;
+
+/** With PayRam the customer picks the coin on the checkout page, so only the USD amount is asked here. */
+function applyGatewayLayout(): void {
+  if (gateway !== 'payram') return;
+  for (const id of ['depositCurrency', 'depositNetwork']) {
+    const field = document.getElementById(id)?.closest('.ic-field') as HTMLElement | null;
+    if (field) field.style.display = 'none';
+  }
+}
 
 function populateNetworks(): void {
   const currencySelect = document.getElementById('depositCurrency') as HTMLSelectElement | null;
@@ -75,6 +85,10 @@ function setStatus(status: DepositStatus): void {
   if (againButton) againButton.style.display = isTerminal ? '' : 'none';
   if (walletLink) walletLink.style.display = isTerminal ? '' : 'none';
   if (cancelButton) cancelButton.style.display = isTerminal ? 'none' : '';
+  if (isTerminal) {
+    const checkoutLink = document.getElementById('depositCheckoutLink');
+    if (checkoutLink) checkoutLink.style.display = 'none';
+  }
 
   if (isTerminal && pollHandle) {
     clearInterval(pollHandle);
@@ -110,11 +124,27 @@ function wireForm(userId: string): void {
       .createDeposit({ userId, amount, currency, network })
       .then((session: DepositSession) => {
         const instructions = document.getElementById('depositInstructions');
-        if (instructions) {
-          instructions.textContent = `Send ${amount} ${session.deposit.currency} via ${session.deposit.network} to the address below.`;
+        const checkoutLink = document.getElementById('depositCheckoutLink') as HTMLAnchorElement | null;
+        const addressField = document.getElementById('depositAddressField');
+        if (session.checkoutUrl) {
+          if (instructions) {
+            instructions.textContent = `Click Pay now to open the secure payment page in a new tab. Choose your coin there and pay $${session.deposit.amount.toFixed(2)}. Keep this page open: it updates when your payment is confirmed.`;
+          }
+          if (checkoutLink) {
+            checkoutLink.href = session.checkoutUrl;
+            checkoutLink.style.display = '';
+          }
+          if (addressField) addressField.style.display = 'none';
+          window.open(session.checkoutUrl, '_blank', 'noopener');
+        } else {
+          if (instructions) {
+            instructions.textContent = `Send ${amount} ${session.deposit.currency} via ${session.deposit.network} to the address below.`;
+          }
+          if (checkoutLink) checkoutLink.style.display = 'none';
+          if (addressField) addressField.style.display = '';
+          const addressInput = document.getElementById('depositAddress') as HTMLInputElement | null;
+          if (addressInput) addressInput.value = session.address ?? '';
         }
-        const addressInput = document.getElementById('depositAddress') as HTMLInputElement | null;
-        if (addressInput) addressInput.value = session.address ?? '';
 
         showSessionPanel();
         setStatus(session.deposit.status);
@@ -162,6 +192,8 @@ async function main() {
   const profile = await requireClientSession();
   populateNetworks();
   wireForm(profile.id);
+  gateway = await depositService.activeGateway();
+  applyGatewayLayout();
 }
 
 void main();
