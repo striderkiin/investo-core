@@ -1,3 +1,4 @@
+import { invokeFunction } from '@/investo/functions'
 import { supabase } from '@/investo/services'
 import type { WithdrawalReviewAction } from '../../../src/services/api/withdrawalService'
 
@@ -26,6 +27,10 @@ export type MoneyRecord = {
   reviewedAt: string | null
   createdAt: string
   updatedAt: string
+  /** Withdrawals sent through PayRam: its payout status (QUEUED, SENT, FAILED, ...) and any error. */
+  payoutProvider: string | null
+  payoutStatus: string | null
+  payoutError: string | null
 }
 
 export const MONEY = {
@@ -71,6 +76,9 @@ const toRecord = (kind: MoneyKind, row: Row, customers: Map<string, MoneyCustome
   reviewedAt: str(row.reviewed_at),
   createdAt: String(row.created_at),
   updatedAt: String(row.updated_at ?? row.created_at),
+  payoutProvider: str(row.payout_provider),
+  payoutStatus: str(row.payout_status),
+  payoutError: str(row.payout_error),
 })
 
 const loadCustomers = async (ids: string[]): Promise<Map<string, MoneyCustomer>> => {
@@ -111,6 +119,10 @@ export const reviewWithdrawal = async (id: string, action: WithdrawalReviewActio
   const { error } = await supabase.rpc('review_withdrawal', { p_withdrawal_id: id, p_action: action, p_notes: notes || null })
   if (error) throw error
 }
+
+/** Approves (if still pending) and sends a USDT withdrawal through PayRam, or re-reads its payout status. */
+export const payramPayout = (id: string, action: 'send' | 'refresh') =>
+  invokeFunction<{ ok: boolean; status?: string; message: string }>('payram-payout', { withdrawalId: id, action })
 
 export const setWithdrawalTxHash = async (id: string, txHash: string) => {
   const { error } = await supabase.rpc('set_withdrawal_tx_hash', { p_withdrawal_id: id, p_tx_hash: txHash })

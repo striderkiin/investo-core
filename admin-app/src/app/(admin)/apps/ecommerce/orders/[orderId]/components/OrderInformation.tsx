@@ -1,11 +1,12 @@
 import IconifyIcon from '@/components/wrappers/IconifyIcon'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Card, CardBody, CardHeader, CardTitle, Col, Row } from 'react-bootstrap'
 import { useNotificationContext } from '@/context/useNotificationContext'
 import UserAvatar from '@/investo/UserAvatar'
 import { countryName } from '@/investo/format'
-import { MONEY, reviewDeposit, reviewWithdrawal, setWithdrawalTxHash, type MoneyRecord } from '@/investo/money'
+import { MONEY, payramPayout, reviewDeposit, reviewWithdrawal, setWithdrawalTxHash, type MoneyRecord } from '@/investo/money'
+import { supabase } from '@/investo/services'
 import type { WithdrawalReviewAction } from '../../../../../../../../../src/services/api/withdrawalService'
 import { usePermission } from '../../../../../../../../../src/hooks/usePermission'
 
@@ -21,8 +22,14 @@ const InfoRow = ({ icon, label, children }: { icon: string; label: string; child
 
 type Action = { key: string; label: string; variant: string; confirm?: string; needsHash?: boolean }
 
+// PayRam pays out USDT on Tron or Ethereum only.
+const PAYRAM_NETWORKS = ['TRC20', 'TRON', 'ERC20', 'ETHEREUM']
+const payramCanSend = (order: MoneyRecord) =>
+  order.kind === 'withdrawal' && order.currency.toUpperCase() === 'USDT' && PAYRAM_NETWORKS.includes((order.network ?? '').toUpperCase())
+const PAYOUT_FAILED = ['FAILED', 'FAILURE', 'REJECTED', 'CANCELLED', 'CANCELED', 'ERROR', 'DECLINED']
+
 // What an admin can do next, by kind and status.
-const actionsFor = (order: MoneyRecord): Action[] => {
+const actionsFor = (order: MoneyRecord, payram: boolean): Action[] => {
   if (order.kind === 'deposit') {
     if (!MONEY.deposit.open.includes(order.status as never)) return []
     return [
@@ -30,15 +37,32 @@ const actionsFor = (order: MoneyRecord): Action[] => {
       { key: 'reject', label: 'Reject', variant: 'outline-danger', confirm: 'Reject this deposit? The customer is told it could not be confirmed.' },
     ]
   }
+  const sendable = payram && payramCanSend(order)
+  const sendAction: Action = {
+    key: 'payram-send',
+    label: 'Approve and send with PayRam',
+    variant: 'primary',
+    confirm: `Send $${(order.amount - order.fee).toFixed(2)} USDT (${order.network}) to ${order.address ?? 'the customer'} from your PayRam hot wallet? Crypto payments cannot be reversed.`,
+  }
   if (['pending', 'review'].includes(order.status)) {
     return [
-      { key: 'approve', label: 'Approve', variant: 'primary' },
+      ...(sendable ? [sendAction] : []),
+      { key: 'approve', label: sendable ? 'Approve (pay by hand)' : 'Approve', variant: sendable ? 'light' : 'primary' },
       ...(order.status === 'pending' ? [{ key: 'hold', label: 'Hold for review', variant: 'light' }] : []),
       { key: 'reject', label: 'Reject and refund', variant: 'outline-danger', confirm: 'Reject this withdrawal? The amount goes back to the customer’s available balance.' },
     ]
   }
   if (order.status === 'processing') {
-    return [{ key: 'complete', label: 'Mark as paid', variant: 'primary', confirm: 'Mark this withdrawal as paid out?', needsHash: true }]
+    const viaPayram = order.payoutProvider === 'payram'
+    const payoutFailed = PAYOUT_FAILED.includes(order.payoutStatus ?? '')
+    return [
+      ...(viaPayram && !payoutFailed && order.payoutStatus !== 'UNKNOWN' ? [{ key: 'payram-refresh', label: 'Check payout status', variant: 'primary' }] : []),
+      ...(sendable && (!viaPayram || payoutFailed) ? [{ ...sendAction, label: viaPayram ? 'Send with PayRam again' : 'Send with PayRam' }] : []),
+      { key: 'complete', label: 'Mark as paid', variant: viaPayram ? 'light' : 'primary', confirm: 'Mark this withdrawal as paid out?', needsHash: true },
+      ...(viaPayram && (payoutFailed || order.payoutStatus === 'UNKNOWN')
+        ? [{ key: 'reject', label: 'Reject and refund', variant: 'outline-danger', confirm: 'Reject this withdrawal? The amount goes back to the customer’s available balance.' }]
+        : []),
+    ]
   }
   return []
 }
@@ -49,8 +73,14 @@ const OrderInformation = ({ order, onChanged }: { order: MoneyRecord; onChanged:
   const [notes, setNotes] = useState('')
   const [txHash, setTxHash] = useState(order.txHash ?? '')
   const [busy, setBusy] = useState(false)
+  const [payram, setPayram] = useState(false)
   const allowed = order.kind === 'deposit' ? can('deposits.manage') : can('withdrawals.approve')
-  const actions = allowed ? actionsFor(order) : []
+  const actions = allowed ? actionsFor(order, payram) : []
+
+  useEffect(() => {
+    if (order.kind !== 'withdrawal') return
+    void supabase.rpc('active_payment_provider').then(({ data }) => setPayram(data === 'payram'))
+  }, [order.kind])
   const customer = order.customer
   const name = customer?.fullName || customer?.email || 'Unknown customer'
 
@@ -58,6 +88,12 @@ const OrderInformation = ({ order, onChanged }: { order: MoneyRecord; onChanged:
     if (action.confirm && !window.confirm(action.confirm)) return
     setBusy(true)
     try {
+      if (action.key === 'payram-send' || action.key === 'payram-refresh') {
+        const result = await payramPayout(order.id, action.key === 'payram-send' ? 'send' : 'refresh')
+        showNotification({ message: result.message, variant: result.ok ? 'success' : 'warning', delay: 8000 })
+        onChanged()
+        return
+      }
       if (order.kind === 'deposit') {
         await reviewDeposit(order.id, action.key as 'confirm' | 'reject', notes.trim(), txHash.trim())
       } else {
@@ -118,6 +154,12 @@ const OrderInformation = ({ order, onChanged }: { order: MoneyRecord; onChanged:
           {customer?.country ? countryName(customer.country) : '-'}
         </InfoRow>
 
+        {order.payoutProvider === 'payram' && (
+          <div className={`alert alert-${PAYOUT_FAILED.includes(order.payoutStatus ?? '') || order.payoutStatus === 'UNKNOWN' ? 'warning' : 'info'} mt-3 mb-0 fs-13`}>
+            <strong>PayRam payout:</strong> {order.payoutStatus ?? 'unknown'}
+            {order.payoutError && <div className="mt-1">{order.payoutError}</div>}
+          </div>
+        )}
         {showHashField && (
           <>
             <hr className="hr-dashed" />

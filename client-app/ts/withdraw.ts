@@ -5,10 +5,9 @@ import type { Profile } from '../../src/types/database';
 
 const withdrawalService = createWithdrawalService();
 
+// Payouts are USDT only. TRC20 first: its network fee is about $1, ERC20's is far higher.
 const NETWORKS: Record<string, string[]> = {
-  BTC: ['Bitcoin'],
-  ETH: ['ERC20'],
-  USDT: ['ERC20', 'TRC20'],
+  USDT: ['TRC20', 'ERC20'],
 };
 
 function populateNetworks(): void {
