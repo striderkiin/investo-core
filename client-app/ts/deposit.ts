@@ -17,13 +17,16 @@ const TERMINAL_STATUSES: DepositStatus[] = ['completed', 'failed', 'rejected'];
 let pollHandle: ReturnType<typeof setInterval> | null = null;
 let gateway: 'payram' | null = null;
 
-/** With PayRam the customer picks the coin on the checkout page, so only the USD amount is asked here. */
+/**
+ * Currency and network start hidden so the form does not jump. They are shown
+ * only when there is no PayRam checkout; with PayRam the customer picks the
+ * coin on the checkout page, so only the USD amount is asked here.
+ */
 function applyGatewayLayout(): void {
-  if (gateway !== 'payram') return;
-  for (const id of ['depositCurrency', 'depositNetwork']) {
-    const field = document.getElementById(id)?.closest('.ic-field') as HTMLElement | null;
-    if (field) field.style.display = 'none';
-  }
+  if (gateway === 'payram') return;
+  document.querySelectorAll<HTMLElement>('[data-coin-field]').forEach((field) => {
+    field.style.display = '';
+  });
 }
 
 function populateNetworks(): void {

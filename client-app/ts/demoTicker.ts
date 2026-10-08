@@ -1,3 +1,4 @@
+import { coinIconFor } from './coinIcons';
 import { createSocialProofService } from '../../src/services/api/socialProofService';
 import { ensurePopupElement, showPopupCard, hidePopupCard, getRotationState, setRotationState, createPausableTimer } from './socialProofUI';
 import type { PopupPosition } from './socialProofUI';
@@ -48,6 +49,8 @@ function runTicker(position: PopupPosition, activities: SocialProofDemoActivity[
       message: current.message,
       nameLocation: current.simulatedName ? `${current.simulatedName}${current.simulatedLocation ? ` from ${current.simulatedLocation}` : ''}` : undefined,
       avatar: { avatarKey: current.avatarKey, displayName: current.simulatedName },
+      // Market rows ("Bitcoin moved lower today") show the coin's logo instead of a person.
+      iconSvg: current.eventType === 'market' ? (coinIconFor(current.message) ?? undefined) : undefined,
     });
 
     createPausableTimer(el, DISPLAY_MS, () => {

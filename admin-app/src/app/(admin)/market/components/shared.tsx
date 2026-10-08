@@ -11,14 +11,20 @@ export const PriceChart = ({ points, height = 260 }: { points: { value: number; 
   const options: ApexOptions = {
     chart: { type: 'area', height, toolbar: { show: false }, zoom: { enabled: false }, animations: { enabled: false } },
     dataLabels: { enabled: false },
-    stroke: { curve: 'smooth', width: 2 },
+    stroke: { curve: 'straight', width: 2 },
     colors: [rising ? '#22c5ad' : '#ef4d56'],
     fill: { type: 'gradient', gradient: { opacityFrom: 0.3, opacityTo: 0.05 } },
-    xaxis: { categories: points.map((p) => new Date(p.recordedAt).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })), labels: { show: false }, tooltip: { enabled: false } },
-    yaxis: { labels: { formatter: (v: number) => formatPrice(v) } },
-    tooltip: { y: { formatter: (v: number) => formatPrice(v) } },
+    xaxis: {
+      type: 'datetime',
+      tickAmount: 6,
+      labels: { datetimeUTC: false, formatter: (_: string, ts?: number) => new Date(ts ?? 0).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) },
+      tooltip: { enabled: false },
+    },
+    yaxis: { tickAmount: 4, labels: { formatter: (v: number) => formatPrice(v) } },
+    tooltip: { x: { format: 'MMM d, HH:mm' }, y: { formatter: (v: number) => formatPrice(v) } },
   }
-  return <ReactApexChart type="area" height={height} options={options} series={[{ name: 'Price', data: points.map((p) => roundPrice(p.value)) }]} />
+  const data = points.map((p) => [new Date(p.recordedAt).getTime(), roundPrice(p.value)])
+  return <ReactApexChart type="area" height={height} options={options} series={[{ name: 'Price', data }]} />
 }
 
 // Large down/up arrows either side of a value.

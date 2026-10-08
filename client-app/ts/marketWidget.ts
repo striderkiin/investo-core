@@ -1,18 +1,12 @@
 import { createMarketService } from '../../src/services/market/marketService';
-import { createCustomerMarketService, marketLabel, type CustomerMarket } from '../../src/services/market/customerMarketService';
+import { createCustomerMarketService, marketLabel, seriesPoints, type CustomerMarket } from '../../src/services/market/customerMarketService';
 import type { CustomerProjection } from '../../src/shared/projection';
-import { formatUsdPrice, roundPrice } from '../../src/shared/price';
-import { loadProjection, markProjection, projectionAsset, withProjection } from './projectionChart';
-
-declare const ApexCharts: new (el: Element, options: Record<string, unknown>) => { render: () => void };
+import { formatUsdPrice } from '../../src/shared/price';
+import { loadProjection, markProjection, projectionAsset } from './projectionChart';
+import { change24hFrom, renderMarketChart, type ChartPoint } from './marketChart';
 
 const marketService = createMarketService();
 const customerMarketService = createCustomerMarketService();
-
-interface ChartPoint {
-  value: number;
-  recordedAt: string;
-}
 
 // Cents for normal prices, significant digits for sub-dollar coins.
 const formatCurrency = formatUsdPrice;
@@ -31,41 +25,7 @@ function renderChart(
   emptyMessage: string,
   projection: CustomerProjection | null = null
 ): void {
-  const container = document.querySelector(selector);
-  if (!container) return;
-  container.innerHTML = '';
-
-  if (history.length === 0 && !projection) {
-    container.innerHTML = `<p class="f14-regular text-Gray text-center pt-4">${emptyMessage}</p>`;
-    return;
-  }
-
-  const trendColor = change >= 0 ? '#2BC155' : '#FD7972';
-  const projected = projection ? withProjection(history, projection) : null;
-  const dates = projected ? projected.dates : history.map((point) => new Date(point.recordedAt));
-
-  new ApexCharts(container, {
-    chart: { height, type, toolbar: { show: false }, zoom: { enabled: false } },
-    dataLabels: { enabled: false },
-    colors: projected
-      ? projected.series.length > 1
-        ? [trendColor, '#a8442e']
-        : [projected.end >= (projected.series[0].data[0] ?? 0) ? '#2BC155' : '#FD7972']
-      : [trendColor],
-    series: projected ? projected.series : [{ name: '$', data: history.map((point) => roundPrice(point.value)) }],
-    // Omit the key entirely for line charts rather than setting it to
-    // undefined — ApexCharts' option merge treats a present-but-undefined
-    // key differently from an absent one and silently fails to render.
-    ...(type === 'area' ? { fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.3, opacityTo: 0.05, stops: [0, 90, 100] } } } : {}),
-    stroke: { curve: 'smooth', width: 2, dashArray: projected ? projected.dashArray : 0 },
-    legend: { show: false },
-    yaxis: { show: false },
-    xaxis: {
-      labels: { show: false },
-      categories: dates.map((date) => date.toLocaleDateString([], { month: 'short', day: 'numeric' })),
-    },
-    tooltip: { y: { formatter: (val: number) => formatCurrency(val) } },
-  }).render();
+  renderMarketChart(selector, history, change, 'date', emptyMessage, projection, { height, type });
 }
 
 export interface MarketWidgetOptions {
@@ -102,32 +62,52 @@ export function mountMarketWidget(options: MarketWidgetOptions): void {
     if (el) el.className = `${changeClassBase} ${change >= 0 ? 'text-YellowGreen' : 'text-Salmon'}`;
   }
 
+  // Bumped on every switch so a slow, older load cannot overwrite a newer one.
+  let loadId = 0;
+
+  function showChange(change: number | null): void {
+    if (changeElId) setText(changeElId, change == null ? '--' : `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`);
+    updateChangeStyle(change ?? 0);
+  }
+
   async function loadPlatform(): Promise<void> {
-    const [settings, history] = await Promise.all([marketService.getCurrent(), marketService.getHistoryRange(30)]);
-    const change = settings.currentPercentageChange;
-    if (priceElId) setText(priceElId, formatCurrency(settings.currentMarketValue));
-    if (changeElId) setText(changeElId, `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`);
-    updateChangeStyle(change);
-    renderChart(chartSelector, history, change, chartType, height, 'No market data yet.', active);
+    const id = ++loadId;
+    try {
+      const [settings, history] = await Promise.all([marketService.getCurrent(), marketService.getSeries(30, seriesPoints(30))]);
+      if (id !== loadId) return;
+      // 24h change from the last day of the 30-day series.
+      const change = change24hFrom(history);
+      if (priceElId) setText(priceElId, formatCurrency(settings.currentMarketValue));
+      showChange(change);
+      renderChart(chartSelector, history, change ?? 0, chartType, height, 'No market data yet.', active);
+    } catch {
+      if (id !== loadId) return;
+      if (priceElId) setText(priceElId, '--');
+      showChange(null);
+      renderChart(chartSelector, [], 0, chartType, height, 'Market data is temporarily unavailable.', active);
+    }
   }
 
   let markets: CustomerMarket[] = [];
 
   async function loadExternal(assetKey: string): Promise<void> {
-    try {
-      const market = markets.find((m) => m.key === assetKey);
-      if (!market) throw new Error('market not available');
-      const points: ChartPoint[] = await customerMarketService.history(market, 30);
-      const change = await customerMarketService.change24h(market).catch(() => 0);
-      if (priceElId) setText(priceElId, formatCurrency(market.price));
-      if (changeElId) setText(changeElId, `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`);
-      updateChangeStyle(change);
-      renderChart(chartSelector, points, change, chartType, height, 'No data for this period yet.', active);
-    } catch {
+    const id = ++loadId;
+    const market = markets.find((m) => m.key === assetKey);
+    if (!market) {
       if (priceElId) setText(priceElId, '--');
-      if (changeElId) setText(changeElId, '--');
-      renderChart(chartSelector, [], 0, chartType, height, 'Live market data is temporarily unavailable.', active);
+      showChange(null);
+      renderChart(chartSelector, [], 0, chartType, height, 'This market is no longer available.', active);
+      return;
     }
+    // The price comes from the database, so it shows even if the history service is slow or down.
+    if (priceElId) setText(priceElId, formatCurrency(market.price));
+    showChange(null);
+    const points = await customerMarketService.history(market, 30).catch(() => null);
+    const change = await customerMarketService.change24h(market).catch(() => (points ? change24hFrom(points) : null));
+    if (id !== loadId) return;
+    showChange(change);
+    if (points) renderChart(chartSelector, points, change ?? 0, chartType, height, 'No data for this period yet.', active);
+    else renderChart(chartSelector, [], 0, chartType, height, 'Price history is temporarily unavailable.', active);
   }
 
   const select = document.getElementById(selectId) as HTMLSelectElement | null;

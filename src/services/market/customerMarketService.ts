@@ -34,6 +34,9 @@ interface AssetRow {
   market_provider_state: { effective_price: number; manual_offset: number } | { effective_price: number; manual_offset: number }[] | null;
 }
 
+/** Chart resolution: hourly for a week, every 6 hours for a month, every 3 days for a year. */
+export const seriesPoints = (days: number) => (days <= 7 ? days * 24 : days <= 31 ? days * 4 : Math.ceil(days / 3));
+
 export const marketLabel = (m: Pick<CustomerMarket, 'name' | 'symbol'>) => `${m.name} (${m.symbol.split('/')[0]})`;
 
 export function createCustomerMarketService(client: SupabaseClient = getSupabaseClient()) {
@@ -75,16 +78,14 @@ export function createCustomerMarketService(client: SupabaseClient = getSupabase
         if (shifted.length) shifted[shifted.length - 1] = { value: market.price, recordedAt: new Date().toISOString() };
         return shifted;
       }
-      const since = new Date(Date.now() - days * 86_400_000).toISOString();
-      const { data, error } = await client
-        .from('market_provider_history')
-        .select('value, recorded_at')
-        .eq('asset_id', market.id)
-        .gte('recorded_at', since)
-        .order('recorded_at', { ascending: false })
-        .limit(300);
+      // Evenly spaced points across the whole period (see asset_history_series).
+      const { data, error } = await client.rpc('asset_history_series', { p_asset_id: market.id, p_days: days, p_points: seriesPoints(days) });
       if (error) throw error;
-      return ((data ?? []) as { value: number; recorded_at: string }[]).map((r) => ({ value: Number(r.value), recordedAt: r.recorded_at })).reverse();
+      const points = ((data ?? []) as { value: number | null; recorded_at: string }[])
+        .filter((r) => r.value != null)
+        .map((r) => ({ value: Number(r.value), recordedAt: r.recorded_at }));
+      if (points.length) points[points.length - 1] = { value: market.price, recordedAt: new Date().toISOString() };
+      return points;
     },
 
     /** 24h change in percent, measured on the price customers see. */

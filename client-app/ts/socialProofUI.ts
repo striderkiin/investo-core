@@ -22,9 +22,8 @@ function prefersReducedMotion(): boolean {
  * dashboard. Both callers share the same DOM node (looked up by id, created
  * once) so the two systems can never render two overlapping cards at once.
  *
- * Corner radius (16px) matches .wg-card — this dashboard's actual CARD
- * radius (public/client-app/css/styles.css; .tf-button's 4px is for
- * buttons, much tighter, and was the wrong token for a floating card).
+ * Compact: 240px wide with an 8px corner radius, so it reads as a small
+ * notice rather than a large rounded card covering the page.
  */
 export function ensurePopupElement(position: PopupPosition): HTMLDivElement {
   const existing = document.getElementById(POPUP_ID) as HTMLDivElement | null;
@@ -40,13 +39,13 @@ export function ensurePopupElement(position: PopupPosition): HTMLDivElement {
     [position === 'bottom-right' ? 'right' : 'left']: '1rem',
     zIndex: '1050',
     width: 'calc(100% - 3rem)',
-    maxWidth: '280px',
+    maxWidth: '240px',
     background: '#f8f5f0',
     color: '#1a1710',
     border: '1px solid rgba(168,68,46,0.3)',
-    borderRadius: '16px',
+    borderRadius: '8px',
     boxShadow: '0 12px 32px rgba(0,0,0,0.28)',
-    padding: '0.875rem 1rem 0.75rem',
+    padding: '0.6rem 0.75rem',
     fontFamily: "'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
     opacity: '0',
     transform: 'translateY(10px)',
@@ -64,6 +63,8 @@ export interface PopupCardOptions {
   nameLocation?: string;
   /** Omitted for canned demo content with no simulated name — falls to the brand-mark tier. */
   avatar?: AvatarInput;
+  /** An SVG shown instead of the avatar, e.g. a coin logo for market messages. */
+  iconSvg?: string;
   closable?: boolean;
   onClose?: () => void;
   onClick?: () => void;
@@ -79,7 +80,7 @@ export function showPopupCard(el: HTMLDivElement, options: PopupCardOptions): vo
   const messageWeight = options.nameLocation ? '400' : '700';
   el.innerHTML = `
     <div style="display:flex;align-items:center;gap:0.7rem;">
-      <span data-popup-avatar style="display:inline-block;width:2.75rem;height:2.75rem;flex-shrink:0;overflow:hidden;border-radius:50%;"></span>
+      <span data-popup-avatar style="display:inline-block;width:2.25rem;height:2.25rem;flex-shrink:0;overflow:hidden;border-radius:50%;"></span>
       <div style="min-width:0;flex:1;">
         ${options.nameLocation ? `<p style="margin:0;font-size:0.8rem;font-weight:700;line-height:1.3;color:#1a1710;">${escapeHtml(options.nameLocation)}</p>` : ''}
         <p style="margin:${options.nameLocation ? '0.2rem' : '0'} 0 0;font-size:0.8rem;font-weight:${messageWeight};line-height:1.3;color:#1a1710;">${escapeHtml(options.message)}</p>
@@ -96,7 +97,9 @@ export function showPopupCard(el: HTMLDivElement, options: PopupCardOptions): vo
   // replaceWith would) leaves those percentages with nothing to resolve
   // against, so the image falls back to its huge intrinsic size.
   const avatarSlot = el.querySelector<HTMLSpanElement>('[data-popup-avatar]');
-  if (avatarSlot) avatarSlot.appendChild(buildAvatarNode(resolveAvatar(options.avatar ?? {})));
+  // The coin SVG is a bundled constant (coinIcons.ts), never user content.
+  if (avatarSlot && options.iconSvg) avatarSlot.innerHTML = options.iconSvg;
+  else if (avatarSlot) avatarSlot.appendChild(buildAvatarNode(resolveAvatar(options.avatar ?? {})));
 
   el.style.pointerEvents = 'auto';
   el.style.opacity = '1';

@@ -33,6 +33,16 @@
     <!-- Favicon and Touch Icons  -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
+    <!-- The Earnings column holds the "Move to balance" and "End plan early"
+         buttons, which do not fit the template's 98px column and 70px rows.
+         It takes the unused 7th column's width, and rows grow to fit. -->
+    <style>
+        #investmentsTable .list-transaction-head > *:nth-child(6),
+        #investmentsTable tbody tr td:nth-child(6) { width: 235px; align-items: flex-start; text-align: left; }
+        #investmentsTable tbody tr td:last-child > div { margin-left: 0; }
+        #investmentsTable tbody tr td { height: auto; min-height: 70px; padding-top: 12px; padding-bottom: 12px; display: flex; flex-direction: column; justify-content: center; }
+    </style>
+
 </head>
 
 <body>
@@ -390,7 +400,7 @@
                                     <div class="mb-20">
                                         <div class="f14-regular text-Gray">Every investment you've made, individually, not grouped by plan.</div>
                                     </div>
-                                    <div class="table-list-transaction d-none d-lg-block">
+                                    <div class="table-list-transaction d-none d-lg-block" id="investmentsTable">
                                         <div class="list-transaction-head">
                                             <div>
                                                 <div class="f12-bold text-White">Plan</div>

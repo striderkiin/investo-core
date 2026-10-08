@@ -5,7 +5,7 @@ import { mapMarketDataRow, mapMarketSettingsRow } from '../../services/supabase/
 import type { MarketDataRow, MarketSettingsRow } from '../../services/supabase/mappers';
 import type { MarketDataPoint, MarketSettings } from '../../types/database';
 
-const HISTORY_LIMIT = 60;
+const HISTORY_LIMIT = 400; // last 24 hours: one tick every 5 minutes plus admin changes
 
 export function useMarketData() {
   const [settings, setSettings] = useState<MarketSettings | null>(null);
@@ -18,7 +18,7 @@ export function useMarketData() {
     const marketService = marketServiceRef.current;
     if (!marketService) return;
     try {
-      const [current, hist] = await Promise.all([marketService.getCurrent(), marketService.getHistory(HISTORY_LIMIT)]);
+      const [current, hist] = await Promise.all([marketService.getCurrent(), marketService.getHistoryRange(1, HISTORY_LIMIT)]);
       setSettings(current);
       setHistory(hist);
       setError(null);
@@ -37,21 +37,8 @@ export function useMarketData() {
     void refresh();
   }, [refresh]);
 
-  // Client-driven automatic tick heartbeat: advances the random walk while the
-  // market is in automatic mode. A no-op server-side while manual control is on.
-  useEffect(() => {
-    if (!marketServiceRef.current || !settings) return;
-    if (settings.mode !== 'automatic') return;
-
-    const interval = setInterval(() => {
-      marketServiceRef.current
-        ?.tickAutomatic()
-        .then((updated) => setSettings(updated))
-        .catch(() => undefined);
-    }, settings.updateIntervalMs);
-
-    return () => clearInterval(interval);
-  }, [settings]);
+  // The index moves on the server (platform_index_tick, pg_cron every 5
+  // minutes) in both automatic and manual mode, so the browser never drives it.
 
   // Realtime: reflect manual admin actions and automatic ticks made from other sessions.
   useEffect(() => {

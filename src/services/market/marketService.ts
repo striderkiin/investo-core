@@ -83,6 +83,15 @@ export function createMarketService(client: SupabaseClient = getSupabaseClient()
       return (data as MarketDataRow[]).map(mapMarketDataRow).reverse();
     },
 
+    /** Evenly spaced Platform Index points covering the last `days` days (see market_history_series). */
+    async getSeries(days: number, points: number): Promise<{ value: number; recordedAt: string }[]> {
+      const { data, error } = await client.rpc('market_history_series', { p_days: days, p_points: points });
+      if (error) throw error;
+      return ((data ?? []) as { value: number | null; recorded_at: string }[])
+        .filter((r) => r.value != null)
+        .map((r) => ({ value: Number(r.value), recordedAt: r.recorded_at }));
+    },
+
     /** Same series, sliced to a calendar window (e.g. the last 7/30/365 days) rather than a fixed point count — used by the Week/Month/Year chart tabs. */
     async getHistoryRange(days: number, maxPoints = 200): Promise<MarketDataPoint[]> {
       const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();

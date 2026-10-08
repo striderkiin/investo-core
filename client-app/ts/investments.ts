@@ -53,7 +53,7 @@ function earningsCell(inv: Investment): string {
     <div class="flex gap8" style="margin-top:6px;flex-wrap:wrap;">
       <button type="button" class="tf-button f12-bold" style="padding:4px 10px;" data-action="claim" data-id="${inv.id}" ${canMove ? '' : 'disabled'}
         title="${canMove ? 'Move these earnings to your available balance' : `Available once earnings reach ${formatCurrency(min)}`}">Move to balance</button>
-      <button type="button" class="tf-button f12-bold bg-Gainsboro" style="padding:4px 10px;" data-action="exit" data-id="${inv.id}">End plan early</button>
+      <button type="button" class="tf-button f12-bold" style="padding:4px 10px;background:transparent;border:1px solid currentColor;" data-action="exit" data-id="${inv.id}">End plan early</button>
     </div>
     ${canMove ? '' : `<div class="f12-regular text-GrayDark" style="margin-top:4px;">You can move earnings once they reach ${formatCurrency(min)}.</div>`}`;
 }

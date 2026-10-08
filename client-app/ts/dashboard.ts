@@ -1,12 +1,13 @@
 import { requireClientSession } from './shell';
 import { createFinancialService } from '../../src/services/api/financialService';
 import { createMarketService } from '../../src/services/market/marketService';
-import { createCustomerMarketService, marketLabel, type CustomerMarket } from '../../src/services/market/customerMarketService';
+import { createCustomerMarketService, marketLabel, seriesPoints, type CustomerMarket } from '../../src/services/market/customerMarketService';
 import { createInvestmentService } from '../../src/services/api/investmentService';
 import type { Investment, InvestmentPlan } from '../../src/types/database';
-import { formatUsdPrice, roundPrice } from '../../src/shared/price';
+import { formatUsdPrice } from '../../src/shared/price';
 import { buildProjectionSeries, type CustomerProjection } from '../../src/shared/projection';
-import { loadProjection, markProjection, projectionAsset, withProjection } from './projectionChart';
+import { loadProjection, markProjection, projectionAsset } from './projectionChart';
+import { change24hFrom, renderMarketChart, type ChartPoint } from './marketChart';
 
 declare const ApexCharts: new (el: Element, options: Record<string, unknown>) => { render: () => void };
 
@@ -68,83 +69,55 @@ async function renderStatTiles(userId: string): Promise<void> {
   }
 }
 
-interface ChartPoint {
-  value: number;
-  recordedAt: string;
+const TABS: { selector: string; days: number; format: 'time' | 'date' }[] = [
+  { selector: '#candlestick-1', days: 7, format: 'time' },
+  { selector: '#candlestick-4', days: 30, format: 'date' },
+  { selector: '#candlestick-5', days: 365, format: 'date' },
+];
+
+// Bumped on every market switch so a slow, older load cannot overwrite a newer one.
+let marketLoadId = 0;
+
+function setChange(change: number | null): void {
+  setText('marketChangeValue', change == null || !Number.isFinite(change) ? '--' : `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`);
 }
 
-function renderMarketChart(
-  selector: string,
-  history: ChartPoint[],
+// Each tab loads on its own: one failed period shows a message in that tab only.
+async function renderTabs(
+  loadId: number,
+  load: (days: number) => Promise<ChartPoint[]>,
   change: number,
-  dateFormat: 'time' | 'date',
-  emptyMessage: string,
-  projection: CustomerProjection | null = null
-): void {
-  const container = document.querySelector(selector);
-  if (!container) return;
-  container.innerHTML = '';
-
-  if (history.length === 0 && !projection) {
-    container.innerHTML = `<p class="f14-regular text-Gray text-center pt-4">${emptyMessage}</p>`;
-    return;
-  }
-
-  const trendColor = change >= 0 ? '#2BC155' : '#FD7972';
-  const projected = projection ? withProjection(history, projection) : null;
-  const dates = projected ? projected.dates : history.map((point) => new Date(point.recordedAt));
-  // A projection runs over days, so its labels are dates even on the Week tab.
-  const format = projected ? 'date' : dateFormat;
-
-  new ApexCharts(container, {
-    chart: { height: 337, type: 'area', toolbar: { show: false }, zoom: { enabled: false } },
-    dataLabels: { enabled: false },
-    colors: projected
-      ? projected.series.length > 1
-        ? [trendColor, '#a8442e']
-        : [projected.end >= (projected.series[0].data[0] ?? 0) ? '#2BC155' : '#FD7972']
-      : [trendColor],
-    series: projected ? projected.series : [{ name: '$', data: history.map((point) => roundPrice(point.value)) }],
-    fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.3, opacityTo: 0.05, stops: [0, 90, 100] } },
-    stroke: { curve: 'smooth', width: 2, dashArray: projected ? projected.dashArray : 0 },
-    legend: { show: false },
-    yaxis: { show: false },
-    xaxis: {
-      labels: { show: false },
-      categories: dates.map((date) =>
-        format === 'time'
-          ? date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-          : date.toLocaleDateString([], { month: 'short', day: 'numeric' })
-      ),
-    },
-    tooltip: { y: { formatter: (val: number) => formatCurrency(val) } },
-  }).render();
+  projection: CustomerProjection | null
+): Promise<void> {
+  await Promise.all(
+    TABS.map(async (tab) => {
+      try {
+        const points = await load(tab.days);
+        if (loadId !== marketLoadId) return;
+        renderMarketChart(tab.selector, points, change, tab.format, 'No data for this period yet.', projection);
+      } catch {
+        if (loadId !== marketLoadId) return;
+        renderMarketChart(tab.selector, [], 0, 'date', 'Price history is temporarily unavailable. Please try again shortly.');
+      }
+    })
+  );
 }
 
 async function loadPlatformIndex(projection: CustomerProjection | null): Promise<void> {
+  const loadId = ++marketLoadId;
+  setText('marketPriceLabel', 'Index value');
   try {
-    const [settings, week, month, year] = await Promise.all([
-      marketService.getCurrent(),
-      marketService.getHistoryRange(7),
-      marketService.getHistoryRange(30),
-      marketService.getHistoryRange(365),
-    ]);
-
+    const [settings, week] = await Promise.all([marketService.getCurrent(), marketService.getSeries(7, seriesPoints(7))]);
+    if (loadId !== marketLoadId) return;
     setText('marketPriceValue', formatCurrency(settings.currentMarketValue));
-    const change = settings.currentPercentageChange;
-    setText('marketChangeValue', `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`);
-
-    const empty = 'No market data for this period yet.';
-    renderMarketChart('#candlestick-1', week, change, 'time', empty, projection);
-    renderMarketChart('#candlestick-4', month, change, 'date', empty, projection);
-    renderMarketChart('#candlestick-5', year, change, 'date', empty, projection);
+    const change = change24hFrom(week);
+    setChange(change);
+    await renderTabs(loadId, (days) => (days === 7 ? Promise.resolve(week) : marketService.getSeries(days, seriesPoints(days))), change ?? 0, projection);
   } catch {
+    if (loadId !== marketLoadId) return;
     setText('marketPriceValue', '--');
-    setText('marketChangeValue', '--');
-    const unavailable = 'Live market data is temporarily unavailable. Please try again shortly.';
-    for (const selector of ['#candlestick-1', '#candlestick-4', '#candlestick-5']) {
-      renderMarketChart(selector, [], 0, 'date', unavailable);
-    }
+    setChange(null);
+    for (const tab of TABS) renderMarketChart(tab.selector, [], 0, 'date', 'Market data is temporarily unavailable. Please try again shortly.');
   }
 }
 
@@ -153,30 +126,23 @@ async function loadPlatformIndex(projection: CustomerProjection | null): Promise
 let markets: CustomerMarket[] = [];
 
 async function loadExternalMarket(assetKey: string, projection: CustomerProjection | null): Promise<void> {
+  const loadId = ++marketLoadId;
+  setText('marketPriceLabel', 'Live price');
   const market = markets.find((m) => m.key === assetKey);
-  const unavailable = (message: string) => {
+  if (!market) {
     setText('marketPriceValue', '--');
-    setText('marketChangeValue', '--');
-    for (const selector of ['#candlestick-1', '#candlestick-4', '#candlestick-5']) renderMarketChart(selector, [], 0, 'date', message);
-  };
-  if (!market) return unavailable('This market is no longer available.');
-  try {
-    const [week, month, year] = await Promise.all([
-      customerMarketService.history(market, 7),
-      customerMarketService.history(market, 30),
-      customerMarketService.history(market, 365),
-    ]);
-    const change = await customerMarketService.change24h(market, week).catch(() => 0);
-    setText('marketPriceValue', formatCurrency(market.price));
-    setText('marketChangeValue', `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`);
-
-    const empty = 'No data for this period yet.';
-    renderMarketChart('#candlestick-1', week, change, 'time', empty, projection);
-    renderMarketChart('#candlestick-4', month, change, 'date', empty, projection);
-    renderMarketChart('#candlestick-5', year, change, 'date', empty, projection);
-  } catch {
-    unavailable('Live market data is temporarily unavailable. Please try again shortly.');
+    setChange(null);
+    for (const tab of TABS) renderMarketChart(tab.selector, [], 0, 'date', 'This market is no longer available.');
+    return;
   }
+  // The price comes from the database, so it shows even if the history service is slow or down.
+  setText('marketPriceValue', formatCurrency(market.price));
+  setChange(null);
+  const week = customerMarketService.history(market, 7);
+  const change = await customerMarketService.change24h(market).catch(async () => change24hFrom(await week.catch(() => [])));
+  if (loadId !== marketLoadId) return;
+  setChange(change);
+  await renderTabs(loadId, (days) => (days === 7 ? week : customerMarketService.history(market, days)), change ?? 0, projection);
 }
 
 // Set when an admin has switched on a Market Overview projection for this
