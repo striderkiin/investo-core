@@ -110,7 +110,8 @@ async function loadPlatformIndex(projection: CustomerProjection | null): Promise
     const [settings, week] = await Promise.all([marketService.getCurrent(), marketService.getSeries(7, seriesPoints(7))]);
     if (loadId !== marketLoadId) return;
     setText('marketPriceValue', formatCurrency(settings.currentMarketValue));
-    const change = change24hFrom(week);
+    // The server keeps the 24h change: the real change, or the admin's number under manual control.
+    const change = settings.currentPercentageChange;
     setChange(change);
     await renderTabs(loadId, (days) => (days === 7 ? Promise.resolve(week) : marketService.getSeries(days, seriesPoints(days))), change ?? 0, projection);
   } catch {

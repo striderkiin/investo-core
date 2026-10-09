@@ -101,7 +101,6 @@ const PlatformIndexControls = () => {
                 <Col xs="auto">
                   <span className={`badge bg-${manual ? 'warning' : 'success'}-subtle text-${manual ? 'warning' : 'success'} fs-12`}>
                     {manual ? 'Manual control' : 'Automatic'}
-                    {settings.previewMode ? ' · preview only' : ''}
                   </span>
                 </Col>
               </Row>
@@ -147,15 +146,6 @@ const PlatformIndexControls = () => {
                   </option>
                 ))}
               </select>
-              <FormCheck
-                type="switch"
-                id="previewMode"
-                className="mt-3"
-                label="Preview only (customers don't see changes)"
-                checked={settings.previewMode}
-                disabled={!canManage}
-                onChange={(e) => void run(() => marketService.setPreviewMode(e.target.checked, adminId))}
-              />
               <div className="d-flex gap-2 mt-3 flex-wrap">
                 <button type="button" className="btn btn-sm btn-light" disabled={!canManage} onClick={() => void run(() => marketService.resetAllManualControls(adminId), 'Manual controls reset.')}>
                   Reset manual controls

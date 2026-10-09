@@ -75,8 +75,8 @@ export function mountMarketWidget(options: MarketWidgetOptions): void {
     try {
       const [settings, history] = await Promise.all([marketService.getCurrent(), marketService.getSeries(30, seriesPoints(30))]);
       if (id !== loadId) return;
-      // 24h change from the last day of the 30-day series.
-      const change = change24hFrom(history);
+      // The server keeps the 24h change: the real change, or the admin's number under manual control.
+      const change = settings.currentPercentageChange;
       if (priceElId) setText(priceElId, formatCurrency(settings.currentMarketValue));
       showChange(change);
       renderChart(chartSelector, history, change ?? 0, chartType, height, 'No market data yet.', active);
