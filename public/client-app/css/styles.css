@@ -6599,4 +6599,30 @@ select.ic-field-input {
   }
 }
 
+/* Sidebar "Upgrade your plan" link: the template puts a 70px picture to the
+   left of this text. Without it the text sat against the edge, so it is a
+   small card lined up with the menu items instead. */
+.section-menu-left a.bottom {
+  margin: 0 20px 24px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.06);
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  -webkit-transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease;
+}
+.section-menu-left a.bottom:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+.section-menu-left a.bottom .content {
+  padding-top: 0;
+}
+.section-menu-left a.bottom::after {
+  content: "\2192";
+  color: var(--White, #fff);
+  font-size: 16px;
+}
+
 /*# sourceMappingURL=styles.css.map */
