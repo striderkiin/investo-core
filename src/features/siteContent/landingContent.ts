@@ -11,7 +11,7 @@
  * main text is empty is hidden on the page.
  */
 
-export type ContentKind = 'text' | 'textarea' | 'image';
+export type ContentKind = 'text' | 'textarea' | 'image' | 'document';
 
 export interface ContentField {
   key: string;
@@ -26,7 +26,13 @@ export interface ContentSection {
   title: string;
   description: string;
   fields: ContentField[];
+  /** Groups sections in the editor's list: the landing page, or the legal pages. */
+  group?: 'landing' | 'legal';
+  /** For legal pages: the public address, for a "View page" link. */
+  path?: string;
 }
+
+import { LEGAL_DOCS } from './legalContent';
 
 const S = '/securevest';
 
@@ -186,5 +192,16 @@ export const LANDING_SECTIONS: ContentSection[] = [
   },
 ];
 
-export const LANDING_FIELDS: ContentField[] = LANDING_SECTIONS.flatMap((section) => section.fields);
+export const LEGAL_SECTIONS: ContentSection[] = LEGAL_DOCS.map((doc) => ({
+  id: doc.key.replace('.', '-'),
+  title: doc.title,
+  description: `The ${doc.title} page at ${doc.path}. Write ## before a line to make it a heading, - for a list item, **two stars** around words for bold, and [link text](/page) for a link.`,
+  group: 'legal',
+  path: doc.path,
+  fields: [{ key: doc.key, label: 'Page text', kind: 'document', default: doc.default }],
+}));
+
+export const CONTENT_SECTIONS: ContentSection[] = [...LANDING_SECTIONS, ...LEGAL_SECTIONS];
+
+export const LANDING_FIELDS: ContentField[] = CONTENT_SECTIONS.flatMap((section) => section.fields);
 export const LANDING_DEFAULTS: Record<string, string> = Object.fromEntries(LANDING_FIELDS.map((field) => [field.key, field.default]));

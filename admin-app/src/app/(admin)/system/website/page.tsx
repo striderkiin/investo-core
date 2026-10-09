@@ -7,7 +7,7 @@ import { useNotificationContext } from '@/context/useNotificationContext'
 import { supabase } from '@/investo/services'
 import { usePermission } from '../../../../../../src/hooks/usePermission'
 import { createSiteContentService } from '../../../../../../src/services/api/siteContentService'
-import { LANDING_SECTIONS, type ContentField } from '../../../../../../src/features/siteContent/landingContent'
+import { CONTENT_SECTIONS, type ContentField } from '../../../../../../src/features/siteContent/landingContent'
 
 export const metadata: Metadata = { title: 'Landing Page' }
 
@@ -21,7 +21,7 @@ const WebsitePage = () => {
   const { showNotification } = useNotificationContext()
   const [saved, setSaved] = useState<Record<string, string> | null>(null)
   const [form, setForm] = useState<Record<string, string>>({})
-  const [sectionId, setSectionId] = useState(LANDING_SECTIONS[0].id)
+  const [sectionId, setSectionId] = useState(CONTENT_SECTIONS[0].id)
   const [uploading, setUploading] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -51,7 +51,7 @@ const WebsitePage = () => {
   if (error) return <div className="alert alert-danger">{error}</div>
   if (!saved) return <FallbackLoading />
 
-  const section = LANDING_SECTIONS.find((s) => s.id === sectionId) ?? LANDING_SECTIONS[0]
+  const section = CONTENT_SECTIONS.find((s) => s.id === sectionId) ?? CONTENT_SECTIONS[0]
   const valueOf = (field: ContentField) => form[field.key] ?? field.default
   const isCustom = (field: ContentField) => field.key in form
   const changedIn = (fields: ContentField[]) => fields.filter((f) => f.key in changes).length
@@ -94,7 +94,7 @@ const WebsitePage = () => {
       const rows = await siteContentService.getAll()
       setSaved(rows)
       setForm(rows)
-      showNotification({ message: 'Saved. The landing page shows the new content now.', variant: 'success' })
+      showNotification({ message: 'Saved. The website shows the new content now.', variant: 'success' })
     } catch (err) {
       showNotification({ message: err instanceof Error ? err.message : 'Could not save.', variant: 'danger' })
     } finally {
@@ -105,7 +105,7 @@ const WebsitePage = () => {
   return (
     <>
       <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-        <p className="text-muted mb-0">Change the words and pictures on your public landing page. Plans, prices, logo and colors are set in Plans and Branding.</p>
+        <p className="text-muted mb-0">Change the words and pictures on your public website and its legal pages. Plans, prices, logo and colors are set in Plans and Branding.</p>
         <div className="d-flex align-items-center gap-2">
           <a className="btn btn-light" href="/" target="_blank" rel="noreferrer">
             View site
@@ -128,17 +128,21 @@ const WebsitePage = () => {
         <Col lg={3}>
           <Card>
             <ListGroup variant="flush">
-              {LANDING_SECTIONS.map((s) => {
+              {CONTENT_SECTIONS.map((s, i) => {
                 const custom = s.fields.filter((f) => f.key in form).length
                 const pending = changedIn(s.fields)
+                const heading = i === 0 ? 'Landing page' : s.group === 'legal' && CONTENT_SECTIONS[i - 1].group !== 'legal' ? 'Legal pages' : null
                 return (
-                  <ListGroupItem key={s.id} action active={s.id === section.id} onClick={() => setSectionId(s.id)} className="d-flex justify-content-between align-items-center">
-                    <span>{s.title}</span>
-                    <span className="d-flex gap-1">
-                      {pending > 0 && <Badge bg="warning">{pending} unsaved</Badge>}
-                      {custom > 0 && pending === 0 && <Badge bg="secondary">{custom} changed</Badge>}
-                    </span>
-                  </ListGroupItem>
+                  <div key={s.id}>
+                    {heading && <div className="px-3 pt-3 pb-1 text-uppercase text-muted fs-11 fw-semibold">{heading}</div>}
+                    <ListGroupItem action active={s.id === section.id} onClick={() => setSectionId(s.id)} className="d-flex justify-content-between align-items-center">
+                      <span>{s.title}</span>
+                      <span className="d-flex gap-1">
+                        {pending > 0 && <Badge bg="warning">{pending} unsaved</Badge>}
+                        {custom > 0 && pending === 0 && <Badge bg="secondary">{custom} changed</Badge>}
+                      </span>
+                    </ListGroupItem>
+                  </div>
                 )
               })}
             </ListGroup>
@@ -149,6 +153,11 @@ const WebsitePage = () => {
             <CardHeader>
               <CardTitle as="h4">{section.title}</CardTitle>
               <p className="text-muted mb-0 mt-1">{section.description}</p>
+              {section.path && (
+                <a className="btn btn-sm btn-light mt-2" href={section.path} target="_blank" rel="noreferrer">
+                  View page
+                </a>
+              )}
             </CardHeader>
             <CardBody className="pt-0">
               <p className="form-text mt-0">Type {'{site}'} anywhere to show your site name from Branding.</p>
@@ -166,6 +175,9 @@ const WebsitePage = () => {
                   </div>
                   {field.kind === 'text' && (
                     <input id={field.key} className="form-control" value={valueOf(field)} maxLength={300} disabled={!canManage} onChange={(e) => setValue(field, e.target.value)} />
+                  )}
+                  {field.kind === 'document' && (
+                    <textarea id={field.key} className="form-control font-monospace fs-13" rows={26} value={valueOf(field)} maxLength={20000} disabled={!canManage} onChange={(e) => setValue(field, e.target.value)} />
                   )}
                   {field.kind === 'textarea' && (
                     <textarea id={field.key} className="form-control" rows={3} value={valueOf(field)} maxLength={5000} disabled={!canManage} onChange={(e) => setValue(field, e.target.value)} />

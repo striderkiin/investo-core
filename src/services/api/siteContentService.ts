@@ -4,6 +4,14 @@ import { getSupabaseClient } from '../supabase/client';
 /** Website text and images an admin changed (site_content table). Fields with no row use the defaults in code. */
 export function createSiteContentService(client: SupabaseClient = getSupabaseClient()) {
   return {
+    /** Saved values plus when each one was last changed (for "Last updated" on legal pages). */
+    async getAllWithDates(): Promise<{ values: Record<string, string>; updated: Record<string, string> }> {
+      const { data, error } = await client.from('site_content').select('key, value, updated_at');
+      if (error) throw error;
+      const rows = data as { key: string; value: string; updated_at: string }[];
+      return { values: Object.fromEntries(rows.map((r) => [r.key, r.value])), updated: Object.fromEntries(rows.map((r) => [r.key, r.updated_at])) };
+    },
+
     async getAll(): Promise<Record<string, string>> {
       const { data, error } = await client.from('site_content').select('key, value');
       if (error) throw error;

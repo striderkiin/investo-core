@@ -3,24 +3,27 @@ import { createSiteContentService } from '../../services/api/siteContentService'
 import { useBranding } from '../../hooks/useBranding';
 import { LANDING_DEFAULTS } from './landingContent';
 
-const CACHE_KEY = 'investo_site_content';
+const CACHE_KEY = 'investo_site_content_v2';
 const WAIT_MS = 1500;
 
-let loaded: Record<string, string> | null = null;
-let pending: Promise<Record<string, string>> | null = null;
+type Saved = { values: Record<string, string>; updated: Record<string, string> };
 
-function readCache(): Record<string, string> | null {
+let loaded: Saved | null = null;
+let pending: Promise<Saved> | null = null;
+
+function readCache(): Saved | null {
   try {
     const raw = localStorage.getItem(CACHE_KEY);
-    return raw ? (JSON.parse(raw) as Record<string, string>) : null;
+    const parsed = raw ? (JSON.parse(raw) as Saved) : null;
+    return parsed && parsed.values ? parsed : null;
   } catch {
     return null;
   }
 }
 
-function load(): Promise<Record<string, string>> {
+function load(): Promise<Saved> {
   pending ??= createSiteContentService()
-    .getAll()
+    .getAllWithDates()
     .then((rows) => {
       loaded = rows;
       try {
@@ -32,7 +35,7 @@ function load(): Promise<Record<string, string>> {
     })
     .catch(() => {
       pending = null;
-      return loaded ?? readCache() ?? {};
+      return loaded ?? readCache() ?? { values: {}, updated: {} };
     });
   return pending;
 }
@@ -45,12 +48,12 @@ function load(): Promise<Record<string, string>> {
  */
 export function useSiteContent() {
   const { branding } = useBranding();
-  const [values, setValues] = useState<Record<string, string> | null>(() => loaded ?? readCache());
+  const [saved, setSaved] = useState<Saved | null>(() => loaded ?? readCache());
 
   useEffect(() => {
     let active = true;
-    const timer = window.setTimeout(() => active && setValues((v) => v ?? {}), WAIT_MS);
-    void load().then((rows) => active && setValues(rows));
+    const timer = window.setTimeout(() => active && setSaved((v) => v ?? { values: {}, updated: {} }), WAIT_MS);
+    void load().then((rows) => active && setSaved(rows));
     return () => {
       active = false;
       window.clearTimeout(timer);
@@ -59,11 +62,12 @@ export function useSiteContent() {
 
   const c = useCallback(
     (key: string): string => {
-      const value = values?.[key] ?? LANDING_DEFAULTS[key] ?? '';
+      const value = saved?.values[key] ?? LANDING_DEFAULTS[key] ?? '';
       return value.replaceAll('{site}', branding.siteName);
     },
-    [values, branding.siteName],
+    [saved, branding.siteName],
   );
+  const updatedAt = useCallback((key: string): string | null => saved?.updated[key] ?? null, [saved]);
 
-  return { c, ready: values !== null };
+  return { c, ready: saved !== null, updatedAt };
 }
