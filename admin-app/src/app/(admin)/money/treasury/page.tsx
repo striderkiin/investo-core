@@ -33,6 +33,7 @@ const WITHDRAWAL_FIELDS: Field[] = [
   { key: 'withdrawalMax', label: 'Maximum withdrawal', unit: '$', step: 1000 },
   { key: 'withdrawalFeePercent', label: 'Withdrawal fee', unit: '%', step: 0.1 },
   { key: 'withdrawalDailyLimit', label: 'Daily limit per customer', unit: '$', step: 500 },
+  { key: 'kycFreeWithdrawalLimit', label: 'Total limit without ID check', unit: '$', step: 50 },
   { key: 'withdrawalProcessingThreshold', label: 'Needs review above', unit: '$', step: 100 },
   { key: 'withdrawalAutoProcessLimit', label: 'Auto-approve up to', unit: '$', step: 50 },
 ]

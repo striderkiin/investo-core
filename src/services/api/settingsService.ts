@@ -17,6 +17,7 @@ export interface SystemSettings {
   withdrawalMax: number;
   withdrawalFeePercent: number;
   withdrawalDailyLimit: number;
+  kycFreeWithdrawalLimit: number;
   withdrawalProcessingThreshold: number;
   withdrawalAutoProcessLimit: number;
   withdrawalEnabled: boolean;
@@ -46,6 +47,7 @@ interface SystemSettingsRow {
   withdrawal_max: number;
   withdrawal_fee_percent: number;
   withdrawal_daily_limit: number;
+  kyc_free_withdrawal_limit: number;
   withdrawal_processing_threshold: number;
   withdrawal_auto_process_limit: number;
   withdrawal_enabled: boolean;
@@ -76,6 +78,7 @@ function mapRow(row: SystemSettingsRow): SystemSettings {
     withdrawalMax: Number(row.withdrawal_max),
     withdrawalFeePercent: Number(row.withdrawal_fee_percent),
     withdrawalDailyLimit: Number(row.withdrawal_daily_limit),
+    kycFreeWithdrawalLimit: Number(row.kyc_free_withdrawal_limit ?? 150),
     withdrawalProcessingThreshold: Number(row.withdrawal_processing_threshold),
     withdrawalAutoProcessLimit: Number(row.withdrawal_auto_process_limit),
     withdrawalEnabled: row.withdrawal_enabled,
@@ -105,6 +108,7 @@ const FIELD_MAP: Record<string, keyof SystemSettingsRow> = {
   withdrawalMax: 'withdrawal_max',
   withdrawalFeePercent: 'withdrawal_fee_percent',
   withdrawalDailyLimit: 'withdrawal_daily_limit',
+  kycFreeWithdrawalLimit: 'kyc_free_withdrawal_limit',
   withdrawalProcessingThreshold: 'withdrawal_processing_threshold',
   withdrawalAutoProcessLimit: 'withdrawal_auto_process_limit',
   withdrawalEnabled: 'withdrawal_enabled',
