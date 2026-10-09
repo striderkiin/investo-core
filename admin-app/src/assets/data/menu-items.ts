@@ -37,6 +37,7 @@ export const MENU_ITEMS: MenuItemType[] = [
       { key: 'audit-logs', label: 'Audit Logs', url: '/system/audit-logs', parentKey: 'system', permission: 'audit.read' },
       { key: 'integrations', label: 'Integrations', url: '/system/integrations', parentKey: 'system', permission: 'integrations.manage' },
       { key: 'branding', label: 'Branding', url: '/system/branding', parentKey: 'system', permission: ['branding.manage', 'white_label.manage'] },
+      { key: 'website', label: 'Landing Page', url: '/system/website', parentKey: 'system', permission: 'branding.manage' },
       { key: 'settings', label: 'Settings', url: '/system/settings', parentKey: 'system', permission: 'settings.manage' },
       { key: 'maintenance', label: 'Maintenance', url: '/system/maintenance', parentKey: 'system', permission: 'settings.manage' },
       { key: 'sandbox', label: 'Sandbox Testing', url: '/system/sandbox', parentKey: 'system', permission: 'integrations.manage' },

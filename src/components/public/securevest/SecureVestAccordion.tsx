@@ -1,33 +1,11 @@
 import { ScrollReveal } from '../ScrollReveal';
 
-/* Structure verbatim from Base/Components/AllPages/security/accordion.php; content
-   replaced with Investo's real FAQ per the step-3 content pass. */
-const ITEMS = [
-  {
-    title: 'How do I get started?',
-    desc: 'Create an account with your name, email, and password, then confirm your email from the link we send you. From there you can fund your account and choose a plan; there is no separate identity verification step required to sign up.',
-  },
-  {
-    title: 'How are investment plan rates determined?',
-    desc: 'Every plan has a fixed rate, rate type (daily, weekly, or monthly), duration, and deposit range that we set and publish up front. Once you invest, that rate and duration are locked in for the life of your investment, even if the plan changes later.',
-  },
-  {
-    title: 'How long do deposits take to confirm?',
-    desc: 'Deposits are held as pending until confirmed on the backend, which depends on network and provider conditions rather than a fixed schedule. You can track the live status of any deposit from your dashboard at any time.',
-  },
-  {
-    title: 'How do withdrawals work?',
-    desc: 'Submit a withdrawal request with an amount and destination, and it is checked against your available balance and the platform&apos;s withdrawal limits. Our team reviews every withdrawal before it is approved and paid out.',
-  },
-  {
-    title: 'Is there a referral program?',
-    desc: 'Yes, every account gets its own referral code and link to share. When someone you refer joins and becomes active, a referral reward is credited to your account, and you can track your referrals and earnings from your dashboard.',
-  },
-  {
-    title: 'How is my account secured?',
-    desc: 'Your account supports two-factor authentication via an authenticator app, and you can view and sign out of your active sessions individually or all at once. Every balance-affecting action is logged and validated server-side, never left to the browser.',
-  },
-];
+/* Structure verbatim from Base/Components/AllPages/security/accordion.php. The
+   questions come from the landing page content (Website > Landing page). */
+export interface AccordionItem {
+  title: string;
+  desc: string;
+}
 
 /**
  * The source (assets/js/main.js) drives this with GSAP: click-to-select,
@@ -37,14 +15,14 @@ const ITEMS = [
  * Only one item is open at a time, and tapping the open item toggles it
  * closed (unlike the source, which always kept exactly one open).
  */
-export function SecureVestAccordion({ activeIndex, onSelect }: { activeIndex: number | null; onSelect: (index: number | null) => void }) {
+export function SecureVestAccordion({ items, activeIndex, onSelect }: { items: AccordionItem[]; activeIndex: number | null; onSelect: (index: number | null) => void }) {
   return (
     <>
-      {ITEMS.map((item, index) => {
+      {items.map((item, index) => {
         const active = index === activeIndex;
         const toggle = () => onSelect(active ? null : index);
         return (
-          <ScrollReveal className={`next-gen-item${active ? ' active' : ''}`} index={index} y={12} key={item.title}>
+          <ScrollReveal className={`next-gen-item${active ? ' active' : ''}`} index={index} y={12} key={index}>
             <div
               className="next-gen-header tw:cursor-pointer tw:flex tw:justify-between tw:items-center tw:gap-4"
               onClick={toggle}

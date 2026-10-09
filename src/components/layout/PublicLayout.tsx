@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
 import { useBranding } from '../../hooks/useBranding';
+import { useSiteContent } from '../../features/siteContent/useSiteContent';
 import { SvgSymbols } from '../public/securevest/SvgSymbols';
 import { createSocialLinksService } from '../../services/api/socialLinksService';
 import { SOCIAL_PLATFORM_META, DEFAULT_SOCIAL_LINKS } from '../public/socialPlatforms';
@@ -29,6 +30,7 @@ function getStoredTheme(): PublicTheme {
 
 export function PublicLayout() {
   const { branding } = useBranding();
+  const { c } = useSiteContent();
   const navRef = useRef<HTMLDivElement>(null);
   const togglerRef = useRef<HTMLButtonElement>(null);
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
@@ -163,7 +165,7 @@ export function PublicLayout() {
                 )}
               </Link>
               <p className="tw:mt-4 tw:sm:mt-6 tw:text-paragraph_white tw:max-w-100">
-                A transparent, server-validated platform for tracking deposits, investments, and withdrawals, all in one dashboard.
+                {c('footer.text')}
               </p>
             </div>
             <div className="tw:w-full tw:lg:w-px tw:h-px tw:lg:h-auto tw:bg-white/10" />

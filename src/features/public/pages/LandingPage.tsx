@@ -14,6 +14,8 @@ import { SocialLinksRow } from '../../../components/public/SocialLinksRow';
 import { DEFAULT_SOCIAL_LINKS } from '../../../components/public/socialPlatforms';
 import { IconMail } from '../../../components/public/icons';
 import { SecureVestAccordion } from '../../../components/public/securevest/SecureVestAccordion';
+import { useSiteContent } from '../../siteContent/useSiteContent';
+import { FAQ_SLOTS } from '../../siteContent/landingContent';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler);
 
@@ -137,6 +139,8 @@ export function LandingPage() {
   const location = useLocation();
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [accordionActive, setAccordionActive] = useState<number | null>(0);
+  const { c, ready } = useSiteContent();
+  const faqItems = Array.from({ length: FAQ_SLOTS }, (_, i) => ({ title: c(`faq.q${i + 1}`), desc: c(`faq.a${i + 1}`) })).filter((item) => item.title.trim());
   const [plans, setPlans] = useState<InvestmentPlan[]>([]);
   const [plansLoading, setPlansLoading] = useState(true);
   const [calcPlanId, setCalcPlanId] = useState('');
@@ -216,7 +220,7 @@ export function LandingPage() {
   }, [calcPlan, calcAmount]);
 
   return (
-    <div className="sv-page">
+    <div className="sv-page" style={ready ? undefined : { visibility: 'hidden' }}>
       {/* ===== 3.1 Hero — verbatim from index-two.php lines 14-60 ===== */}
       <section className="tw:py-14 tw:md:py-20 tw:lg:py-24 tw:xl:py-27 tw:bg-background tw:relative tw:z-1">
         <img className="tw:hidden tw:lg:block tw:absolute tw:top-[4%] tw:left-0 tw:-z-1" src={`${S}/img/home-v2/banner/background-shape.webp`} alt="background-shape" />
@@ -225,17 +229,17 @@ export function LandingPage() {
             <div className="tw:md:max-w-137.5 tw:w-full">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
-                <p className="tw:m-0! tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide">INVESTMENT INFRASTRUCTURE</p>
+                <p className="tw:m-0! tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide">{c('hero.eyebrow')}</p>
               </div>
               <h1 className="tw:text-[28px] tw:sm:text-3xl tw:md:text-4xl tw:lg:text-5xl tw:xl:text-[56px] tw:font-bold tw:leading-[1.15]! tw:text-title_black tw:mt-4! tw:md:mt-5!">
-                Your capital. In full view.
+                {c('hero.title')}
               </h1>
               <p className="tw:text-base tw:text-paragraph_black tw:mt-4">
-                A complete platform to manage deposits, withdrawals, investments, and referrals, all in one secure dashboard with real-time visibility into every action.
+                {c('hero.text')}
               </p>
               <div className="tw:mt-6 tw:sm:mt-8 tw:lg:mt-12 tw:flex tw:items-center tw:gap-3">
                 <a href="/client-app/sign-up.html" className="button-primary">
-                  Create free account
+                  {c('hero.button')}
                 </a>
                 <Link
                   to="/#plans"
@@ -250,23 +254,23 @@ export function LandingPage() {
             </div>
             <div className="tw:max-w-120 tw:lg:max-w-157.25 tw:xl:max-w-145 tw:2xl:max-w-157.25 tw:w-full tw:xl:-mr-10.5 tw:pb-12 tw:px-3 tw:pt-3 tw:relative tw:z-1">
               {/* Main Thumb */}
-              <img className="tw:max-w-157.25 tw:w-full tw:ml-auto" src={`${S}/img/home-v2/banner/banner-thumb.webp`} alt="thumb" />
+              <img className="tw:max-w-157.25 tw:w-full tw:ml-auto" src={c('hero.image')} alt="thumb" />
 
               {/* Cercile Shpae */}
               <div className="tw:absolute tw:top-0 tw:right-[10%] tw:-z-1 tw:w-[70%] tw:bg-primary tw:aspect-square tw:rounded-full" />
               {/* Graph Shpae */}
               <img
                 className="tw:w-[45%] tw:lg:w-auto tw:max-w-51.5 tw:absolute tw:bottom-0 tw:xl:bottom-auto tw:xl:top-[20%] tw:left-0 tw:xl:-left-[12%] tw:z-1 tw:shadow-[0px_4px_24px_0px_rgba(0,0,0,0.1)] tw:rounded-2xl tw:max-[380px]:hidden"
-                src={`${S}/img/home-v2/banner/shape-02.webp`}
+                src={c('hero.small_image')}
                 alt="banner-sahpe"
               />
               {/* Counter Up */}
               <div className="tw:absolute tw:bottom-0 tw:max-[380px]:right-1/2 tw:transform tw:max-[380px]:translate-x-1/2 tw:right-0 tw:lg:right-auto tw:lg:left-[50%] tw:z-1 tw:p-4 tw:lg:p-6 tw:bg-secondary tw:rounded-xl tw:lg:rounded-2xl tw:shadow-[0px_4px_24px_0px_rgba(0,0,0,0.1)]">
                 <div className="tw:flex">
-                  <h2 className="counter tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:text-title_white tw:font-bold tw:leading-none!">4</h2>
+                  <h2 className="counter tw:text-3xl tw:md:text-4xl tw:lg:text-[40px] tw:xl:text-5xl tw:text-title_white tw:font-bold tw:leading-none!">{c('hero.badge_value')}</h2>
                 </div>
                 <div className="tw:mt-2 tw:lg:mt-4 tw:flex tw:flex-col tw:gap-1.75">
-                  <p className="tw:text-sm tw:text-title_white tw:font-semibold">Investment Plans</p>
+                  <p className="tw:text-sm tw:text-title_white tw:font-semibold">{c('hero.badge_label')}</p>
                   <svg width="136" height="5" viewBox="0 0 136 5" fill="none" className="tw:text-title_white">
                     <path d="M0.75 3.75601C18.75 1.256 77.75 -0.743972 135.25 2.25601" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                   </svg>
@@ -287,46 +291,35 @@ export function LandingPage() {
             <ScrollReveal className="tw:max-w-175 tw:lg:max-w-135 tw:w-full tw:lg:self-start">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
-                <p className="tw:m-0! tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide">WHY INVESTO</p>
+                <p className="tw:m-0! tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide">{c('features.eyebrow')}</p>
               </div>
-              <h2 className="tw:text-2xl tw:sm:text-[28px] tw:md:text-3xl tw:lg:text-4xl tw:xl:text-[40px] tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">Built for the Next Generation of Investors</h2>
+              <h2 className="tw:text-2xl tw:sm:text-[28px] tw:md:text-3xl tw:lg:text-4xl tw:xl:text-[40px] tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">{c('features.title')}</h2>
               <p className="tw:mt-4 tw:text-base tw:sm:text-lg tw:text-paragraph_black">
-                We give modern investors the tools, security, and clarity needed to manage capital with confidence.
+                {c('features.text')}
               </p>
               <ul className="tw:flex tw:flex-col tw:gap-4 tw:mt-9 tw:text-paragraph_black">
-                <li className="tw:text-base tw:flex tw:items-start tw:gap-3">
-                  <svg className="tw:w-5 tw:h-5 tw:fill-current tw:mt-1">
-                    <use href="#tmnlList-01" />
-                  </svg>
-                  <span className="tw:flex-1">Live Market Data: real-time charts and up-to-the-minute pricing across every plan.</span>
-                </li>
-                <li className="tw:text-base tw:flex tw:items-start tw:gap-3">
-                  <svg className="tw:w-5 tw:h-5 tw:fill-current tw:mt-1">
-                    <use href="#tmnlList-02" />
-                  </svg>
-                  <span className="tw:flex-1">Secure by Design: role-based access, full audit logging, and server-side validation on every account.</span>
-                </li>
-                <li className="tw:text-base tw:flex tw:items-start tw:gap-3">
-                  <svg className="tw:w-5 tw:h-5 tw:fill-current tw:mt-1">
-                    <use href="#tmnlList-03" />
-                  </svg>
-                  <span className="tw:flex-1">Referral Program: earn rewards for every investor you bring onto the platform.</span>
-                </li>
+                {[1, 2, 3]
+                  .filter((n) => c(`features.point${n}`).trim())
+                  .map((n) => (
+                    <li key={n} className="tw:text-base tw:flex tw:items-start tw:gap-3">
+                      <svg className="tw:w-5 tw:h-5 tw:fill-current tw:mt-1">
+                        <use href={`#tmnlList-0${n}`} />
+                      </svg>
+                      <span className="tw:flex-1">{c(`features.point${n}`)}</span>
+                    </li>
+                  ))}
               </ul>
             </ScrollReveal>
             <div className="tw:lg:max-w-165 tw:w-full tw:grid tw:sm:grid-cols-2 tw:gap-x-6 tw:gap-y-10 tw:max-xl:flex-1">
-              {[
-                { img: `${S}/img/home-v2/feature/feature-icon-01.svg`, title: 'Real-Time Tracking', desc: 'Watch your balances, returns, and transaction history update live from your dashboard.' },
-                { img: `${S}/img/home-v2/feature/feature-icon-02.svg`, title: 'Bank-Grade Security', desc: 'Two-factor authentication, session controls, and server-validated transactions on every account.' },
-                { img: `${S}/img/home-v2/feature/feature-icon-03.svg`, title: 'Transparent Reporting', desc: 'A full, auditable ledger of every deposit, investment, and withdrawal, never a black box.' },
-                { img: `${S}/img/home-v2/feature/feature-icon-04.svg`, title: 'Referral Rewards', desc: 'Every account gets a referral code and link, with earnings tracked automatically.' },
-              ].map((item, i) => (
-                <ScrollReveal key={item.title} index={i}>
-                  <img className="tw:w-10" src={item.img} alt="feature icon" />
-                  <h3 className="tw:mt-5! tw:text-lg tw:md:text-xl tw:font-semibold tw:text-title_black">{item.title}</h3>
-                  <p className="tw:mt-3 tw:text-base tw:text-paragraph_black">{item.desc}</p>
-                </ScrollReveal>
-              ))}
+              {[1, 2, 3, 4]
+                .filter((n) => c(`features.card${n}.title`).trim())
+                .map((n, i) => (
+                  <ScrollReveal key={n} index={i}>
+                    <img className="tw:w-10" src={c(`features.card${n}.icon`)} alt="" />
+                    <h3 className="tw:mt-5! tw:text-lg tw:md:text-xl tw:font-semibold tw:text-title_black">{c(`features.card${n}.title`)}</h3>
+                    <p className="tw:mt-3 tw:text-base tw:text-paragraph_black">{c(`features.card${n}.text`)}</p>
+                  </ScrollReveal>
+                ))}
             </div>
           </div>
         </div>
@@ -339,49 +332,48 @@ export function LandingPage() {
             <div className="tw:md:max-w-170 tw:w-full">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
-                <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide tw:block">PLATFORM RELIABILITY</span>
+                <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide tw:block">{c('stats.eyebrow')}</span>
               </div>
-              <h2 className="tw:text-2xl tw:sm:text-[28px] tw:md:text-3xl tw:lg:text-4xl tw:xl:text-[40px] tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">Built for Trust, Measured in Numbers</h2>
+              <h2 className="tw:text-2xl tw:sm:text-[28px] tw:md:text-3xl tw:lg:text-4xl tw:xl:text-[40px] tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">{c('stats.title')}</h2>
             </div>
             <p className="tw:md:max-w-115 tw:w-full tw:text-base tw:sm:text-lg tw:text-paragraph_black">
-              We measure our own success by the reliability and transparency of the platform you depend on.
+              {c('stats.text')}
             </p>
           </ScrollReveal>
           <div className="tw:grid tw:sm:grid-cols-2 tw:lg:grid-cols-3 tw:gap-5 tw:lg:gap-8">
             <ScrollReveal className="tw:sm:col-span-2" index={0}>
-              <img src={`${S}/img/home-v2/counter-img/counter-1.webp`} alt="counter image" className="tw:rounded-lg tw:md:rounded-2xl tw:object-cover tw:aspect-835/310 tw:w-full tw:h-full" />
+              <img src={c('stats.image1')} alt="" className="tw:rounded-lg tw:md:rounded-2xl tw:object-cover tw:aspect-835/310 tw:w-full tw:h-full" />
             </ScrollReveal>
             <ScrollReveal className="tw:bg-secondary tw:p-5 tw:sm:p-8 tw:rounded-2xl tw:flex tw:flex-col tw:justify-between tw:gap-5" index={1}>
               <div className="tw:flex tw:items-start tw:gap-1">
-                <h2 className="counter tw:text-primary tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">4</h2>
+                <h2 className="counter tw:text-primary tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">{c('stats.item1.value')}</h2>
               </div>
               <div>
-                <h3 className="tw:text-title_white tw:text-lg tw:md:text-xl tw:font-semibold">Investment Plans</h3>
-                <p className="tw:pt-3 tw:sm:pt-4 tw:text-paragraph_white tw:text-base tw:leading-normal">From steady starter returns to our top tier, each with a fixed rate and duration.</p>
+                <h3 className="tw:text-title_white tw:text-lg tw:md:text-xl tw:font-semibold">{c('stats.item1.title')}</h3>
+                <p className="tw:pt-3 tw:sm:pt-4 tw:text-paragraph_white tw:text-base tw:leading-normal">{c('stats.item1.text')}</p>
               </div>
             </ScrollReveal>
             <ScrollReveal className="tw:bg-[#5c2015] tw:p-5 tw:sm:p-8 tw:rounded-2xl tw:flex tw:flex-col tw:justify-between tw:gap-5" index={2}>
               <div className="tw:flex tw:items-start tw:gap-1">
-                <h2 className="counter tw:text-white tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">24/7</h2>
+                <h2 className="counter tw:text-white tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">{c('stats.item2.value')}</h2>
               </div>
               <div>
-                <h3 className="tw:text-white tw:text-lg tw:md:text-xl tw:font-semibold">Platform Availability</h3>
-                <p className="tw:pt-3 tw:sm:pt-4 tw:text-white tw:text-base tw:leading-[1.5]">Manage deposits, withdrawals, and investments from your dashboard any time.</p>
+                <h3 className="tw:text-white tw:text-lg tw:md:text-xl tw:font-semibold">{c('stats.item2.title')}</h3>
+                <p className="tw:pt-3 tw:sm:pt-4 tw:text-white tw:text-base tw:leading-[1.5]">{c('stats.item2.text')}</p>
               </div>
             </ScrollReveal>
 
             <ScrollReveal index={3}>
-              <img src={`${S}/img/home-v2/counter-img/counter-2.webp`} alt="counter image" className="tw:rounded-lg tw:md:rounded-2xl tw:object-cover tw:aspect-410/310 tw:w-full tw:h-full" />
+              <img src={c('stats.image2')} alt="" className="tw:rounded-lg tw:md:rounded-2xl tw:object-cover tw:aspect-410/310 tw:w-full tw:h-full" />
             </ScrollReveal>
 
             <ScrollReveal className="tw:bg-[#1a1a1a] tw:p-5 tw:sm:p-8 tw:rounded-2xl tw:flex tw:flex-col tw:justify-between tw:gap-5" index={4}>
               <div className="tw:flex tw:items-start tw:gap-1">
-                <h2 className="counter tw:text-white tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">100</h2>
-                <h2 className="tw:text-white tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">%</h2>
+                <h2 className="counter tw:text-white tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">{c('stats.item3.value')}</h2>
               </div>
               <div>
-                <h3 className="tw:text-white tw:text-lg tw:md:text-xl tw:font-semibold">Server-Validated Transactions</h3>
-                <p className="tw:pt-3 tw:sm:pt-4 tw:text-white tw:text-base tw:leading-[1.5]">Every balance-affecting action runs through audited, server-side logic, never the browser.</p>
+                <h3 className="tw:text-white tw:text-lg tw:md:text-xl tw:font-semibold">{c('stats.item3.title')}</h3>
+                <p className="tw:pt-3 tw:sm:pt-4 tw:text-white tw:text-base tw:leading-[1.5]">{c('stats.item3.text')}</p>
               </div>
             </ScrollReveal>
           </div>
@@ -395,12 +387,12 @@ export function LandingPage() {
             <div className="tw:md:max-w-170 tw:w-full">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
-                <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide tw:block">PRICING PLAN</span>
+                <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide tw:block">{c('plans.eyebrow')}</span>
               </div>
-              <h2 className="tw:text-2xl tw:sm:text-[28px] tw:md:text-3xl tw:lg:text-4xl tw:xl:text-[40px] tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">Choose the Plan that Best Fits Your Goals</h2>
+              <h2 className="tw:text-2xl tw:sm:text-[28px] tw:md:text-3xl tw:lg:text-4xl tw:xl:text-[40px] tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">{c('plans.title')}</h2>
             </div>
             <p className="tw:md:max-w-115 tw:w-full tw:text-base tw:sm:text-lg tw:text-paragraph_black">
-              Every plan has a fixed rate, deposit range, and duration, no hidden fees, no surprises.
+              {c('plans.text')}
             </p>
           </ScrollReveal>
           <div>
@@ -455,7 +447,7 @@ export function LandingPage() {
                               : 'tw:w-full tw:px-6 tw:py-4 tw:text-base tw:leading-none tw:font-semibold tw:text-background tw:bg-title_black tw:rounded-[6px] tw:cursor-pointer hover:tw:text-white hover:tw:bg-primary tw:transition tw:duration-300 tw:text-center tw:justify-center!'
                           }
                         >
-                          Get Started Today
+                          {c('plans.button')}
                         </a>
                       </div>
                     </ScrollReveal>
@@ -479,12 +471,12 @@ export function LandingPage() {
             <div className="tw:md:max-w-170 tw:w-full">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
-                <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide">RETURN CALCULATOR</span>
+                <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide">{c('calc.eyebrow')}</span>
               </div>
-              <h2 className="tw:text-2xl tw:sm:text-[28px] tw:md:text-3xl tw:lg:text-4xl tw:xl:text-[40px] tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">See What Your Money Could Earn</h2>
+              <h2 className="tw:text-2xl tw:sm:text-[28px] tw:md:text-3xl tw:lg:text-4xl tw:xl:text-[40px] tw:font-bold tw:leading-tight tw:text-title_black tw:mt-4! tw:md:mt-5!">{c('calc.title')}</h2>
             </div>
             <p className="tw:md:max-w-115 tw:w-full tw:text-base tw:sm:text-lg tw:text-paragraph_black">
-              Pick a plan and an amount to see a live projection based on that plan&apos;s real fixed rate and duration.
+              {c('calc.text')}
             </p>
           </ScrollReveal>
           {plansLoading ? (
@@ -603,12 +595,12 @@ export function LandingPage() {
                 </div>
                 <div className="tw:pt-8 tw:border-t tw:border-border tw:flex tw:items-start tw:lg:items-center tw:justify-between tw:gap-4 tw:lg:gap-6 tw:flex-col tw:lg:flex-row">
                   <div className="tw:flex-1">
-                    <p className="tw:text-title_black tw:text-lg tw:font-semibold">Ready to Put Your Capital to Work?</p>
-                    <p className="tw:text-base tw:mt-3 tw:text-paragraph_black tw:max-w-154.25">Create a free account and fund your first plan in minutes, then track everything live from your dashboard.</p>
+                    <p className="tw:text-title_black tw:text-lg tw:font-semibold">{c('calc.cta_title')}</p>
+                    <p className="tw:text-base tw:mt-3 tw:text-paragraph_black tw:max-w-154.25">{c('calc.cta_text')}</p>
                   </div>
                   <div className="tw:w-fit">
                     <a href="/client-app/sign-up.html" className="button-primary tw:w-fit">
-                      Create free account
+                      {c('calc.cta_button')}
                       <svg className="tw:w-2.75 tw:h-2.75 tw:fill-current">
                         <use href="#buttonArrow" />
                       </svg>
@@ -628,16 +620,16 @@ export function LandingPage() {
             <ScrollReveal className="tw:w-full tw:lg:max-w-100 tw:lg:flex-shrink-0">
               <div className="tw:flex tw:items-center tw:gap-2.5">
                 <img className="rotate" src={`${S}/img/title-icon-primary.svg`} alt="title-icon" />
-                <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide">FREQUENTLY ASKED QUESTIONS</span>
+                <span className="tw:text-xs tw:sm:text-sm tw:font-semibold tw:leading-[1.1]! tw:text-primary tw:uppercase tw:tracking-wide">{c('faq.eyebrow')}</span>
               </div>
-              <h2 className="tw:text-2xl tw:sm:text-[28px] tw:md:text-3xl tw:lg:text-4xl tw:xl:text-[40px] tw:font-bold tw:leading-tight tw:text-title_white tw:mt-4! tw:md:mt-5!">Everything You Need to Know</h2>
+              <h2 className="tw:text-2xl tw:sm:text-[28px] tw:md:text-3xl tw:lg:text-4xl tw:xl:text-[40px] tw:font-bold tw:leading-tight tw:text-title_white tw:mt-4! tw:md:mt-5!">{c('faq.title')}</h2>
               <p className="tw:mt-4 tw:text-base tw:sm:text-lg tw:text-paragraph_white">
-                Answers to the questions we hear most about getting started, rates, deposits, withdrawals, and account security.
+                {c('faq.text')}
               </p>
             </ScrollReveal>
             <div className="tw:w-full tw:lg:flex-1 tw:lg:max-w-160">
               <div className="next-gen-accordion-wrapper excellence-accordion-wrapper tw:flex tw:flex-col tw:gap-4 tw:md:gap-6 tw:lg:gap-9">
-                <SecureVestAccordion activeIndex={accordionActive} onSelect={setAccordionActive} />
+                <SecureVestAccordion items={faqItems} activeIndex={accordionActive} onSelect={setAccordionActive} />
               </div>
             </div>
           </div>
@@ -648,8 +640,8 @@ export function LandingPage() {
       <section id="contact" className="tw:bg-background tw:py-5">
         <div className="tw:container py-5">
           <ScrollReveal className="text-center mb-5">
-            <span className="ic-public-eyebrow mb-2 d-inline-flex">Contact</span>
-            <h2 className="h3 mb-0 tw:text-title_black">Get in touch</h2>
+            <span className="ic-public-eyebrow mb-2 d-inline-flex">{c('contact.eyebrow')}</span>
+            <h2 className="h3 mb-0 tw:text-title_black">{c('contact.title')}</h2>
           </ScrollReveal>
           <div className="tw:flex tw:flex-col tw:lg:flex-row tw:gap-12 tw:lg:gap-24">
             <ScrollReveal className="tw:w-full tw:lg:max-w-100 tw:lg:flex-shrink-0">
@@ -659,7 +651,7 @@ export function LandingPage() {
                 </IconBadge>
               </div>
               <p className="mb-4 tw:text-paragraph_black">
-                Have a question about a deposit or a withdrawal? Send us a message and our team will get back to you. Already have an account? You can also open a ticket from your dashboard&apos;s Support Center for the fastest response.
+                {c('contact.text')}
               </p>
               <SocialLinksRow links={socialLinks.length > 0 ? socialLinks : DEFAULT_SOCIAL_LINKS} />
             </ScrollReveal>
