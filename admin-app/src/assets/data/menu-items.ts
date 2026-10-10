@@ -41,7 +41,6 @@ export const MENU_ITEMS: MenuItemType[] = [
       { key: 'settings', label: 'Settings', url: '/system/settings', parentKey: 'system', permission: 'settings.manage' },
       { key: 'maintenance', label: 'Maintenance', url: '/system/maintenance', parentKey: 'system', permission: 'settings.manage' },
       { key: 'sandbox', label: 'Sandbox Testing', url: '/system/sandbox', parentKey: 'system', permission: 'integrations.manage' },
-      { key: 'activity', label: 'Activity Simulation', url: '/system/activity', parentKey: 'system', permission: 'settings.manage' },
     ],
   },
 ]

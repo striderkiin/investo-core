@@ -33,7 +33,6 @@ import * as SecurityPage from '@/app/(admin)/system/security/page'
 import * as TreasuryPage from '@/app/(admin)/money/treasury/page'
 import * as MarketPage from '@/app/(admin)/market/page'
 import * as SocialProofPage from '@/app/(admin)/engagement/social-proof/page'
-import * as ActivityPage from '@/app/(admin)/system/activity/page'
 import * as MaintenancePage from '@/app/(admin)/system/maintenance/page'
 import * as BrandingPage from '@/app/(admin)/system/branding/page'
 import * as SettingsPage from '@/app/(admin)/system/settings/page'
@@ -198,7 +197,7 @@ const LEGACY_REDIRECTS: Record<string, string> = {
   users: '/customers',
   announcements: '/notifications',
   maintenance: '/system/maintenance',
-  activity: '/system/activity',
+  activity: '/dashboard',
   'white-label': '/system/branding',
   branding: '/system/branding',
   integrations: '/system/integrations',
@@ -311,7 +310,8 @@ createRoot(document.getElementById('root')!).render(
             <Route path="treasury" element={<Page module={TreasuryPage} />} />
             <Route path="market" element={<Page module={MarketPage} />} />
             <Route path="social-proof" element={<Page module={SocialProofPage} />} />
-            <Route path="system/activity" element={<Page module={ActivityPage} />} />
+            {/* Activity Simulation is hidden: nothing on the site used its settings. */}
+            <Route path="system/activity" element={<Navigate to="/dashboard" replace />} />
             <Route path="system/maintenance" element={<Page module={MaintenancePage} />} />
             <Route path="system/branding" element={<Page module={BrandingPage} />} />
             <Route path="system/settings" element={<Page module={SettingsPage} />} />
