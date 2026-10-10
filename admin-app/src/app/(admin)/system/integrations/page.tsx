@@ -28,6 +28,8 @@ const DEPOSIT_PAIRS: { currency: string; network: string }[] = [
 type EmailConfig = { from_email?: string; from_name?: string; site_url?: string }
 
 const EmailCard = ({ integration, masked, onChanged }: { integration: (IntegrationConfig & { config: EmailConfig }) | null; masked: string | null; onChanged: () => void }) => {
+  // The Supabase email hook is set up by the host, so only the super admin sees how.
+  const { role } = usePermission()
   const { showNotification } = useNotificationContext()
   const [apiKey, setApiKey] = useState('')
   const [fromEmail, setFromEmail] = useState(integration?.config.from_email ?? '')
@@ -156,6 +158,9 @@ const EmailCard = ({ integration, masked, onChanged }: { integration: (Integrati
         </form>
         <hr className="hr-dashed" />
         <p className="fw-semibold mb-1">One-time step so sign-up and password emails also use Resend</p>
+        {role !== 'super_admin' ? (
+          <p className="text-muted fs-13 mb-0">We turn this on for you when we set up your site. Once your key is saved above, sign-up and password emails go out from your own address.</p>
+        ) : (
         <ol className="text-muted fs-13 mb-0 ps-3">
           <li>In Supabase, open Authentication, then Hooks, and add a Send Email hook of type HTTPS.</li>
           <li>
@@ -163,6 +168,7 @@ const EmailCard = ({ integration, masked, onChanged }: { integration: (Integrati
           </li>
           <li>Generate the hook secret, copy it, and add it under Edge Functions, then Secrets, as SEND_EMAIL_HOOK_SECRET.</li>
         </ol>
+        )}
       </CardBody>
     </Card>
   )
