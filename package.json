@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && tsc --noEmit -p client-app/tsconfig.json && tsc --noEmit -p admin-app/tsconfig.json && vite build",
+    "build:hq": "tsc --noEmit -p hq/tsconfig.json && vite build --config hq/vite.config.ts",
+    "dev:hq": "vite --config hq/vite.config.ts",
     "typecheck:client-app": "tsc --noEmit -p client-app/tsconfig.json",
     "typecheck:admin-app": "tsc --noEmit -p admin-app/tsconfig.json",
     "lint": "oxlint",

@@ -1,0 +1,23 @@
+// HQ uses the logo PNGs directly, the same way the admin panel does.
+.startbar .brand .logo {
+  .logo-sm {
+    display: none;
+  }
+
+  .logo-lg {
+    height: 44px;
+    width: auto;
+  }
+}
+
+@media (min-width: 1200px) {
+  body[data-sidebar-size='collapsed'] .startbar:not(:hover) .brand .logo {
+    .logo-sm {
+      display: inline-block;
+    }
+
+    .logo-lg {
+      display: none;
+    }
+  }
+}

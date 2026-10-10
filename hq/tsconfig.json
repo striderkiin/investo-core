@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "target": "ES2020",
+    "types": ["vite/client"],
+    "noUncheckedSideEffectImports": false
+  },
+  "include": ["src", "vite.config.ts"]
+}
