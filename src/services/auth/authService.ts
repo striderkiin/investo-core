@@ -58,6 +58,14 @@ export function createAuthService(client: SupabaseClient = getSupabaseClient()) 
       if (error) throw error;
     },
 
+    // Signs in with the one-time code from a password link. The link carries
+    // the code instead of signing in on open, so link previews (Telegram,
+    // WhatsApp, email scanners) and page reloads cannot use it up.
+    async verifyRecoveryCode(tokenHash: string): Promise<void> {
+      const { error } = await client.auth.verifyOtp({ token_hash: tokenHash, type: 'recovery' });
+      if (error) throw error;
+    },
+
     async updatePassword(newPassword: string): Promise<void> {
       const { error } = await client.auth.updateUser({ password: newPassword });
       if (error) throw error;

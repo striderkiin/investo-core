@@ -3,6 +3,18 @@ import { isSupabaseConfigured } from '../../src/services/supabase/client';
 
 const authService = createAuthService();
 
+// Links from HQ and the admin panel carry a one-time code (?token_hash=...)
+// that is only used when the form is sent. Older links sign in on open and
+// arrive with tokens or an error in the address after #.
+const params = new URLSearchParams(window.location.search);
+const recoveryCode = params.get('type') === 'recovery' ? params.get('token_hash') : null;
+const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+const linkError = hashParams.get('error_code') ?? params.get('error_code');
+const EXPIRED = 'This link has expired or was already used. Ask for a new one.';
+// The code works once: after it signs in, a second try (for example after a
+// too-short password) reuses that sign-in.
+let codeUsed = false;
+
 function showError(message: string): void {
   const box = document.getElementById('resetError');
   if (!box) return;
@@ -55,8 +67,17 @@ function wireForm(): void {
       submitButton.textContent = 'Updating…';
     }
 
-    void authService
-      .updatePassword(password)
+    void (async () => {
+      if (recoveryCode && !codeUsed) {
+        await authService.verifyRecoveryCode(recoveryCode).catch(() => {
+          throw new Error(EXPIRED);
+        });
+        codeUsed = true;
+      } else if (!(await authService.getSession().catch(() => null))) {
+        throw new Error(linkError ? EXPIRED : 'Open the link from your email or message again to set your password.');
+      }
+      await authService.updatePassword(password);
+    })()
       .then(() => {
         showSuccess();
       })
@@ -70,4 +91,5 @@ function wireForm(): void {
   });
 }
 
+if (linkError && !recoveryCode) showError(EXPIRED);
 wireForm();
