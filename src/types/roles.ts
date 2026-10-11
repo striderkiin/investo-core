@@ -1,4 +1,4 @@
-export type RoleName = 'super_admin' | 'finance_admin' | 'support_admin' | 'operations_admin' | 'demo_admin' | 'client';
+export type RoleName = 'super_admin' | 'site_admin' | 'finance_admin' | 'support_admin' | 'operations_admin' | 'demo_admin' | 'client';
 
 export type Permission =
   | 'users.read'
@@ -65,6 +65,40 @@ export const ROLE_PERMISSIONS: Record<RoleName, Permission[]> = {
     'security.manage',
     'admins.manage',
     'roles.manage',
+    'audit.read',
+    'settings.manage',
+    'environment.manage',
+  ],
+  // Hosted buyer: runs their own site but cannot manage admins or roles.
+  // Admins for hosted sites are added from HQ by the owner.
+  site_admin: [
+    'users.read',
+    'users.write',
+    'users.adjust_balance',
+    'users.manage_status',
+    'deposits.read',
+    'deposits.manage',
+    'withdrawals.read',
+    'withdrawals.approve',
+    'transactions.read',
+    'treasury.read',
+    'treasury.manage',
+    'investments.read',
+    'investments.manage',
+    'market.read',
+    'market.manage',
+    'referrals.read',
+    'support.read',
+    'support.manage',
+    'notifications.send',
+    'announcements.manage',
+    'social_proof.manage',
+    'branding.manage',
+    'white_label.manage',
+    'integrations.manage',
+    'integrations.read_secrets',
+    'compliance.manage',
+    'security.manage',
     'audit.read',
     'settings.manage',
     'environment.manage',

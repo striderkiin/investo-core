@@ -21,11 +21,13 @@ const ADMIN_ROLES: { value: RoleName; hint: string }[] = [
   { value: 'finance_admin', hint: 'Deposits, withdrawals, treasury' },
   { value: 'operations_admin', hint: 'Plans, announcements, branding, market' },
   { value: 'demo_admin', hint: 'Shareable demo login; no keys, admins or settings' },
+  { value: 'site_admin', hint: 'Everything except managing admins' },
   { value: 'super_admin', hint: 'Everything, including other admins' },
 ]
 
 const ROLE_VARIANT: Partial<Record<RoleName, string>> = {
   super_admin: 'danger',
+  site_admin: 'warning',
   finance_admin: 'primary',
   support_admin: 'info',
   operations_admin: 'success',

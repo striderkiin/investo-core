@@ -7,6 +7,15 @@ describe('role permissions', () => {
     expect(roleHasPermission('super_admin', 'roles.manage')).toBe(true);
   });
 
+  it('lets site_admin run the site but never manage admins or roles', () => {
+    expect(roleHasPermission('site_admin', 'integrations.manage')).toBe(true);
+    expect(roleHasPermission('site_admin', 'withdrawals.approve')).toBe(true);
+    expect(roleHasPermission('site_admin', 'branding.manage')).toBe(true);
+    expect(roleHasPermission('site_admin', 'admins.manage')).toBe(false);
+    expect(roleHasPermission('site_admin', 'roles.manage')).toBe(false);
+    expect(isAdminRole('site_admin')).toBe(true);
+  });
+
   it('grants finance_admin financial permissions but not admin management', () => {
     expect(roleHasPermission('finance_admin', 'withdrawals.approve')).toBe(true);
     expect(roleHasPermission('finance_admin', 'deposits.manage')).toBe(true);

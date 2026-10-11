@@ -2,6 +2,7 @@ import type { Permission, RoleName } from '../../../src/types/roles'
 
 const ROLE_LABELS: Record<RoleName, string> = {
   super_admin: 'Super Admin',
+  site_admin: 'Site Admin',
   finance_admin: 'Finance Admin',
   support_admin: 'Support Admin',
   operations_admin: 'Operations Admin',

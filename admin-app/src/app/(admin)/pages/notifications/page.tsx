@@ -44,7 +44,7 @@ const DELIVERIES: { value: AnnouncementDelivery; label: string }[] = [
   { value: 'popup', label: 'Pop-up' },
   { value: 'notification', label: 'Notification bell' },
 ]
-const ROLES: RoleName[] = ['super_admin', 'finance_admin', 'support_admin', 'operations_admin', 'demo_admin']
+const ROLES: RoleName[] = ['super_admin', 'site_admin', 'finance_admin', 'support_admin', 'operations_admin', 'demo_admin']
 
 const typeOf = (value: AnnouncementType) => TYPES.find((t) => t.value === value) ?? TYPES[0]
 
