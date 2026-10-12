@@ -42,7 +42,7 @@ export function ensurePopupElement(position: PopupPosition): HTMLDivElement {
     maxWidth: '240px',
     background: '#f8f5f0',
     color: '#1a1710',
-    border: '1px solid rgba(168,68,46,0.3)',
+    border: '1px solid color-mix(in srgb, var(--YellowGreen) 30%, transparent)',
     borderRadius: '8px',
     boxShadow: '0 12px 32px rgba(0,0,0,0.28)',
     padding: '0.6rem 0.75rem',

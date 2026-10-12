@@ -8,11 +8,8 @@
    used sparingly (jewelry, not paint), a faint star/data-point field for
    atmosphere instead of glowing gradient blobs.
 
-   --pub-accent is a fixed #A8442E matching the landing page's own palette
-   (securevest-tailwind.css), not the operator-configurable --ic-primary —
-   the public marketing pages (nav/footer included) are a hand-built brand
-   surface independent of the admin white-label theme, which only governs
-   the authenticated client/admin dashboards. */
+   --pub-accent follows the Branding primary color (--ic-primary, set by
+   BrandingContext), so the public pages match the operator's brand. */
 
 .ic-public {
   --pub-bg: #000000;
@@ -23,7 +20,7 @@
   --pub-text: #ffffff;
   --pub-text-muted: #a3a3a3;
   --pub-text-subtle: #5c5c5c;
-  --pub-accent: #a8442e;
+  --pub-accent: var(--ic-primary, #a8442e);
   --pub-accent-light: color-mix(in srgb, var(--pub-accent) 70%, white);
   --pub-accent-dark: color-mix(in srgb, var(--pub-accent) 60%, black);
   --pub-font-display: 'Playfair Display', Georgia, serif;

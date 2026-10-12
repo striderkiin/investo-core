@@ -16,6 +16,8 @@ import { IconMail } from '../../../components/public/icons';
 import { SecureVestAccordion } from '../../../components/public/securevest/SecureVestAccordion';
 import { useSiteContent } from '../../siteContent/useSiteContent';
 import { FAQ_SLOTS } from '../../siteContent/landingContent';
+import { useBranding } from '../../../hooks/useBranding';
+import { withAlpha } from '../../../shared/brandColor';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler);
 
@@ -140,6 +142,7 @@ export function LandingPage() {
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [accordionActive, setAccordionActive] = useState<number | null>(0);
   const { c, ready } = useSiteContent();
+  const accent = useBranding().branding.primaryColor;
   const faqItems = Array.from({ length: FAQ_SLOTS }, (_, i) => ({ title: c(`faq.q${i + 1}`), desc: c(`faq.a${i + 1}`) })).filter((item) => item.title.trim());
   const [plans, setPlans] = useState<InvestmentPlan[]>([]);
   const [plansLoading, setPlansLoading] = useState(true);
@@ -417,7 +420,7 @@ export function LandingPage() {
                       <div
                         className={
                           highlighted
-                            ? 'tw:bg-background tw:border tw:border-primary tw:shadow-[0_0_50px_-12px_rgba(168,68,46,0.65)] tw:rounded-2xl tw:p-6 tw:xl:p-8 tw:flex tw:flex-col tw:justify-between tw:gap-10 tw:md:gap-12'
+                            ? 'tw:bg-background tw:border tw:border-primary tw:shadow-[0_0_50px_-12px_color-mix(in_srgb,var(--pub-accent)_65%,transparent)] tw:rounded-2xl tw:p-6 tw:xl:p-8 tw:flex tw:flex-col tw:justify-between tw:gap-10 tw:md:gap-12'
                             : 'tw:bg-background tw:border tw:border-border tw:rounded-2xl tw:p-6 tw:xl:p-8 tw:transition tw:duration-300 tw:flex tw:flex-col tw:justify-between tw:gap-10 tw:md:gap-12 tw:h-full'
                         }
                       >
@@ -547,14 +550,14 @@ export function LandingPage() {
                         {
                           label: 'Projected value',
                           data: projection.values,
-                          borderColor: '#a8442e',
+                          borderColor: accent,
                           backgroundColor: (context) => {
                             const { chart } = context;
                             const { ctx, chartArea } = chart;
-                            if (!chartArea) return 'rgba(168, 68, 46, 0.15)';
+                            if (!chartArea) return withAlpha(accent, 0.15);
                             const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-                            gradient.addColorStop(0, 'rgba(168, 68, 46, 0.35)');
-                            gradient.addColorStop(1, 'rgba(168, 68, 46, 0)');
+                            gradient.addColorStop(0, withAlpha(accent, 0.35));
+                            gradient.addColorStop(1, withAlpha(accent, 0));
                             return gradient;
                           },
                           fill: true,
@@ -563,7 +566,7 @@ export function LandingPage() {
                           pointRadius: 0,
                           pointHoverRadius: 5,
                           pointHitRadius: 20,
-                          pointHoverBackgroundColor: '#a8442e',
+                          pointHoverBackgroundColor: accent,
                           pointHoverBorderColor: '#ffffff',
                           pointHoverBorderWidth: 2,
                         },

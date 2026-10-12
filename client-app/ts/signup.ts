@@ -2,6 +2,9 @@ import { createAuthService } from '../../src/services/auth/authService';
 import { isSupabaseConfigured } from '../../src/services/supabase/client';
 import { isAdminRole } from '../../src/types/roles';
 import { countryOptions, isCountryCode } from '../../src/shared/countries';
+import { loadBrandColor } from './brandTheme';
+
+loadBrandColor();
 
 const authService = createAuthService();
 

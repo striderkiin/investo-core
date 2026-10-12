@@ -13,8 +13,8 @@
    - dark-green `secondary` accent blocks -> pure white. title_white/
      paragraph_white are "text that sits on a secondary block," so they
      invert to dark values for the same reason.
-   - lime `primary` interactive color -> #A8442E (site accent, later
-     revision — was a muted gold in the step 2 pass).
+   - lime `primary` interactive color -> the Branding primary color
+     (--ic-primary), #A8442E by default.
    - `background`/`border` (the near-canvas bordered-card tone used by the
      pricing cards) -> near-black/subtle-light-border, preserving the
      source's "blends into the canvas" relationship now that the canvas
@@ -75,7 +75,7 @@
 }
 
 @theme {
-  --color-primary: #a8442e;
+  --color-primary: var(--ic-primary, #a8442e);
   --color-secondary: #ffffff;
   --color-title_black: #ffffff;
   --color-title_white: #000000;

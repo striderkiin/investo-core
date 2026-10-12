@@ -1,5 +1,8 @@
 import { createAuthService } from '../../src/services/auth/authService';
 import { isSupabaseConfigured } from '../../src/services/supabase/client';
+import { loadBrandColor } from './brandTheme';
+
+loadBrandColor();
 
 const authService = createAuthService();
 

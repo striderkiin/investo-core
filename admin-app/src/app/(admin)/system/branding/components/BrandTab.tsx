@@ -194,7 +194,7 @@ const BrandTab = ({ canManage }: { canManage: boolean }) => {
           <Card>
             <CardHeader>
               <CardTitle as="h4">Colors</CardTitle>
-              <p className="text-muted mb-0 fs-12">Used by the public website. The admin panel keeps its own theme.</p>
+              <p className="text-muted mb-0 fs-12">Used by your website and the customer dashboard. The admin panel keeps its own theme.</p>
             </CardHeader>
             <CardBody className="pt-0">
               <Row className="g-3">

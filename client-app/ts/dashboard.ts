@@ -1,4 +1,5 @@
 import { requireClientSession } from './shell';
+import { brandColor } from '../../src/shared/brandColor';
 import { createFinancialService } from '../../src/services/api/financialService';
 import { createMarketService } from '../../src/services/market/marketService';
 import { createCustomerMarketService, marketLabel, seriesPoints, type CustomerMarket } from '../../src/services/market/customerMarketService';
@@ -20,19 +21,20 @@ const investmentService = createInvestmentService();
 // always the same color regardless of which/how-many plans a client holds.
 // Genuinely distinct hues rather than shades of one color — a donut where
 // every slice is a different lightness of gold is unreadable at a glance.
-// Professional gets the brand rust since it's typically the flagship tier;
+// Professional gets the brand color since it's typically the flagship tier;
 // the rest are muted, cohesive colors picked to stay legible against each
 // other rather than a literal brand-only palette.
 const PLAN_COLORS: Record<string, string> = {
   Starter: '#5c5c5c',
   Growth: '#2f6f6a',
-  Professional: '#a8442e',
   Elite: '#d1a24a',
 };
-const FALLBACK_SHADES = ['#a8442e', '#2f6f6a', '#d1a24a', '#6b4a6b', '#5c5c5c'];
+const FALLBACK_SHADES = ['brand', '#2f6f6a', '#d1a24a', '#6b4a6b', '#5c5c5c'];
 
 function colorForPlan(name: string, fallbackIndex: number): string {
-  return PLAN_COLORS[name] ?? FALLBACK_SHADES[fallbackIndex % FALLBACK_SHADES.length];
+  if (name === 'Professional') return brandColor();
+  const shade = PLAN_COLORS[name] ?? FALLBACK_SHADES[fallbackIndex % FALLBACK_SHADES.length];
+  return shade === 'brand' ? brandColor() : shade;
 }
 
 // Cents for normal prices, significant digits for sub-dollar coins.

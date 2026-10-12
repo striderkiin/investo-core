@@ -86,8 +86,8 @@ export function markProjection(key: string, titleEl: Element | null, chartEl: El
       padding: '1px 8px',
       borderRadius: '999px',
       verticalAlign: 'middle',
-      border: `1px solid ${onDark ? 'rgba(255,255,255,.7)' : '#a8442e'}`,
-      color: onDark ? '#fff' : '#a8442e',
+      border: `1px solid ${onDark ? 'rgba(255,255,255,.7)' : 'var(--YellowGreen)'}`,
+      color: onDark ? '#fff' : 'var(--YellowGreen)',
     });
     titleEl.appendChild(pill);
   }

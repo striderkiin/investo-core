@@ -1,3 +1,4 @@
+import { brandColor } from '../../src/shared/brandColor';
 import type { CustomerProjection } from '../../src/shared/projection';
 import { formatUsdPrice, roundPrice } from '../../src/shared/price';
 import { withProjection } from './projectionChart';
@@ -60,7 +61,7 @@ export function renderMarketChart(
     dataLabels: { enabled: false },
     colors: projected
       ? projected.series.length > 1
-        ? [trendColor, '#a8442e']
+        ? [trendColor, brandColor()]
         : [projected.end >= (projected.series[0].data[0] ?? 0) ? '#2BC155' : '#FD7972']
       : [trendColor],
     series,

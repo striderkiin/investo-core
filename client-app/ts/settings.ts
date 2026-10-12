@@ -341,7 +341,7 @@ function renderReferredUsersList(users: ReferredUserSummary[]): void {
         <li>
           <div class="wallet-activity-item pb-0">
             <div class="icon">
-              <div style="width:2.25rem;height:2.25rem;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(168,68,46,0.12);color:var(--YellowGreen);font-size:12px;font-weight:700;">${initials(user.fullName)}</div>
+              <div style="width:2.25rem;height:2.25rem;border-radius:50%;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb, var(--YellowGreen) 12%, transparent);color:var(--YellowGreen);font-size:12px;font-weight:700;">${initials(user.fullName)}</div>
             </div>
             <div class="content">
               <div class="mb-2">
@@ -413,7 +413,7 @@ async function renderActivityLogInner(userId: string): Promise<void> {
         <li>
           <div class="wallet-activity-item pb-0">
             <div class="icon">
-              <div style="width:2.25rem;height:2.25rem;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(168,68,46,0.12);color:var(--YellowGreen);">
+              <div style="width:2.25rem;height:2.25rem;border-radius:50%;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb, var(--YellowGreen) 12%, transparent);color:var(--YellowGreen);">
                 <i class="icon-setting-5" style="font-size:14px;"></i>
               </div>
             </div>

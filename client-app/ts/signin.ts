@@ -2,6 +2,9 @@ import { createAuthService } from '../../src/services/auth/authService';
 import { isSupabaseConfigured } from '../../src/services/supabase/client';
 import { isAdminRole } from '../../src/types/roles';
 import { needsMfaCode, verifyMfaCode } from './mfa';
+import { loadBrandColor } from './brandTheme';
+
+loadBrandColor();
 
 const authService = createAuthService();
 

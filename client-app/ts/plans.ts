@@ -173,7 +173,7 @@ function wireInvestModal(userId: string): void {
   function showInsufficientBalance(): void {
     errorEl!.innerHTML =
       'Insufficient available balance for this investment. ' +
-      '<a href="deposit.html" class="fw-bold" style="color:#a8442e;text-decoration:underline;">Deposit funds</a> to continue.';
+      '<a href="deposit.html" class="fw-bold" style="color:var(--YellowGreen);text-decoration:underline;">Deposit funds</a> to continue.';
     errorEl!.style.display = '';
   }
 

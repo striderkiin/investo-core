@@ -9,6 +9,9 @@ import { mountDemoTicker } from './demoTicker';
 import { mountSocialProofPopup } from './socialProofPopup';
 import { applyMaintenanceGuard } from './maintenanceGuard';
 import { needsMfaCode } from './mfa';
+import { loadBrandColor } from './brandTheme';
+
+loadBrandColor();
 
 const authService = createAuthService();
 const notificationService = createNotificationService();

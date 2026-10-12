@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { createBrandingService } from '../../services/api/brandingService';
 import type { Branding } from '../../services/api/brandingService';
 import { isSupabaseConfigured } from '../../services/supabase/client';
+import { applyBrandColor } from '../../shared/brandColor';
 
 const DEFAULT_BRANDING: Branding = {
   id: 'default',
@@ -44,7 +45,8 @@ export const BrandingContext = createContext<BrandingContextValue | undefined>(u
 
 function applyCssVariables(branding: Branding) {
   const root = document.documentElement;
-  root.style.setProperty('--ic-primary', branding.primaryColor);
+  // The placeholder defaults would undo the cached color main.tsx applied, so wait for the real row.
+  if (branding.id !== 'default') applyBrandColor(branding.primaryColor);
   root.style.setProperty('--ic-secondary', branding.secondaryColor);
   root.style.setProperty('--ic-success', branding.successColor);
   root.style.setProperty('--ic-warning', branding.warningColor);
