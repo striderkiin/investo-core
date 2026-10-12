@@ -1,4 +1,5 @@
 import { requireClientSession } from './shell';
+import { PAUSED_MESSAGE, sitePaused } from './license';
 import { createDepositService } from '../../src/services/api/depositService';
 import type { DepositSession } from '../../src/services/payments/PaymentProvider';
 import type { DepositStatus } from '../../src/types/database';
@@ -197,6 +198,11 @@ async function main() {
   wireForm(profile.id);
   gateway = await depositService.activeGateway();
   applyGatewayLayout();
+  if (await sitePaused()) {
+    showError(PAUSED_MESSAGE);
+    const submitButton = document.getElementById('depositSubmit') as HTMLButtonElement | null;
+    if (submitButton) submitButton.disabled = true;
+  }
 }
 
 void main();

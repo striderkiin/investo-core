@@ -1,4 +1,5 @@
 import { requireClientSession } from './shell';
+import { PAUSED_MESSAGE, sitePaused } from './license';
 import { createInvestmentService } from '../../src/services/api/investmentService';
 import { createFinancialService } from '../../src/services/api/financialService';
 import type { InvestmentPlan } from '../../src/types/database';
@@ -194,6 +195,12 @@ function wireInvestModal(userId: string): void {
     form.reset();
     amountInput.value = String(activePlan.minAmount);
     planNameEl.textContent = activePlan.name;
+    submitButton.disabled = false;
+    void sitePaused().then((isPaused) => {
+      if (!isPaused) return;
+      showError(PAUSED_MESSAGE);
+      submitButton.disabled = true;
+    });
     planDetailEl.textContent = `${activePlan.rate}% ${activePlan.rateType} · ${activePlan.durationDays} days · ${formatCurrency(activePlan.minAmount)} to ${formatCurrency(activePlan.maxAmount)} · Earnings can be moved to your balance from ${formatCurrency(activePlan.minWithdrawal)}. You can end the plan early: before the halfway point you get your investment back with no earnings, after it you keep half of your earnings.`;
     modal.show();
   });

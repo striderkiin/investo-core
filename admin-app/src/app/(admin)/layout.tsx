@@ -5,6 +5,7 @@ import Footer from '@/components/layout/Footer'
 import FallbackLoading from '@/components/FallbackLoading'
 import { Suspense } from 'react'
 import AuthProtectionWrapper from '@/components/wrappers/AuthProtectionWrapper'
+import LicenseGate from '@/components/LicenseGate'
 
 const TopNavigationBar = dynamic(() => import('@/components/layout/TopNavigationBar'))
 const VerticalNavigationBar = dynamic(() => import('@/components/layout/VerticalNavigationBar'))
@@ -23,7 +24,9 @@ const AdminLayout = ({ children }: ChildrenType) => {
       <div className="page-wrapper">
         <div className="page-content">
           <div className="container-xxl">
-            <Suspense>{children}</Suspense>
+            <Suspense>
+              <LicenseGate>{children}</LicenseGate>
+            </Suspense>
           </div>
           <Footer />
         </div>
