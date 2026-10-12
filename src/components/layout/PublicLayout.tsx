@@ -6,8 +6,11 @@ import { SvgSymbols } from '../public/securevest/SvgSymbols';
 import { createSocialLinksService } from '../../services/api/socialLinksService';
 import { SOCIAL_PLATFORM_META, DEFAULT_SOCIAL_LINKS } from '../public/socialPlatforms';
 import type { SocialLink } from '../../types/database';
+import { createWhiteLabelService, type WhiteLabelSettings } from '../../services/api/whiteLabelService';
+import { coinLogo } from '../../shared/coinLogos';
 
 const socialLinksService = createSocialLinksService();
+const whiteLabelService = createWhiteLabelService();
 
 const NAV_LINKS = [
   { to: '/', label: 'Home', end: true },
@@ -35,6 +38,7 @@ export function PublicLayout() {
   const togglerRef = useRef<HTMLButtonElement>(null);
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [theme, setTheme] = useState<PublicTheme>(getStoredTheme);
+  const [company, setCompany] = useState<WhiteLabelSettings | null>(null);
   // The nav's background follows this page's own light/dark toggle (separate
   // from admin's site-wide branding.theme), so the logo variant follows it too.
   const navLogoUrl = (theme === 'light' ? branding.logoLightUrl : branding.logoDarkUrl) ?? branding.logoUrl;
@@ -45,7 +49,19 @@ export function PublicLayout() {
       .listEnabled()
       .then(setSocialLinks)
       .catch((err) => console.error('Failed to load social links', err));
+    // Business details are public-read; the footer just skips them if they can't load.
+    whiteLabelService.get().then(setCompany).catch(() => setCompany(null));
   }, []);
+
+  const companyName = company?.legalBusinessName.trim() || company?.businessName.trim() || '';
+  const companyLines = [
+    company?.businessRegistrationNumber.trim() ? `Registration number ${company.businessRegistrationNumber.trim()}` : '',
+    company?.businessAddress.trim() || company?.supportAddress.trim() || '',
+  ].filter(Boolean);
+  const coins = c('footer.payments')
+    .split(',')
+    .map((symbol) => symbol.trim())
+    .filter(Boolean);
 
   function toggleTheme() {
     const next = theme === 'light' ? 'dark' : 'light';
@@ -222,6 +238,48 @@ export function PublicLayout() {
               </div>
             </div>
           </div>
+          {(companyName || companyLines.length > 0 || company?.supportEmail || company?.supportPhone || coins.length > 0) && (
+            <div className="tw:py-8 tw:border-b tw:border-white/10 tw:flex tw:flex-col tw:md:flex-row tw:md:items-start tw:justify-between tw:gap-8">
+              <div className="tw:text-paragraph_white tw:text-sm tw:flex tw:flex-col tw:gap-1.5">
+                {companyName && <p className="tw:m-0! tw:text-white tw:font-semibold">{companyName}</p>}
+                {companyLines.map((line) => (
+                  <p key={line} className="tw:m-0!">
+                    {line}
+                  </p>
+                ))}
+                {(company?.supportEmail || company?.supportPhone) && (
+                  <p className="tw:m-0! tw:flex tw:flex-wrap tw:gap-x-4 tw:gap-y-1">
+                    {company?.supportEmail && (
+                      <a className="tw:text-paragraph_white hover:tw:text-primary" href={`mailto:${company.supportEmail}`}>
+                        {company.supportEmail}
+                      </a>
+                    )}
+                    {company?.supportPhone && (
+                      <a className="tw:text-paragraph_white hover:tw:text-primary" href={`tel:${company.supportPhone.replace(/[^+\d]/g, '')}`}>
+                        {company.supportPhone}
+                      </a>
+                    )}
+                  </p>
+                )}
+              </div>
+              {coins.length > 0 && (
+                <div className="tw:flex tw:flex-col tw:gap-3 tw:md:items-end">
+                  <p className="tw:m-0! tw:text-white tw:text-sm tw:font-semibold">{c('footer.payments_label')}</p>
+                  <div className="tw:flex tw:flex-wrap tw:items-center tw:gap-2">
+                    {coins.map((symbol) => {
+                      const logo = coinLogo(symbol);
+                      return (
+                        <span key={symbol} className="tw:flex tw:items-center tw:gap-2 tw:bg-white/10 tw:rounded-full tw:py-1.5 tw:pl-1.5 tw:pr-3 tw:text-white tw:text-sm">
+                          {logo ? <span className="tw:w-6 tw:h-6 tw:block" aria-hidden="true" dangerouslySetInnerHTML={{ __html: logo }} /> : null}
+                          {symbol.toUpperCase()}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
           <div className="tw:py-5 tw:md:py-8 tw:lg:py-10.5 tw:flex tw:items-center tw:justify-between tw:gap-4 tw:sm:gap-6 tw:flex-col tw:sm:flex-row">
             <p className="tw:text-paragraph_white tw:text-center tw:sm:text-left">
               © {new Date().getFullYear()} {branding.siteName}. All rights reserved.
@@ -245,6 +303,7 @@ export function PublicLayout() {
               })}
             </div>
           </div>
+          {c('footer.risk').trim() && <p className="tw:pb-8 tw:m-0! tw:text-xs tw:leading-relaxed tw:text-paragraph_white tw:opacity-80">{c('footer.risk')}</p>}
         </div>
       </footer>
       <button

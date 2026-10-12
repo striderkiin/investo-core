@@ -182,10 +182,24 @@ const WebsitePage = () => {
                   {field.kind === 'textarea' && (
                     <textarea id={field.key} className="form-control" rows={3} value={valueOf(field)} maxLength={5000} disabled={!canManage} onChange={(e) => setValue(field, e.target.value)} />
                   )}
+                  {field.kind === 'switch' && (
+                    <div className="form-check form-switch">
+                      <input
+                        id={field.key}
+                        type="checkbox"
+                        role="switch"
+                        className="form-check-input"
+                        checked={valueOf(field) === 'on'}
+                        disabled={!canManage}
+                        onChange={(e) => setValue(field, e.target.checked ? 'on' : 'off')}
+                      />
+                      <span className="form-check-label">{valueOf(field) === 'on' ? 'Shown on your site' : 'Hidden'}</span>
+                    </div>
+                  )}
                   {field.kind === 'image' && (
                     <div className="d-flex flex-wrap align-items-center gap-3">
                       <div className="border rounded p-2 bg-light d-flex align-items-center justify-content-center" style={{ width: 160, height: 110 }}>
-                        <img src={valueOf(field)} alt="" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                        {valueOf(field) ? <img src={valueOf(field)} alt="" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} /> : <small className="text-muted">No picture</small>}
                       </div>
                       {canManage && (
                         <label className={`btn btn-outline-primary btn-sm mb-0 ${uploading ? 'disabled' : ''}`}>

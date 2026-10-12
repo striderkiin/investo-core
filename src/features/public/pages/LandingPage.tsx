@@ -17,6 +17,7 @@ import { SecureVestAccordion } from '../../../components/public/securevest/Secur
 import { useSiteContent } from '../../siteContent/useSiteContent';
 import { FAQ_SLOTS } from '../../siteContent/landingContent';
 import { useBranding } from '../../../hooks/useBranding';
+import { HowItWorks, Team, Testimonials } from '../../../components/public/LandingExtras';
 import { withAlpha } from '../../../shared/brandColor';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler);
@@ -356,7 +357,7 @@ export function LandingPage() {
                 <p className="tw:pt-3 tw:sm:pt-4 tw:text-paragraph_white tw:text-base tw:leading-normal">{c('stats.item1.text')}</p>
               </div>
             </ScrollReveal>
-            <ScrollReveal className="tw:bg-[#5c2015] tw:p-5 tw:sm:p-8 tw:rounded-2xl tw:flex tw:flex-col tw:justify-between tw:gap-5" index={2}>
+            <ScrollReveal className="tw:bg-[color-mix(in_srgb,var(--pub-accent)_40%,black)] tw:p-5 tw:sm:p-8 tw:rounded-2xl tw:flex tw:flex-col tw:justify-between tw:gap-5" index={2}>
               <div className="tw:flex tw:items-start tw:gap-1">
                 <h2 className="counter tw:text-white tw:font-bold tw:leading-[1.1] tw:text-4xl tw:sm:text-[40px] tw:md:text-5xl tw:lg:text-[52px] tw:xl:text-[64px]">{c('stats.item2.value')}</h2>
               </div>
@@ -382,6 +383,8 @@ export function LandingPage() {
           </div>
         </div>
       </section>
+
+      <HowItWorks c={c} />
 
       {/* ===== 3.4 Pricing — verbatim from services.php lines 55-106 (toggle at 68-93 excluded) + pricing-cards.php ===== */}
       <section id="plans" className="section-spacing-md-lg">
@@ -615,6 +618,9 @@ export function LandingPage() {
           )}
         </div>
       </section>
+
+      <Testimonials c={c} />
+      <Team c={c} />
 
       {/* ===== 3.6 FAQ — structure verbatim from accordion.php + its JS behavior; the reference's paired thumbnail column (excellence-accordion-thumb-0N.webp) is dropped per the brief since there's no equivalent FAQ imagery, and the accordion now takes the full width ===== */}
       <section id="faq" className="section-spacing-lg tw:bg-secondary">

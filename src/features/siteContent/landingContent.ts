@@ -9,9 +9,13 @@
  *
  * List fields (FAQ, feature cards) have a fixed number of slots. A slot whose
  * main text is empty is hidden on the page.
+ *
+ * A 'switch' field holds 'on' or 'off'. Team and testimonials start off on a
+ * new site, so a buyer never goes live with sample people; they add their own
+ * and switch the section on.
  */
 
-export type ContentKind = 'text' | 'textarea' | 'image' | 'document';
+export type ContentKind = 'text' | 'textarea' | 'image' | 'document' | 'switch';
 
 export interface ContentField {
   key: string;
@@ -39,6 +43,17 @@ const S = '/securevest';
 const text = (key: string, label: string, value: string, hint?: string): ContentField => ({ key, label, kind: 'text', default: value, hint });
 const area = (key: string, label: string, value: string, hint?: string): ContentField => ({ key, label, kind: 'textarea', default: value, hint });
 const image = (key: string, label: string, value: string, hint?: string): ContentField => ({ key, label, kind: 'image', default: value, hint });
+const toggle = (key: string, label: string, value: 'on' | 'off', hint?: string): ContentField => ({ key, label, kind: 'switch', default: value, hint });
+
+export const TEAM_SLOTS = 4;
+export const TESTIMONIAL_SLOTS = 3;
+export const STEP_SLOTS = 3;
+
+const STEPS = [
+  { title: 'Create your account', desc: 'Sign up with your name and email, then confirm your email to unlock your dashboard.' },
+  { title: 'Fund your balance', desc: 'Deposit in crypto. Your balance updates once the payment is confirmed on the network.' },
+  { title: 'Choose a plan and track it', desc: 'Pick the plan that fits your goals and follow your returns live, any time.' },
+];
 
 const FEATURE_CARDS = [
   { title: 'Real-Time Tracking', desc: 'Watch your balances, returns, and transaction history update live from your dashboard.' },
@@ -137,6 +152,20 @@ export const LANDING_SECTIONS: ContentSection[] = [
     ],
   },
   {
+    id: 'how',
+    title: 'How it works',
+    description: 'Three short steps that show a new visitor how to get started. Leave a step title empty to hide it.',
+    fields: [
+      text('how.eyebrow', 'Small heading', 'HOW IT WORKS'),
+      area('how.title', 'Heading', 'Start in Three Simple Steps'),
+      area('how.text', 'Text beside the heading', 'From sign-up to your first plan in a few minutes.'),
+      ...STEPS.flatMap((step, i) => [
+        text(`how.step${i + 1}.title`, `Step ${i + 1} title`, step.title),
+        area(`how.step${i + 1}.text`, `Step ${i + 1} text`, step.desc),
+      ]),
+    ],
+  },
+  {
     id: 'plans',
     title: 'Plans',
     description: 'The plan cards come from Plans in the admin panel. Only the heading and button are set here.',
@@ -158,6 +187,39 @@ export const LANDING_SECTIONS: ContentSection[] = [
       text('calc.cta_title', 'Bottom call to action heading', 'Ready to Put Your Capital to Work?'),
       area('calc.cta_text', 'Bottom call to action text', 'Create a free account and fund your first plan in minutes, then track everything live from your dashboard.'),
       text('calc.cta_button', 'Bottom call to action button', 'Create free account'),
+    ],
+  },
+  {
+    id: 'testimonials',
+    title: 'Testimonials',
+    description: `Up to ${TESTIMONIAL_SLOTS} quotes from real customers. Hidden until you switch it on. Only use real quotes from people who agreed to be shown.`,
+    fields: [
+      toggle('testimonials.show', 'Show this section', 'off'),
+      text('testimonials.eyebrow', 'Small heading', 'TESTIMONIALS'),
+      area('testimonials.title', 'Heading', 'What Our Investors Say'),
+      ...Array.from({ length: TESTIMONIAL_SLOTS }, (_, i) => [
+        image(`testimonials.item${i + 1}.photo`, `Quote ${i + 1} photo`, '', 'A square photo, at least 200 x 200.'),
+        text(`testimonials.item${i + 1}.name`, `Quote ${i + 1} name`, '', 'Leave empty to hide this quote.'),
+        text(`testimonials.item${i + 1}.place`, `Quote ${i + 1} city or job`, ''),
+        area(`testimonials.item${i + 1}.quote`, `Quote ${i + 1} text`, ''),
+      ]).flat(),
+      area('testimonials.note', 'Small print under the quotes', 'Individual experiences vary. Past results do not guarantee future returns.'),
+    ],
+  },
+  {
+    id: 'team',
+    title: 'Team',
+    description: `Up to ${TEAM_SLOTS} people behind the business. Hidden until you switch it on.`,
+    fields: [
+      toggle('team.show', 'Show this section', 'off'),
+      text('team.eyebrow', 'Small heading', 'OUR TEAM'),
+      area('team.title', 'Heading', 'The People Behind {site}'),
+      area('team.text', 'Text beside the heading', 'A small team focused on keeping your money safe and your dashboard clear.'),
+      ...Array.from({ length: TEAM_SLOTS }, (_, i) => [
+        image(`team.member${i + 1}.photo`, `Person ${i + 1} photo`, '', 'A square photo, at least 400 x 400.'),
+        text(`team.member${i + 1}.name`, `Person ${i + 1} name`, '', 'Leave empty to hide this person.'),
+        text(`team.member${i + 1}.role`, `Person ${i + 1} job title`, ''),
+      ]).flat(),
     ],
   },
   {
@@ -187,8 +249,13 @@ export const LANDING_SECTIONS: ContentSection[] = [
   {
     id: 'footer',
     title: 'Footer',
-    description: 'The dark strip at the bottom of every public page.',
-    fields: [area('footer.text', 'Text under the logo', 'A transparent, server-validated platform for tracking deposits, investments, and withdrawals, all in one dashboard.')],
+    description: 'The dark strip at the bottom of every public page. Your company name, registration number, address and support contact come from Branding > Business details.',
+    fields: [
+      area('footer.text', 'Text under the logo', 'A transparent, server-validated platform for tracking deposits, investments, and withdrawals, all in one dashboard.'),
+      text('footer.payments_label', 'Payment methods heading', 'We accept'),
+      text('footer.payments', 'Payment methods', 'USDT, BTC, ETH', 'Coin symbols separated by commas, e.g. USDT, BTC, ETH. Leave empty to hide.'),
+      area('footer.risk', 'Risk warning', 'Investing involves risk, including the possible loss of the money you invest. Past performance does not guarantee future results. Projections are estimates, not promises.', 'Shown in small print at the very bottom. Leave empty to hide.'),
+    ],
   },
 ];
 

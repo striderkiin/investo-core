@@ -158,6 +158,16 @@ const loadChecklist = async (): Promise<Group[]> => {
           guide: 'Chapter 7',
         },
         {
+          key: 'people',
+          title: 'Add your team and testimonials',
+          why: 'Visitors trust a business they can put faces to. These sections stay hidden until you add real people and switch them on.',
+          status: saved.has('team.show') || saved.has('testimonials.show') ? 'done' : 'todo',
+          howTo: 'Open Landing Page, then Team or Testimonials. Add names, photos and quotes from real people who agreed to be shown, switch the section on and save.',
+          link: { href: '/system/website', label: 'Open Landing Page' },
+          guide: 'Chapter 6',
+          optional: true,
+        },
+        {
           key: 'social',
           title: 'Decide on the activity pop-ups',
           why: 'The demo ticker shows example activity to visitors. Decide whether you want it, and check its lines.',
