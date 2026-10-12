@@ -30,6 +30,12 @@ const LicenseGate = ({ children }: ChildrenType) => {
 
   if (!license || license.status === 'active') return <>{children}</>
 
+  const payButton = license.payUrl ? (
+    <a href={license.payUrl} target="_blank" rel="noreferrer" className="btn btn-sm btn-primary ms-auto flex-shrink-0">
+      Pay now
+    </a>
+  ) : null
+
   if (license.status === 'grace') {
     return (
       <>
@@ -39,6 +45,7 @@ const LicenseGate = ({ children }: ChildrenType) => {
             <strong>Your subscription payment is due.</strong>{' '}
             {license.message || `Please pay${license.locksOn ? ` by ${longDate(license.locksOn)}` : ''} to keep your site running. After that, new deposits and investments are paused until payment is received.`}
           </div>
+          {payButton}
         </Alert>
         {children}
       </>
@@ -53,6 +60,7 @@ const LicenseGate = ({ children }: ChildrenType) => {
         {license.message || 'Your subscription payment is overdue. New deposits and investments are paused until payment is received.'} Withdrawals and
         support keep working so your customers can still be paid.
       </div>
+      {payButton}
     </Alert>
   )
 
@@ -72,8 +80,15 @@ const LicenseGate = ({ children }: ChildrenType) => {
         <CardBody className="text-center py-5">
           <IconifyIcon icon="iconoir:lock" className="text-danger mb-3" style={{ fontSize: 48 }} />
           <h4 className="mb-2">This page is unavailable while your site is paused</h4>
-          <p className="text-muted mb-4">Contact your provider to pay and unlock the site. Everything is kept as it was.</p>
+          <p className="text-muted mb-4">
+            {license.payUrl ? 'Pay your subscription to unlock the site straight away.' : 'Contact your provider to pay and unlock the site.'} Everything is kept as it was.
+          </p>
           <div className="d-flex justify-content-center gap-2">
+            {license.payUrl && (
+              <a href={license.payUrl} target="_blank" rel="noreferrer" className="btn btn-success">
+                Pay now
+              </a>
+            )}
             <Link href="/withdrawals" className="btn btn-primary">
               Open Withdrawals
             </Link>
