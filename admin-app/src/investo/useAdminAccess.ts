@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { useAuth } from '../../../src/hooks/useAuth'
+import { IS_DEMO } from '../../../src/config/env'
 import { isAdminRole } from '../../../src/types/roles'
 import { supabase } from './services'
 
@@ -45,6 +46,9 @@ export const useAdminAccess = (): AdminAccess => {
   if (!session) return 'signed-out'
   if (!profile) return error ? 'signed-out' : 'loading'
   if (!isAdminRole(profile.role)) return 'not-admin'
+  // The shared demo admin can't hold an authenticator code, so demo builds let
+  // it in on password or demo link alone. Every other admin still needs 2FA.
+  if (IS_DEMO && profile.role === 'demo_admin') return 'ok'
   if (!assurance) return 'loading'
   if (assurance.next !== 'aal2') return 'needs-mfa-setup'
   if (assurance.current !== 'aal2') return 'needs-mfa-code'

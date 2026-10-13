@@ -5,12 +5,17 @@ import { Suspense } from 'react'
 
 import type { ChildrenType } from '@/types/component-props'
 import { useAdminAccess } from '@/investo/useAdminAccess'
+import { supabase } from '@/investo/services'
+import { useAuth } from '../../../../src/hooks/useAuth'
+import { mountDemoTimer } from '../../../../src/shared/demoSession'
 import FallbackLoading from '../FallbackLoading'
 
 const AuthProtectionWrapper = ({ children }: ChildrenType) => {
   const access = useAdminAccess()
   const { replace } = useRouter()
   const pathname = usePathname()
+  const { session } = useAuth()
+  const userId = session?.user.id
 
   useEffect(() => {
     if (access === 'signed-out' || access === 'needs-mfa-code') {
@@ -22,6 +27,11 @@ const AuthProtectionWrapper = ({ children }: ChildrenType) => {
       window.location.replace('/client-app/index.html')
     }
   }, [access, pathname, replace])
+
+  // Visitors signed in from /demo get a countdown and are signed out at zero.
+  useEffect(() => {
+    if (access === 'ok') mountDemoTimer(userId, () => supabase.auth.signOut())
+  }, [access, userId])
 
   if (access !== 'ok') return <FallbackLoading />
 

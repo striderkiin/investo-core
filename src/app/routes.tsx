@@ -18,10 +18,12 @@ import { InvestmentsPage } from '../features/investments/pages/InvestmentsPage';
 
 
 import { NotFoundPage } from '../features/public/pages/NotFoundPage';
+import { DemoPage } from '../features/demo/pages/DemoPage';
 
 export function AppRoutes() {
   return (
     <Routes>
+      <Route path="/demo" element={<DemoPage />} />
       <Route element={<PublicLayout />}>
         <Route path="/" element={<LandingPage />} />
         <Route path="/terms" element={<TermsPage />} />
