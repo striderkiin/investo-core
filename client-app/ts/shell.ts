@@ -10,6 +10,7 @@ import { mountSocialProofPopup } from './socialProofPopup';
 import { applyMaintenanceGuard } from './maintenanceGuard';
 import { needsMfaCode } from './mfa';
 import { loadBrandColor } from './brandTheme';
+import { mountDemoTimer } from '../../src/shared/demoSession';
 
 loadBrandColor();
 
@@ -58,6 +59,8 @@ export async function requireClientSession(): Promise<Profile> {
     window.location.replace('/admin');
     throw new Error('Not a client account');
   }
+
+  mountDemoTimer(profile.id, () => authService.logout());
 
   const blocked = await applyMaintenanceGuard();
   if (blocked) {
