@@ -33,10 +33,16 @@
   .startbar-menu {
     padding-bottom: var(--#{$prefix}topbar-height);
     height: 100vh;
+    // Phone browsers count the area behind their toolbars in 100vh, which hid
+    // the last menu items; dvh is the height actually visible.
+    height: 100dvh;
 
     .startbar-collapse {
-      padding: 0 16px 16px;
+      // Extra room at the end so the last item can scroll clear of the
+      // browser toolbar and the demo timer.
+      padding: 0 16px calc(96px + env(safe-area-inset-bottom));
       height: calc(100vh - $topbar-height);
+      height: calc(100dvh - $topbar-height);
       overflow-y: auto;
       // min-height: calc(100vh - $topbar-height);
     }
