@@ -28,7 +28,13 @@ const BaseVectorMap = ({
 		})
 		const container = ref.current
 		return () => {
-			map?.destroy?.()
+			// vite.config.ts patches the jsvectormap destroy() crash; this is a
+			// backstop so a map failing to clean up never breaks the page.
+			try {
+				map?.destroy?.()
+			} catch {
+				map?._tooltip?.dispose?.()
+			}
 			container.innerHTML = ''
 		}
 	}, [options, type])
