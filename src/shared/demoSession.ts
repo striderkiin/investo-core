@@ -40,6 +40,25 @@ function clearDemo(): void {
   }
 }
 
+const UI_KEY = 'investo.demoTimerUi';
+type TimerUi = { x?: number; y?: number; compact?: boolean };
+
+function readUi(): TimerUi {
+  try {
+    return (JSON.parse(sessionStorage.getItem(UI_KEY) ?? '{}') as TimerUi) ?? {};
+  } catch {
+    return {};
+  }
+}
+
+function writeUi(value: TimerUi): void {
+  try {
+    sessionStorage.setItem(UI_KEY, JSON.stringify(value));
+  } catch {
+    // Position just won't be remembered.
+  }
+}
+
 const format = (ms: number) => {
   const total = Math.max(0, Math.ceil(ms / 1000));
   return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
@@ -71,12 +90,14 @@ export function mountDemoTimer(userId: string | null | undefined, signOut: () =>
 
   const bar = document.createElement('div');
   bar.setAttribute('role', 'status');
+  bar.title = 'Drag to move. Tap to shrink or expand.';
   bar.style.cssText = [
     'position:fixed', 'left:50%', 'bottom:16px', 'transform:translateX(-50%)', 'z-index:2147483000',
     'display:flex', 'align-items:center', 'gap:12px', 'flex-wrap:wrap', 'justify-content:center',
     'max-width:calc(100vw - 32px)', 'padding:10px 16px', 'border-radius:999px',
     'background:#141416', 'color:#f5f5f5', 'border:1px solid #2a2830',
     'box-shadow:0 12px 32px rgba(0,0,0,.35)', 'font:600 14px/1.3 system-ui,sans-serif',
+    'touch-action:none', 'user-select:none', '-webkit-user-select:none', 'cursor:grab',
   ].join(';');
 
   const label = document.createElement('span');
@@ -87,9 +108,66 @@ export function mountDemoTimer(userId: string | null | undefined, signOut: () =>
   bar.append(label, link);
   document.body.appendChild(bar);
 
+  let compact = readUi().compact ?? false;
+  const applyCompact = () => {
+    link.style.display = compact ? 'none' : '';
+    bar.style.padding = compact ? '8px 14px' : '10px 16px';
+  };
+  applyCompact();
+
+  // Once moved, the bar keeps its spot (top-left corner, clamped on screen).
+  const place = (x: number, y: number) => {
+    const maxX = window.innerWidth - bar.offsetWidth - 8;
+    const maxY = window.innerHeight - bar.offsetHeight - 8;
+    bar.style.transform = 'none';
+    bar.style.bottom = 'auto';
+    bar.style.left = `${Math.round(Math.min(Math.max(8, x), Math.max(8, maxX)))}px`;
+    bar.style.top = `${Math.round(Math.min(Math.max(8, y), Math.max(8, maxY)))}px`;
+  };
+  const saved = readUi();
+  if (typeof saved.x === 'number' && typeof saved.y === 'number') place(saved.x, saved.y);
+  window.addEventListener('resize', () => {
+    if (bar.style.transform === 'none') place(bar.offsetLeft, bar.offsetTop);
+  });
+
+  let start: { x: number; y: number; left: number; top: number } | null = null;
+  let moved = false;
+  bar.addEventListener('pointerdown', (event) => {
+    if (event.target === link) return;
+    const rect = bar.getBoundingClientRect();
+    start = { x: event.clientX, y: event.clientY, left: rect.left, top: rect.top };
+    moved = false;
+    bar.setPointerCapture(event.pointerId);
+    bar.style.cursor = 'grabbing';
+  });
+  bar.addEventListener('pointermove', (event) => {
+    if (!start) return;
+    const dx = event.clientX - start.x;
+    const dy = event.clientY - start.y;
+    if (!moved && Math.hypot(dx, dy) < 6) return;
+    moved = true;
+    place(start.left + dx, start.top + dy);
+  });
+  const finish = () => {
+    if (!start) return;
+    start = null;
+    bar.style.cursor = 'grab';
+    if (moved) {
+      writeUi({ ...readUi(), x: bar.offsetLeft, y: bar.offsetTop });
+    } else {
+      // A tap, not a drag: shrink to just the time, or expand again.
+      compact = !compact;
+      applyCompact();
+      writeUi({ ...readUi(), compact });
+      if (bar.style.transform === 'none') place(bar.offsetLeft, bar.offsetTop);
+    }
+  };
+  bar.addEventListener('pointerup', finish);
+  bar.addEventListener('pointercancel', finish);
+
   const tick = () => {
     const left = demo.expiresAt - Date.now();
-    label.textContent = `Demo session · ${format(left)} left`;
+    label.textContent = compact ? `Demo · ${format(left)}` : `Demo session · ${format(left)} left`;
     if (left <= 0) {
       window.clearInterval(timer);
       label.textContent = 'Demo session ended';
