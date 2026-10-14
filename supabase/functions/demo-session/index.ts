@@ -83,6 +83,16 @@ Deno.serve(async (req) => {
   const { data: profile } = await db.from('profiles').select('role').eq('id', userId).maybeSingle();
   if (profile?.role !== account.role) return json({ error: 'The demo account is not set up correctly.' }, 500);
 
+  // A visitor may have turned on 2FA for the shared client, which would lock
+  // everyone else out of the client demo. Clear it before each demo session.
+  // (The demo admin is let in without 2FA by the demo build itself.)
+  if (data.role === 'client') {
+    const { data: mfa } = await db.auth.admin.mfa.listFactors({ userId });
+    for (const factor of mfa?.factors ?? []) {
+      await db.auth.admin.mfa.deleteFactor({ id: factor.id, userId });
+    }
+  }
+
   const minutes = Math.min(Math.max(Number(data.minutes) || 5, 1), MAX_MINUTES);
   return json({ tokenHash: link.properties.hashed_token, role: data.role, expiresAt: Date.now() + minutes * 60_000 });
 });

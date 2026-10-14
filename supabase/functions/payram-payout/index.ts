@@ -42,6 +42,12 @@ Deno.serve(async (req) => {
   if (!body.withdrawalId) return json({ error: 'Missing withdrawal.' }, 400);
   const db = adminClient();
 
+  // The shared demo login never reaches PayRam: the payout is simulated and
+  // the withdrawal completed with a made-up reference, so a public demo can't
+  // move real money.
+  const { data: caller } = await db.from('profiles').select('role').eq('id', userData.user.id).maybeSingle();
+  if (caller?.role === 'demo_admin') return simulatePayout(db, userClient, body);
+
   let settings;
   try {
     settings = await loadPayram(db);
@@ -137,3 +143,23 @@ Deno.serve(async (req) => {
     return json({ ok: false, message });
   }
 });
+
+type Db = ReturnType<typeof adminClient>;
+
+async function simulatePayout(db: Db, userClient: Db, body: Body) {
+  if (body.action === 'refresh') return json({ ok: true, status: 'SENT', message: 'Demo: this payout was simulated. Nothing was sent.' });
+
+  const { data: withdrawal } = await db.from('withdrawals').select('status').eq('id', body.withdrawalId).maybeSingle();
+  if (!withdrawal) return json({ error: 'Withdrawal not found.' }, 404);
+  if (['pending', 'review'].includes(String(withdrawal.status))) {
+    const { error } = await userClient.rpc('review_withdrawal', { p_withdrawal_id: body.withdrawalId, p_action: 'approve', p_notes: 'Demo payout (simulated)' });
+    if (error) return json({ error: error.message }, 400);
+  }
+  const { data: current } = await db.from('withdrawals').select('status').eq('id', body.withdrawalId).maybeSingle();
+  if (current?.status !== 'processing') return json({ error: 'Only pending or approved withdrawals can be sent.' }, 400);
+
+  const reference = `demo-${crypto.randomUUID().slice(0, 8)}`;
+  await db.rpc('record_withdrawal_payout', { p_withdrawal_id: body.withdrawalId, p_provider: 'demo', p_reference: reference, p_status: 'SENT', p_error: null });
+  await db.rpc('settle_withdrawal_payout', { p_withdrawal_id: body.withdrawalId, p_tx_hash: reference });
+  return json({ ok: true, status: 'SENT', message: 'Demo: payout simulated and the withdrawal completed. Nothing was sent.' });
+}
