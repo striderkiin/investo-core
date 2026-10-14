@@ -67,9 +67,37 @@ const adminAppHistoryFallback = (): Plugin => {
   };
 };
 
+// jsvectormap 1.7's EventHandler.flush() deletes registry entries while
+// looping over them. On touch devices one handler is registered for both
+// touchstart and touchmove, so destroying a map always threw ("undefined is
+// not an object (evaluating ...selector)") and showed the admin error box.
+// Patch the loop to remove each entry by its own key and skip missing ones.
+const JSVECTORMAP_FLUSH = `Object.keys(eventRegistry).forEach(function (event) {
+      EventHandler.off(eventRegistry[event].selector, event, eventRegistry[event].handler);
+    });`;
+const fixJsVectorMapFlush = (): Plugin => ({
+  name: 'fix-jsvectormap-flush',
+  transform(code, id) {
+    if (!id.includes('jsvectormap') || !code.includes('getEventRegistry')) return null;
+    if (!code.includes(JSVECTORMAP_FLUSH)) {
+      this.warn('jsvectormap changed: check whether the EventHandler.flush patch is still needed.');
+      return null;
+    }
+    return code.replace(
+      JSVECTORMAP_FLUSH,
+      `Object.keys(eventRegistry).forEach(function (event) {
+      var entry = eventRegistry[event];
+      if (!entry) return;
+      EventHandler.off(entry.selector, event, entry.handler);
+      delete eventRegistry[event];
+    });`
+    );
+  },
+});
+
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [adminAppStaticImages(), adminAppHistoryFallback(), react(), tailwindcss()],
+  plugins: [fixJsVectorMapFlush(), adminAppStaticImages(), adminAppHistoryFallback(), react(), tailwindcss()],
   resolve: {
     alias: [
       // Only the admin-app template imports through `@/`; the main app and
