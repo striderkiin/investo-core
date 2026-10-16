@@ -11,7 +11,7 @@ const KEY = 'investo.demoSession';
 
 /** Where visitors go when their time is up, and where "Get this platform" points. */
 export const DEMO_RETURN_URL =
-  (import.meta.env.VITE_DEMO_RETURN_URL as string | undefined) || 'https://probable-fishstick-rouge.vercel.app/p/investo';
+  (import.meta.env.VITE_DEMO_RETURN_URL as string | undefined) || 'https://mojox.space/p/investo';
 
 type StoredDemo = { userId: string; expiresAt: number };
 
